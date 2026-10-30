@@ -13,6 +13,7 @@ env:
   GST_REGISTRY: '~/registry.bin'
   KIVY_GL_BACKEND: 'angle_sdl2'
   SETUPTOOLS_USE_DISTUTILS: local
+  UV_SYSTEM_PYTHON: "1"
 
 jobs:
   windows_wheels_create:
@@ -29,6 +30,10 @@ jobs:
       with:
         python-version: ${{ matrix.python }}
         architecture: ${{ matrix.arch }}
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v10.3.3
+      with:
+        version: "0.13.6"
     - name: Generate version metadata
       run: |
         . .\.ci\windows_ci.ps1
@@ -63,8 +68,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: 3.x
-      - run: |
-          python -m pip install -r .ci/cicd-requirements.txt
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10.3.3
+        with:
+          version: "0.13.6"
       - uses: actions/download-artifact@v4
         with:
           pattern: windows_wheels-*-*
@@ -94,10 +101,9 @@ jobs:
       - name: Publish to PyPI
         if: github.event_name == 'create' && github.event.ref_type == 'tag'
         env:
-          TWINE_USERNAME: "__token__"
-          TWINE_PASSWORD: ${{ secrets.pypi_password }}
+          UV_PUBLISH_TOKEN: ${{ secrets.pypi_password }}
         run: |
-          twine upload dist/*
+          uv publish dist/*
 
   windows_wheel_test:
     runs-on: windows-latest
@@ -113,6 +119,10 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
           architecture: ${{ matrix.arch }}
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10.3.3
+        with:
+          version: "0.13.6"
       - uses: actions/download-artifact@v4
         with:
           # Only one windows_wheels-*-* artifact contains the kivy-examples
@@ -148,6 +158,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: 3.x
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10.3.3
+        with:
+          version: "0.13.6"
       - uses: actions/download-artifact@v4
         with:
           # Only one windows_wheels-*-* artifact contains the sdist

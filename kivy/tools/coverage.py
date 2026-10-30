@@ -8,13 +8,11 @@ create and add::
     plugins =
         kivy.tools.coverage
 
-to the ``.coveragerc`` file in the root of your project. Or::
+to the ``.coveragerc`` file in the root of your project. Or, in
+``pyproject.toml``::
 
-    [coverage:run]
-    plugins =
-        kivy.tools.coverage
-
-in ``setup.cfg``.
+    [tool.coverage.run]
+    plugins = ["kivy.tools.coverage"]
 
 Then you can test your project with e.g. ``pip install coverage`` followed by
 ``coverage run --source=./ kivy_app.py`` and ``coverage report``.

@@ -3,16 +3,13 @@
 # https://kivy.org/
 #
 
+import os
 import sys
 
-build_examples = False
-if "--build_examples" in sys.argv:
-    build_examples = True
-    sys.argv.remove("--build_examples")
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from kivy.utils import pi_version
 from copy import deepcopy
-import os
 from os.path import join, dirname, exists, basename, isdir
 from os import walk, environ, makedirs
 from collections import OrderedDict
@@ -36,11 +33,6 @@ if sys.version_info[0] == 2:
 
 def ver_equal(self, other):
     return self.version == other
-
-
-def get_description():
-    with open(join(dirname(__file__), "README.md"), "rb") as fileh:
-        return fileh.read().decode("utf8").replace("\r\n", "\n")
 
 
 def getoutput(cmd, env=None):
@@ -98,7 +90,7 @@ def get_isolated_env_paths():
     try:
         # sdl2_dev is installed before setup.py is run, when installing from
         # source due to pyproject.toml. However, it is installed to a
-        # pip isolated env, which we need to add to compiler
+        # build isolated env, which we need to add to compiler
         import kivy_deps.sdl2_dev as sdl2_dev
     except ImportError:
         return [], []
@@ -149,8 +141,6 @@ def check_c_source_compiles(code, include_dirs=None):
 # -----------------------------------------------------------------------------
 
 # Determine on which platform we are
-
-build_examples = build_examples or os.environ.get("KIVY_BUILD_EXAMPLES", "0") == "1"
 
 platform = sys.platform
 
@@ -1171,9 +1161,13 @@ def get_extensions_from_sources(sources):
         return ext_modules
     for pyx, flags in sources.items():
         is_graphics = pyx.startswith("graphics")
-        pyx_path = expand(src_path, pyx)
-        depends = [expand(src_path, x) for x in flags.pop("depends", [])]
-        c_depends = [expand(src_path, x) for x in flags.pop("c_depends", [])]
+        pyx_path = os.path.relpath(expand(src_path, pyx))
+        depends = [
+            os.path.relpath(expand(src_path, x)) for x in flags.pop("depends", [])
+        ]
+        c_depends = [
+            os.path.relpath(expand(src_path, x)) for x in flags.pop("c_depends", [])
+        ]
         if not can_use_cython:
             # can't use cython, so use the .c files instead.
             pyx_path = "%s.c" % pyx_path[:-4]
@@ -1255,89 +1249,24 @@ def glob_paths(*patterns, excludes=(".pyc",)):
 
 # -----------------------------------------------------------------------------
 # setup !
-if not build_examples:
-    setup(
-        name="Kivy",
-        version=__version__,
-        author="Kivy Team and other contributors",
-        author_email="kivy-dev@googlegroups.com",
-        url="http://kivy.org",
-        project_urls={
-            "Source": "https://github.com/kivy/kivy",
-            "Documentation": "https://kivy.org/doc/stable/",
-            "Bug Reports": "https://github.com/kivy/kivy/issues",
-        },
-        license="MIT",
-        description=(
-            "An open-source Python framework for developing "
-            "GUI apps that work cross-platform, including "
-            "desktop, mobile and embedded platforms."
-        ),
-        long_description=get_description(),
-        long_description_content_type="text/markdown",
-        ext_modules=ext_modules,
-        cmdclass=cmdclass,
-        packages=find_packages(include=["kivy*"]),
-        package_dir={"kivy": "kivy"},
-        package_data={
-            "kivy": glob_paths("*.pxd", "*.pxi")
-            + glob_paths("**/*.pxd", "**/*.pxi")
-            + glob_paths("data/**/*.*")
-            + glob_paths("include/**/*.*")
-            + glob_paths("tools/**/*.*", excludes=(".pyc", ".enc"))
-            + glob_paths("graphics/**/*.h")
-            + glob_paths("tests/**/*.*")
-            + [
-                "setupconfig.py",
-            ]
-            + binary_deps
-        },
-        data_files=[] if split_examples else list(examples.items()),
-        classifiers=[
-            "Development Status :: 5 - Production/Stable",
-            "Environment :: MacOS X",
-            "Environment :: Win32 (MS Windows)",
-            "Environment :: X11 Applications",
-            "Intended Audience :: Developers",
-            "Intended Audience :: End Users/Desktop",
-            "Intended Audience :: Information Technology",
-            "Intended Audience :: Science/Research",
-            "License :: OSI Approved :: MIT License",
-            "Natural Language :: English",
-            "Operating System :: MacOS :: MacOS X",
-            "Operating System :: Microsoft :: Windows",
-            "Operating System :: POSIX :: BSD :: FreeBSD",
-            "Operating System :: POSIX :: Linux",
-            "Programming Language :: Python :: 3.8",
-            "Programming Language :: Python :: 3.9",
-            "Programming Language :: Python :: 3.10",
-            "Programming Language :: Python :: 3.11",
-            "Programming Language :: Python :: 3.12",
-            "Programming Language :: Python :: 3.13",
-            "Topic :: Artistic Software",
-            "Topic :: Games/Entertainment",
-            "Topic :: Multimedia :: Graphics :: 3D Rendering",
-            "Topic :: Multimedia :: Graphics :: Capture :: Digital Camera",
-            "Topic :: Multimedia :: Graphics :: Presentation",
-            "Topic :: Multimedia :: Graphics :: Viewers",
-            "Topic :: Multimedia :: Sound/Audio :: Players :: MP3",
-            "Topic :: Multimedia :: Video :: Display",
-            "Topic :: Scientific/Engineering :: Human Machine Interfaces",
-            "Topic :: Scientific/Engineering :: Visualization",
-            ("Topic :: Software Development :: Libraries :: Application Frameworks"),
-            "Topic :: Software Development :: User Interfaces",
-        ],
-    )
-else:
-    setup(
-        name="Kivy-examples",
-        version=__version__,
-        author="Kivy Team and other contributors",
-        author_email="kivy-dev@googlegroups.com",
-        url="http://kivy.org",
-        license="MIT",
-        description=("Kivy examples."),
-        long_description_content_type="text/markdown",
-        long_description=get_description(),
-        data_files=list(examples.items()),
-    )
+setup(
+    version=__version__,
+    ext_modules=ext_modules,
+    cmdclass=cmdclass,
+    packages=find_packages(include=["kivy*"]),
+    package_dir={"kivy": "kivy"},
+    package_data={
+        "kivy": glob_paths("*.pxd", "*.pxi")
+        + glob_paths("**/*.pxd", "**/*.pxi")
+        + glob_paths("data/**/*.*")
+        + glob_paths("include/**/*.*")
+        + glob_paths("tools/**/*.*", excludes=(".pyc", ".enc"))
+        + glob_paths("graphics/**/*.h")
+        + glob_paths("tests/**/*.*")
+        + [
+            "setupconfig.py",
+        ]
+        + binary_deps
+    },
+    data_files=[] if split_examples else list(examples.items()),
+)

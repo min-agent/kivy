@@ -1,5 +1,7 @@
 .coverage
 Kivy.egg-info
+*.egg-info/
+__pycache__/
 Kivy-*.dist-info
 *.so
 *.pyd
@@ -11,6 +13,7 @@ Kivy-*.dist-info
 *.DS_Store
 *.kpf
 build/*
+packaging/*/build/
 doc/build
 doc/autobuild.py-done*
 doc/sources/api-*.rst
@@ -77,6 +80,7 @@ kivy/core/window/_window_sdl2.c
 
 # Virtualenv
 venv
+.venv
 
 # Emacs
 .projectile

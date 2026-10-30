@@ -35,14 +35,12 @@ function Update-version-metadata {
 }
 
 function Generate-sdist {
-    python -m pip install -U build
-    python -m build --sdist .
-    $env:KIVY_BUILD_EXAMPLES = '1'
-    python -m build --wheel .
+    uv build --sdist .
+    uv build --wheel --out-dir dist packaging/kivy_examples
 }
 
 function Generate-windows-wheels {
-    pip wheel --no-deps . -w dist/
+    uv build --wheel .
 }
 
 function Rename-windows-wheels {
@@ -78,7 +76,7 @@ function Upload-windows-wheels-to-server($ip) {
 }
 
 function Install-kivy {
-    python -m pip install -e .[dev,full]
+    uv pip install -e ".[dev,full]"
 }
 
 function Install-kivy-wheel {
@@ -92,7 +90,7 @@ function Install-kivy-wheel {
     $kivy_fname=(ls $root/dist/Kivy-*$version*$bitness*.whl | Sort-Object -property @{Expression={$_.name.tostring().Length}} | Select-Object -First 1).name
     $kivy_examples_fname=(ls $root/dist/Kivy_examples-*.whl | Sort-Object -property @{Expression={$_.name.tostring().Length}} | Select-Object -First 1).name
     echo "kivy_fname = $kivy_fname, kivy_examples_fname = $kivy_examples_fname"
-    python -m pip install "$root/dist/$kivy_fname[full,dev]" "$root/dist/$kivy_examples_fname"
+    uv pip install "$root/dist/$kivy_fname[full,dev]" "$root/dist/$kivy_examples_fname"
 }
 
 function Install-kivy-sdist {
@@ -100,7 +98,7 @@ function Install-kivy-sdist {
     cd "$HOME"
 
     $kivy_fname=(ls $root/dist/Kivy-*.tar.gz).name
-    python -m pip install "$root/dist/$kivy_fname[full,dev]"
+    uv pip install "$root/dist/$kivy_fname[full,dev]"
 }
 
 function Test-kivy {
@@ -123,7 +121,15 @@ function Test-kivy {
 }
 
 function Test-kivy-benchmark {
-    pytest --pyargs kivy.tests --benchmark-only
+    pytest --pyargs kivy.tests --benchmark-only -o addopts="" `
+        --benchmark-warmup=on `
+        --benchmark-warmup-iterations=5 `
+        --benchmark-disable-gc `
+        --benchmark-name=short `
+        --benchmark-sort=mean `
+        --benchmark-group-by=fullfunc `
+        --benchmark-storage=.benchmarks-kivy `
+        --benchmark-save=kivy
 }
 
 function Test-kivy-installed {

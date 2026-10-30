@@ -10,9 +10,13 @@ RUN [ "cross-build-start" ]
 
 # Install dependencies.
 RUN /bin/bash -c 'source .ci/ubuntu_ci.sh && \
-    export PIP_EXTRA_INDEX_URL="https://www.piwheels.org/simple" && \
+    export UV_EXTRA_INDEX_URL="https://www.piwheels.org/simple" && \
     install_ubuntu_build_deps && \
     DEBIAN_FRONTEND=noninteractive apt-get -y install xorg wget libxrender-dev lsb-release libraspberrypi-dev raspberrypi-kernel-headers'
+
+# Install uv for package builds.
+RUN wget -qO- https://astral.sh/uv/0.13.6/install.sh | sh
+ENV PATH="/root/.local/bin:$PATH"
 
 # If we're on Debian buster, we need to install cmake from backports as the cmake version
 # in buster is too old to build sdl2
@@ -33,14 +37,14 @@ RUN /bin/bash -c 'rm -rf patchelf-0.17.2-armv7l'
 RUN /bin/bash -c 'rm patchelf-0.17.2-armv7l.tar.gz'
 
 # Install auditwheel for delocation
-RUN /bin/bash -c 'pip install auditwheel'
+RUN /bin/bash -c 'uv pip install --system --break-system-packages auditwheel'
 
 
 # Build the dependencies (sdl)
 RUN ./tools/build_linux_dependencies.sh
 
 # Build the wheel.
-RUN KIVY_SPLIT_EXAMPLES=1 USE_X11=1 USE_SDL2=1 USE_PANGOFT2=0 USE_GSTREAMER=0 KIVY_SDL_GL_ALPHA_SIZE=0 KIVY_DEPS_ROOT=$(pwd)/kivy-dependencies KIVY_CROSS_PLATFORM="$KIVY_CROSS_PLATFORM" python3 -m pip -v wheel --extra-index-url https://www.piwheels.org/simple . -w /kivy-wheel
+RUN KIVY_SPLIT_EXAMPLES=1 USE_X11=1 USE_SDL2=1 USE_PANGOFT2=0 USE_GSTREAMER=0 KIVY_SDL_GL_ALPHA_SIZE=0 KIVY_DEPS_ROOT=$(pwd)/kivy-dependencies KIVY_CROSS_PLATFORM="$KIVY_CROSS_PLATFORM" UV_EXTRA_INDEX_URL="https://www.piwheels.org/simple" uv build --wheel --out-dir /kivy-wheel .
 
 # Delocate the wheel.
 # buster: manylinux_2_28_armv7l, bullseye: manylinux_2_31_armv7l, bookworm: manylinux_2_35_armv7l

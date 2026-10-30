@@ -4,7 +4,7 @@
     ==============================================
 
     DEPRECATED: Use pre-commit.com framework instead:
-    `pip install pre-commit && make hook`
+    `uv tool install pre-commit && make hook`
 
     This script is not supposed to be run directly.
     Instead, copy it to your kivy/.git/hooks/ directory, call it 'pre-commit'

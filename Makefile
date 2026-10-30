@@ -19,6 +19,7 @@ endif
 CHECKSCRIPT = -m ruff check
 KIVY_DIR = kivy/
 PYTEST = $(PYTHON) -m pytest
+UV = uv
 KIVY_USE_DEFAULTCONFIG = 1
 HOSTPYTHON = $(KIVYIOSROOT)/tmp/Python-$(PYTHON_VERSION)/hostpython
 
@@ -40,13 +41,16 @@ ifneq ($(INSTALL_PREFIX),)
 	INSTALL_OPTIONS += --prefix=$(INSTALL_PREFIX)
 endif
 
-.PHONY: build force mesabuild pdf style hook test batchtest cover clean distclean theming
+.PHONY: build force mesabuild pdf style hook test batchtest cover clean distclean theming venv
+
+venv:
+	$(UV) venv
 
 build:
-	$(PYTHON) -m pip install -e . $(BUILD_OPTS)
+	$(UV) pip install -e . $(BUILD_OPTS)
 
 mesabuild:
-	env USE_MESAGL=1 $(PYTHON) -m pip install -e . $(BUILD_OPTS)
+	env USE_MESAGL=1 $(UV) pip install -e . $(BUILD_OPTS)
 
 ios:
 	-ln -s $(KIVYIOSROOT)/Python-2.7.1/python
@@ -111,7 +115,7 @@ cover:
 	coverage html --include='$(KIVY_DIR)*' --omit '$(KIVY_DIR)data/*,$(KIVY_DIR)lib/*,$(KIVY_DIR)tools/*,$(KIVY_DIR)tests/*'
 
 install:
-	$(PYTHON) -m pip install -e . $(INSTALL_OPTIONS)
+	$(UV) pip install -e . $(INSTALL_OPTIONS)
 
 clean:
 	$(MAKE) -C doc clean
@@ -146,12 +150,13 @@ help:
 	@echo "  clean          remove generated and compiled files"
 	@echo "  cover          create an html coverage report of unittests"
 	@echo "  dist-clean     clean then use 'git clean'"
-	@echo "  hook           add Pep-8 checking as a git precommit hook"
+	@echo "  hook           add Ruff checking as a git precommit hook"
 	@echo "  html           to make standalone HTML files"
 	@echo "  install        install with extra options"
 	@echo "  mesabuild      for a build with MesaGL"
 	@echo "  style          to check Python code for style issues"
 	@echo "  test           run unittests (pytest)"
 	@echo "  theming        create a default theme atlas"
+	@echo "  venv           create a virtual environment with uv"
 	@echo "  "
 	@echo "You can also 'cd doc && make help' to build more documentation types"

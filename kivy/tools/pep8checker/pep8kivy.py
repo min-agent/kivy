@@ -29,7 +29,7 @@ class KivyStyleChecker(pep8.Checker):
 if __name__ == "__main__":
     print(
         "DEPRECATED: Use pre-commit.com framework instead: ",
-        "pip install pre-commit && make hook",
+        "uv tool install pre-commit && make hook",
     )
 
     def usage():

@@ -412,12 +412,17 @@ Unit tests are separated into two cases:
   image comparison
 
 To be able to run unit tests, you need to install [pytest](https://pytest.org/),
-and [coverage](http://nedbatchelder.com/code/coverage/). You can use pip for
-that::
+and [coverage](http://nedbatchelder.com/code/coverage/). We use
+[uv](https://docs.astral.sh/uv/) for dependency management. From the kivy
+directory::
 
-    sudo pip install kivy[dev]
+    uv venv
+    uv pip install -e ".[dev]"
+    source .venv/bin/activate
 
-Then, in the kivy directory::
+On Windows, activate the environment with ``.venv\Scripts\activate`` instead.
+
+Then::
 
     make test
 

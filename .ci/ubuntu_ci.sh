@@ -24,15 +24,15 @@ prepare_env_for_unittest() {
 
 install_kivy() {
   options=${1:-full,dev}
-  python3 -m pip install -e "$(pwd)[$options]"
+  uv pip install -e "$(pwd)[$options]"
 }
 
 install_kivy_examples_wheel() {
   options=${1:-full,dev}
   root="$(pwd)"
   cd ~
-  python3 -m pip install --pre --no-index --no-deps -f "$root/dist" "kivy_examples"
-  python3 -m pip install --pre -f "$root/dist" "kivy_examples[$options]"
+  uv pip install --pre --no-index --no-deps -f "$root/dist" "kivy_examples"
+  uv pip install --pre -f "$root/dist" "kivy_examples[$options]"
 }
 
 install_kivy_wheel() {
@@ -41,7 +41,7 @@ install_kivy_wheel() {
   cd ~
   version=$(python3 -c "import sys; print('{}{}'.format(sys.version_info.major, sys.version_info.minor))")
   kivy_fname=$(ls "$root"/dist/Kivy-*$version*.whl | awk '{ print length, $0 }' | sort -n -s | cut -d" " -f2- | head -n1)
-  python3 -m pip install "${kivy_fname}[$options]"
+  uv pip install "${kivy_fname}[$options]"
 }
 
 install_kivy_sdist() {
@@ -50,7 +50,7 @@ install_kivy_sdist() {
   cd ~
 
   kivy_fname=$(ls $root/dist/Kivy-*.tar.gz)
-  python3 -m pip install "$kivy_fname[$options]"
+  uv pip install "$kivy_fname[$options]"
 }
 
 test_kivy() {
@@ -63,7 +63,16 @@ test_kivy() {
 }
 
 test_kivy_benchmark() {
-  env KIVY_NO_ARGS=1 pytest --pyargs kivy.tests --benchmark-only
+  env KIVY_NO_ARGS=1 pytest --pyargs kivy.tests --benchmark-only \
+    -o addopts="" \
+    --benchmark-warmup=on \
+    --benchmark-warmup-iterations=5 \
+    --benchmark-disable-gc \
+    --benchmark-name=short \
+    --benchmark-sort=mean \
+    --benchmark-group-by=fullfunc \
+    --benchmark-storage=.benchmarks-kivy \
+    --benchmark-save=kivy
 }
 
 test_kivy_install() {

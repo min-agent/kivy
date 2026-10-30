@@ -10,6 +10,7 @@ on:
 env:
   KIVY_SPLIT_EXAMPLES: 1
   SERVER_IP: '159.203.106.198'
+  UV_SYSTEM_PYTHON: "1"
 
 jobs:
   kivy_examples_create:
@@ -21,12 +22,13 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: 3.x
-      - name: Install CI/CD Python requirements
-        run: |
-          python -m pip install -r .ci/cicd-requirements.txt
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10.3.3
+        with:
+          version: "0.13.6"
       - name: Create wheel
         run: |
-          KIVY_BUILD_EXAMPLES=1 python3 -m build --wheel .
+          uv build --wheel --out-dir dist packaging/kivy_examples
       - name: Upload kivy-examples wheel as artifact
         uses: actions/upload-artifact@v4
         with:
@@ -59,9 +61,13 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: 3.x
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v10.3.3
+      with:
+        version: "0.13.6"
     - name: Install CI/CD Python requirements
       run: |
-        python -m pip install -r .ci/cicd-requirements.txt
+        uv pip install --group ci
     - name: Set up QEMU
       if: ${{ matrix.cibw_archs == 'aarch64' }}
       uses: docker/setup-qemu-action@v3
@@ -80,9 +86,6 @@ jobs:
       run: |
         source .ci/ubuntu_ci.sh
         update_version_metadata
-    - name: Install CI/CD Python requirements
-      run: |
-        python -m pip install -r .ci/cicd-requirements.txt
     - name: Make wheels
       run: |
         python -m cibuildwheel --output-dir wheelhouse
@@ -102,9 +105,10 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: 3.x
-    - name: Install CI/CD Python requirements
-      run: |
-        python -m pip install -r .ci/cicd-requirements.txt
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v10.3.3
+      with:
+        version: "0.13.6"
     - uses: actions/download-artifact@v4
       with:
         pattern: manylinux_wheels-*
@@ -130,10 +134,9 @@ jobs:
     - name: Publish to PyPI
       if: github.event_name == 'create' && github.event.ref_type == 'tag'
       env:
-        TWINE_USERNAME: "__token__"
-        TWINE_PASSWORD: ${{ secrets.pypi_password }}
+        UV_PUBLISH_TOKEN: ${{ secrets.pypi_password }}
       run: |
-        twine upload dist/*
+        uv publish dist/*
 
   manylinux_wheel_test:
     runs-on: ubuntu-latest
@@ -149,6 +152,10 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python }}
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v10.3.3
+      with:
+        version: "0.13.6"
     - uses: actions/download-artifact@v4
       with:
         pattern: manylinux_wheels-*
@@ -195,12 +202,13 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: 3.x
-      - name: Install CI/CD Python requirements
-        run: |
-          python -m pip install -r .ci/cicd-requirements.txt
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v10.3.3
+        with:
+          version: "0.13.6"
       - name: Generate sdist
         run: |
-          python -m build --sdist .
+          uv build --sdist .
       - name: Install dependencies
         run: |
           source .ci/ubuntu_ci.sh

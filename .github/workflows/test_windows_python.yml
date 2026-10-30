@@ -7,6 +7,7 @@ env:
   KIVY_GL_BACKEND: 'angle_sdl2'
   KIVY_SPLIT_EXAMPLES: 1
   SETUPTOOLS_USE_DISTUTILS: local
+  UV_SYSTEM_PYTHON: "1"
 
 jobs:
   unit_test:
@@ -22,6 +23,10 @@ jobs:
       with:
         python-version: ${{ matrix.python }}
         architecture: ${{ matrix.arch }}
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v10.3.3
+      with:
+        version: "0.13.6"
     - name: Install Kivy
       run: |
         . .\.ci\windows_ci.ps1

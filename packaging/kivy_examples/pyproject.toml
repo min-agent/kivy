@@ -1,0 +1,19 @@
+[build-system]
+requires = [
+    "setuptools~=69.2.0",
+    "wheel~=0.44.0",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "Kivy-examples"
+dynamic = ["version"]
+description = "Kivy examples."
+requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [
+    { name = "Kivy Team and other contributors", email = "kivy-dev@googlegroups.com" },
+]
+
+[tool.setuptools]
+packages = []

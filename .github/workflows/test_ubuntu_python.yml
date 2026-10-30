@@ -4,6 +4,7 @@ on: [push, pull_request]
 
 env:
   KIVY_SPLIT_EXAMPLES: 1
+  UV_SYSTEM_PYTHON: "1"
 
 jobs:
   PEP8_test:
@@ -14,9 +15,13 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: 3.13
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v10.3.3
+      with:
+        version: "0.13.6"
     - name: Install CI/CD Python requirements
       run: |
-        python -m pip install -r .ci/cicd-requirements.txt
+        uv pip install --group ci
     - name: Validate PEP8
       run: |
         make style
@@ -31,9 +36,13 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: 3.13
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v10.3.3
+      with:
+        version: "0.13.6"
     - name: Install CI/CD Python requirements
       run: |
-        python -m pip install -r .ci/cicd-requirements.txt
+        uv pip install --group ci
     - name: Install dependencies
       run: |
         source .ci/ubuntu_ci.sh
@@ -73,6 +82,10 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: 3.13
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v10.3.3
+      with:
+        version: "0.13.6"
     - name: Install dependencies
       run: |
         source .ci/ubuntu_ci.sh

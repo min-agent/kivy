@@ -15,10 +15,13 @@ could result in merge conflicts.
 Install Sphinx
 --------------
 
-- With pip:
-  
+- With uv (https://docs.astral.sh/uv/):
 
-  ``pip install sphinx``
+  ``uv venv``
+
+  ``uv pip install sphinx``
+
+  ``source .venv/bin/activate``
 
 - With apt-get:
     
@@ -30,13 +33,13 @@ Install Sphinx
 
   ``port install py34-sphinx``
 
-- On Windows (or from inside your virtualenv):
+- On Windows:
 
-  Get pip (https://pypi.python.org/pypi/pip). You'll use it to install the dependencies.
+  Install uv (https://docs.astral.sh/uv/), then run ``uv venv`` and:
 
-  To install pip, run ``python setup.py install`` in the pip directory. Now run:
+  ``uv pip install sphinx``
 
-  ``pip install -r doc-requirements.txt``
+  ``.venv\Scripts\activate``
   
 
 Building the documentation
