@@ -259,7 +259,7 @@ TODO:
     When views are re-used they may not trigger if the data remains the same.
 """
 
-__all__ = ('RecycleViewBehavior', 'RecycleView')
+__all__ = ("RecycleViewBehavior", "RecycleView")
 
 from copy import deepcopy
 
@@ -267,11 +267,12 @@ from kivy.uix.scrollview import ScrollView
 from kivy.properties import AliasProperty
 from kivy.clock import Clock
 
-from kivy.uix.recycleview.layout import RecycleLayoutManagerBehavior, \
-    LayoutChangeException
+from kivy.uix.recycleview.layout import (
+    RecycleLayoutManagerBehavior,
+    LayoutChangeException,
+)
 from kivy.uix.recycleview.views import RecycleDataAdapter
-from kivy.uix.recycleview.datamodel import RecycleDataModelBehavior, \
-    RecycleDataModel
+from kivy.uix.recycleview.datamodel import RecycleDataModelBehavior, RecycleDataModel
 
 
 class RecycleViewBehavior(object):
@@ -287,7 +288,7 @@ class RecycleViewBehavior(object):
     _data_model = None
     _layout_manager = None
 
-    _refresh_flags = {'data': [], 'layout': [], 'viewport': False}
+    _refresh_flags = {"data": [], "layout": [], "viewport": False}
     _refresh_trigger = None
 
     def __init__(self, **kwargs):
@@ -311,31 +312,31 @@ class RecycleViewBehavior(object):
             return
 
         data = self.data
-        f = flags['data']
+        f = flags["data"]
         if f:
             self.save_viewport()
             # lm.clear_layout()
-            flags['data'] = []
-            flags['layout'] = [{}]
+            flags["data"] = []
+            flags["layout"] = [{}]
             lm.compute_sizes_from_data(data, f)
 
-        while flags['layout']:
+        while flags["layout"]:
             # if `data` we were re-triggered so finish in the next call.
             # Otherwise go until fully laid out.
             self.save_viewport()
-            if flags['data']:
+            if flags["data"]:
                 return
-            flags['viewport'] = True
-            f = flags['layout']
-            flags['layout'] = []
+            flags["viewport"] = True
+            f = flags["layout"]
+            flags["layout"] = []
 
             try:
                 lm.compute_layout(data, f)
             except LayoutChangeException:
-                flags['layout'].append({})
+                flags["layout"].append({})
                 continue
 
-        if flags['data']:  # in case that happened meanwhile
+        if flags["data"]:  # in case that happened meanwhile
             return
 
         # make sure if we were re-triggered in the loop that we won't be
@@ -344,9 +345,9 @@ class RecycleViewBehavior(object):
 
         self.restore_viewport()
 
-        if flags['viewport']:
+        if flags["viewport"]:
             # TODO: make this also listen to LayoutChangeException
-            flags['viewport'] = False
+            flags["viewport"] = False
             viewport = self.get_viewport()
             indices = lm.compute_visible_views(data, viewport)
             lm.set_visible_views(indices, data, viewport)
@@ -364,7 +365,7 @@ class RecycleViewBehavior(object):
 
         It can be called manually to trigger an update.
         """
-        self._refresh_flags['data'].append(kwargs)
+        self._refresh_flags["data"].append(kwargs)
         self._refresh_trigger()
 
     def refresh_from_layout(self, *largs, **kwargs):
@@ -373,7 +374,7 @@ class RecycleViewBehavior(object):
         typically called when a layout parameter has changed and therefore the
         layout needs to be recomputed.
         """
-        self._refresh_flags['layout'].append(kwargs)
+        self._refresh_flags["layout"].append(kwargs)
         self._refresh_trigger()
 
     def refresh_from_viewport(self, *largs):
@@ -381,7 +382,7 @@ class RecycleViewBehavior(object):
         This should be called when the viewport changes and the displayed data
         must be updated. Neither the data nor the layout will be recomputed.
         """
-        self._refresh_flags['viewport'] = True
+        self._refresh_flags["viewport"] = True
         self._refresh_trigger()
 
     def _dispatch_prop_on_source(self, prop_name, *largs):
@@ -405,8 +406,10 @@ class RecycleViewBehavior(object):
 
         if not isinstance(value, RecycleDataModelBehavior):
             raise ValueError(
-                'Expected object based on RecycleDataModelBehavior, got {}'.
-                format(value.__class__))
+                "Expected object based on RecycleDataModelBehavior, got {}".format(
+                    value.__class__
+                )
+            )
 
         self._data_model = value
         value.attach_recycleview(self)
@@ -437,8 +440,10 @@ class RecycleViewBehavior(object):
 
         if not isinstance(value, RecycleDataAdapter):
             raise ValueError(
-                'Expected object based on RecycleAdapter, got {}'.
-                format(value.__class__))
+                "Expected object based on RecycleAdapter, got {}".format(
+                    value.__class__
+                )
+            )
 
         self._view_adapter = value
         value.attach_recycleview(self)
@@ -471,8 +476,10 @@ class RecycleViewBehavior(object):
 
         if not isinstance(value, RecycleLayoutManagerBehavior):
             raise ValueError(
-                'Expected object based on RecycleLayoutManagerBehavior, '
-                'got {}'.format(value.__class__))
+                "Expected object based on RecycleLayoutManagerBehavior, got {}".format(
+                    value.__class__
+                )
+            )
 
         self._layout_manager = value
         value.attach_recycleview(self)
@@ -496,17 +503,18 @@ class RecycleView(RecycleViewBehavior, ScrollView):
 
     See the module documentation for more information.
     """
+
     def __init__(self, **kwargs):
         if self.data_model is None:
-            kwargs.setdefault('data_model', RecycleDataModel())
+            kwargs.setdefault("data_model", RecycleDataModel())
         if self.view_adapter is None:
-            kwargs.setdefault('view_adapter', RecycleDataAdapter())
+            kwargs.setdefault("view_adapter", RecycleDataAdapter())
         super(RecycleView, self).__init__(**kwargs)
 
         fbind = self.fbind
-        fbind('scroll_x', self.refresh_from_viewport)
-        fbind('scroll_y', self.refresh_from_viewport)
-        fbind('size', self.refresh_from_viewport)
+        fbind("scroll_x", self.refresh_from_viewport)
+        fbind("scroll_y", self.refresh_from_viewport)
+        fbind("size", self.refresh_from_viewport)
         self.refresh_from_data()
 
     def _convert_sv_to_lm(self, x, y):
@@ -519,8 +527,9 @@ class RecycleView(RecycleViewBehavior, ScrollView):
 
         if parent is not self:
             raise Exception(
-                'The layout manager must be a sub child of the recycleview. '
-                'Could not find {} in the parent tree of {}'.format(self, lm))
+                "The layout manager must be a sub child of the recycleview. "
+                "Could not find {} in the parent tree of {}".format(self, lm)
+            )
 
         for widget in reversed(tree):
             x, y = widget.to_local(x, y)
@@ -559,8 +568,7 @@ class RecycleView(RecycleViewBehavior, ScrollView):
 
     def add_widget(self, widget, *args, **kwargs):
         super(RecycleView, self).add_widget(widget, *args, **kwargs)
-        if (isinstance(widget, RecycleLayoutManagerBehavior) and
-                not self.layout_manager):
+        if isinstance(widget, RecycleLayoutManagerBehavior) and not self.layout_manager:
             self.layout_manager = widget
 
     def remove_widget(self, widget, *args, **kwargs):
@@ -597,8 +605,7 @@ class RecycleView(RecycleViewBehavior, ScrollView):
         if a:
             a.viewclass = value
 
-    viewclass = AliasProperty(_get_viewclass, _set_viewclass,
-                              bind=["layout_manager"])
+    viewclass = AliasProperty(_get_viewclass, _set_viewclass, bind=["layout_manager"])
     """
     The viewclass used by the current layout_manager.
 
@@ -615,8 +622,9 @@ class RecycleView(RecycleViewBehavior, ScrollView):
         if a:
             a.key_viewclass = value
 
-    key_viewclass = AliasProperty(_get_key_viewclass, _set_key_viewclass,
-                                  bind=["layout_manager"])
+    key_viewclass = AliasProperty(
+        _get_key_viewclass, _set_key_viewclass, bind=["layout_manager"]
+    )
     """
     key_viewclass is an :class:`~kivy.properties.AliasProperty` that gets and
     sets the key viewclass for the current

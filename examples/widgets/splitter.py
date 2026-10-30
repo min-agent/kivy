@@ -1,7 +1,7 @@
 from kivy.base import runTouchApp
 from kivy.lang import Builder
 
-bl = Builder.load_string('''
+bl = Builder.load_string("""
 BoxLayout:
     orientation: 'vertical'
     BoxLayout:
@@ -68,7 +68,7 @@ BoxLayout:
                     text: 'Btn7'
             Button:
                 text: 'right btn'
-''')
+""")
 
 
 runTouchApp(bl)

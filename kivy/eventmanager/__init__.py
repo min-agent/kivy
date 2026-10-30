@@ -1,4 +1,4 @@
-'''
+"""
 Event Manager
 =============
 
@@ -89,35 +89,35 @@ Currently there are three dispatch modes (behaviors) recognized by the
 
 Note that window does not have a `motion_filter` property and therefore does
 not have a list of filtered widgets from its `children` list.
-'''
+"""
 
-MODE_DEFAULT_DISPATCH = 'default'
-'''Assign this mode to make event dispatch through widget's `children` list,
+MODE_DEFAULT_DISPATCH = "default"
+"""Assign this mode to make event dispatch through widget's `children` list,
 starting with the first widget in the list until event gets accepted or last
 widget registered for that event is reached. Widgets after the last registered
 widget are ignored.
 
 .. versionadded:: 2.1.0
-'''
+"""
 
-MODE_FILTERED_DISPATCH = 'filtered'
-'''Assign this mode to make event dispatch only to child widgets which were
+MODE_FILTERED_DISPATCH = "filtered"
+"""Assign this mode to make event dispatch only to child widgets which were
 previously registered to receive events of the same
 :attr:`~kivy.input.motionevent.MotionEvent.type_id` and not to all
 child widgets.
 
 .. versionadded:: 2.1.0
-'''
+"""
 
-MODE_DONT_DISPATCH = 'none'
-'''Assign this mode to prevent event from dispatching to child widgets.
+MODE_DONT_DISPATCH = "none"
+"""Assign this mode to prevent event from dispatching to child widgets.
 
 .. versionadded:: 2.1.0
-'''
+"""
 
 
 class EventManagerBase(object):
-    '''Abstract class with methods :meth:`start`, :meth:`stop` and
+    """Abstract class with methods :meth:`start`, :meth:`stop` and
     :meth:`dispatch` for specific class to implement.
 
     Example of the manager receiving touch and hover events::
@@ -138,33 +138,33 @@ class EventManagerBase(object):
             def stop(self):
                 # Release resources
 
-    '''
+    """
 
     type_ids = None
-    '''Override this attribute to declare the type ids of the events which
+    """Override this attribute to declare the type ids of the events which
     manager wants to receive. This attribute will be used by
     :class:`~kivy.core.window.WindowBase` to know which events to pass to the
     :meth:`dispatch` method.
 
     .. versionadded:: 2.1.0
-    '''
+    """
 
     window = None
-    '''Holds the instance of the :class:`~kivy.core.window.WindowBase`.
+    """Holds the instance of the :class:`~kivy.core.window.WindowBase`.
 
     .. versionadded:: 2.1.0
-    '''
+    """
 
     def start(self):
-        '''Start the manager, bind callbacks to the objects and create
+        """Start the manager, bind callbacks to the objects and create
         additional resources. Attribute :attr:`window` is assigned when this
         method is called.
 
         .. versionadded:: 2.1.0
-        '''
+        """
 
     def dispatch(self, etype, me):
-        '''Dispatch event `me` to the widgets in the :attr:`window`.
+        """Dispatch event `me` to the widgets in the :attr:`window`.
 
         :Parameters:
             `etype`: `str`
@@ -175,11 +175,11 @@ class EventManagerBase(object):
             `True` to stop event dispatching
 
         .. versionadded:: 2.1.0
-        '''
+        """
 
     def stop(self):
-        '''Stop the manager, unbind from any objects and release any allocated
+        """Stop the manager, unbind from any objects and release any allocated
         resources.
 
         .. versionadded:: 2.1.0
-        '''
+        """

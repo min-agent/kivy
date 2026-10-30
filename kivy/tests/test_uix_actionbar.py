@@ -8,7 +8,7 @@ from time import sleep
 DropDown = None
 
 
-KV = '''
+KV = """
 # +/- copied from ActionBar example + edited for the test
 FloatLayout:
     ActionBar:
@@ -49,17 +49,19 @@ FloatLayout:
                     text: 'Btn6'
                 ActionButton:
                     text: 'Btn7'
-'''
+"""
 
 
 class TouchPoint(UTMotionEvent):
     def __init__(self, raw_x, raw_y):
         win = EventLoop.window
         super().__init__(
-            "unittest", 1, {
+            "unittest",
+            1,
+            {
                 "x": raw_x / float(win.width),
                 "y": raw_y / float(win.height),
-            }
+            },
         )
         # press & release
         EventLoop.post_dispatch_input("begin", self)
@@ -77,7 +79,7 @@ class ActionBarTestCase(GraphicUnitTest):
         # kill KV lang logging (too long test)
         import kivy.lang.builder as builder
 
-        if not hasattr(self, '_trace'):
+        if not hasattr(self, "_trace"):
             self._trace = builder.trace
 
         self.builder = builder
@@ -87,6 +89,7 @@ class ActionBarTestCase(GraphicUnitTest):
     def tearDown(self, *args, **kwargs):
         # add the logging back
         import kivy.lang.builder as builder
+
         builder.trace = self._trace
         super(ActionBarTestCase, self).tearDown(*args, **kwargs)
 
@@ -100,10 +103,7 @@ class ActionBarTestCase(GraphicUnitTest):
         self.move_frames(5)
 
     def check_dropdown(self, present=True):
-        any_list = [
-            isinstance(child, DropDown)
-            for child in self._win.children
-        ]
+        any_list = [isinstance(child, DropDown) for child in self._win.children]
 
         # mustn't allow more than one DropDown opened!
         self.assertLess(sum(any_list), 2)
@@ -114,7 +114,7 @@ class ActionBarTestCase(GraphicUnitTest):
         elif present and any(any_list):
             return
 
-        print('DropDown either missing, or isn\'t supposed to be there')
+        print("DropDown either missing, or isn't supposed to be there")
         self.assertTrue(False)
 
     def test_1_openclose(self, *args):
@@ -266,10 +266,7 @@ class ActionBarTestCase(GraphicUnitTest):
         self.assertFalse(group2.is_open)
         self.assertFalse(group1.is_open)
 
-        items = (
-            (group2, group1, group2button),
-            (group1, group2, group1button)
-        )
+        items = ((group2, group1, group2button), (group1, group2, group1button))
         for item in items:
             active, passive, button = item
 
@@ -288,9 +285,7 @@ class ActionBarTestCase(GraphicUnitTest):
 
             # click on active Group DropDown Button (needed to_window)
             TouchPoint(*button.to_window(*button.center))
-            self.assertTrue(getattr(
-                root, active.text[0::6] + 'button'
-            ))
+            self.assertTrue(getattr(root, active.text[0::6] + "button"))
 
             # wait for closed Group DropDown to disappear
             # go to the next frame after the DropDown disappeared
@@ -358,6 +353,7 @@ class ActionBarTestCase(GraphicUnitTest):
         self._win.remove_widget(root)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import unittest
+
     unittest.main()

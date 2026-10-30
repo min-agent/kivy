@@ -19,9 +19,9 @@ def kivy_benchmark(benchmark, kivy_clock):
     from kivy.lang.builder import BuilderBase, Builder
 
     context = Context(init=False)
-    context['Clock'] = ClockBase()
-    context['Factory'] = FactoryBase.create_from(Factory)
-    context['Builder'] = BuilderBase.create_from(Builder)
+    context["Clock"] = ClockBase()
+    context["Factory"] = FactoryBase.create_from(Factory)
+    context["Builder"] = BuilderBase.create_from(Builder)
 
     for category in list(Cache._objects.keys()):
         if category not in Cache._categories:
@@ -32,14 +32,14 @@ def kivy_benchmark(benchmark, kivy_clock):
 
     gc.collect()
 
-    benchmark.extra_info['platform'] = str(sys.platform)
-    benchmark.extra_info['python_version'] = str(sys.version)
-    benchmark.extra_info['python_api'] = str(sys.api_version)
-    benchmark.extra_info['kivy_platform'] = platform
-    benchmark.extra_info['kivy_version'] = kivy.__version__
-    benchmark.extra_info['gl_vendor'] = str(glGetString(GL_VENDOR))
-    benchmark.extra_info['gl_renderer'] = str(glGetString(GL_RENDERER))
-    benchmark.extra_info['gl_version'] = str(glGetString(GL_VERSION))
+    benchmark.extra_info["platform"] = str(sys.platform)
+    benchmark.extra_info["python_version"] = str(sys.version)
+    benchmark.extra_info["python_api"] = str(sys.api_version)
+    benchmark.extra_info["kivy_platform"] = platform
+    benchmark.extra_info["kivy_version"] = kivy.__version__
+    benchmark.extra_info["gl_vendor"] = str(glGetString(GL_VENDOR))
+    benchmark.extra_info["gl_renderer"] = str(glGetString(GL_RENDERER))
+    benchmark.extra_info["gl_version"] = str(glGetString(GL_VERSION))
 
     context.push()
     try:
@@ -53,6 +53,7 @@ def test_event_dispatcher_creation(kivy_benchmark):
 
     class Event(EventDispatcher):
         pass
+
     # create one just so we don't incur loading cost
     e = Event()
     kivy_benchmark(Event)
@@ -60,6 +61,7 @@ def test_event_dispatcher_creation(kivy_benchmark):
 
 def test_widget_creation(kivy_benchmark):
     from kivy.uix.widget import Widget
+
     # create one just so we don't incur loading cost
     w = Widget()
     kivy_benchmark(Widget)
@@ -85,7 +87,7 @@ def test_kv_widget_creation(kivy_benchmark):
     kivy_benchmark(MyWidget)
 
 
-@pytest.mark.parametrize('test_component', ['create', 'set'])
+@pytest.mark.parametrize("test_component", ["create", "set"])
 def test_complex_kv_widget(kivy_benchmark, test_component):
     from kivy.lang import Builder
     from kivy.uix.widget import Widget
@@ -117,7 +119,7 @@ def test_complex_kv_widget(kivy_benchmark, test_component):
         widget.width = w
         widget.size_hint = sh, sh
 
-    if test_component == 'create':
+    if test_component == "create":
         kivy_benchmark(MyWidget)
     else:
         kivy_benchmark(set_value)
@@ -126,21 +128,22 @@ def test_complex_kv_widget(kivy_benchmark, test_component):
 def get_event_class(name, args, kwargs):
     from kivy.event import EventDispatcher
     import kivy.properties
-    from kivy.properties import BooleanProperty, ReferenceListProperty, \
-        AliasProperty
+    from kivy.properties import BooleanProperty, ReferenceListProperty, AliasProperty
 
-    if name == 'AliasProperty':
+    if name == "AliasProperty":
+
         class Event(EventDispatcher):
             def get_a(self):
                 return 0
 
             def set_a(self, value):
                 pass
+
             a = AliasProperty(get_a, set_a)
 
-    elif name == 'ReferenceListProperty':
-        class Event(EventDispatcher):
+    elif name == "ReferenceListProperty":
 
+        class Event(EventDispatcher):
             a1 = BooleanProperty(0)
             a2 = BooleanProperty(0)
             a = ReferenceListProperty(a1, a2)
@@ -149,26 +152,28 @@ def get_event_class(name, args, kwargs):
         cls = getattr(kivy.properties, name)
 
         class Event(EventDispatcher):
-
             a = cls(*args, **kwargs)
 
     return Event
 
 
-@pytest.mark.parametrize('name,args,kwargs', [
-    ('NumericProperty', (0,), {}),
-    ('ObjectProperty', (None,), {}),
-    ('VariableListProperty', ([0, 0, 0, 0],), {}),
-    ('BoundedNumericProperty', (1, ), {'min': 0, 'max': 2}),
-    ('DictProperty', ({}, ), {}),
-    ('ColorProperty', ([1, 1, 1, 1],), {}),
-    ('BooleanProperty', (False,), {}),
-    ('OptionProperty', ('a',), {'options': ['a', 'b']}),
-    ('StringProperty', ('',), {}),
-    ('ListProperty', ([],), {}),
-    ('AliasProperty', (), {}),
-    ('ReferenceListProperty', (), {}),
-])
+@pytest.mark.parametrize(
+    "name,args,kwargs",
+    [
+        ("NumericProperty", (0,), {}),
+        ("ObjectProperty", (None,), {}),
+        ("VariableListProperty", ([0, 0, 0, 0],), {}),
+        ("BoundedNumericProperty", (1,), {"min": 0, "max": 2}),
+        ("DictProperty", ({},), {}),
+        ("ColorProperty", ([1, 1, 1, 1],), {}),
+        ("BooleanProperty", (False,), {}),
+        ("OptionProperty", ("a",), {"options": ["a", "b"]}),
+        ("StringProperty", ("",), {}),
+        ("ListProperty", ([],), {}),
+        ("AliasProperty", (), {}),
+        ("ReferenceListProperty", (), {}),
+    ],
+)
 def test_property_creation(kivy_benchmark, name, args, kwargs):
     event_cls = get_event_class(name, args, kwargs)
 
@@ -177,25 +182,29 @@ def test_property_creation(kivy_benchmark, name, args, kwargs):
     kivy_benchmark(event_cls)
 
 
-@pytest.mark.parametrize('name,args,kwargs,val,reset_val', [
-    ('NumericProperty', (0,), {}, 10, 0),
-    ('NumericProperty', (0,), {}, '10dp', 0),
-    ('NumericProperty', (0,), {}, [10, 'dp'], 0),
-    ('ObjectProperty', (None,), {}, 5, 0),
-    ('VariableListProperty', ([0, 0, 0, 0],), {}, [2, 4], [0]),
-    ('BoundedNumericProperty', (1, ), {'min': 0, 'max': 2}, .5, 1),
-    ('DictProperty', ({}, ), {}, {'name': 1}, {}),
-    ('ColorProperty', ([1, 1, 1, 1],), {}, 'red', [1, 1, 1, 1]),
-    ('BooleanProperty', (False,), {}, True, False),
-    ('OptionProperty', ('a',), {'options': ['a', 'b']}, 'b', 'a'),
-    ('StringProperty', ('',), {}, 'a', ''),
-    ('ListProperty', ([],), {}, [1, 2], []),
-    ('AliasProperty', (0,), {}, 1, 0),
-    ('ReferenceListProperty', ((1, 2),), {}, (3, 4), (1, 2)),
-])
-@pytest.mark.parametrize('exclude_first', [True, False])
+@pytest.mark.parametrize(
+    "name,args,kwargs,val,reset_val",
+    [
+        ("NumericProperty", (0,), {}, 10, 0),
+        ("NumericProperty", (0,), {}, "10dp", 0),
+        ("NumericProperty", (0,), {}, [10, "dp"], 0),
+        ("ObjectProperty", (None,), {}, 5, 0),
+        ("VariableListProperty", ([0, 0, 0, 0],), {}, [2, 4], [0]),
+        ("BoundedNumericProperty", (1,), {"min": 0, "max": 2}, 0.5, 1),
+        ("DictProperty", ({},), {}, {"name": 1}, {}),
+        ("ColorProperty", ([1, 1, 1, 1],), {}, "red", [1, 1, 1, 1]),
+        ("BooleanProperty", (False,), {}, True, False),
+        ("OptionProperty", ("a",), {"options": ["a", "b"]}, "b", "a"),
+        ("StringProperty", ("",), {}, "a", ""),
+        ("ListProperty", ([],), {}, [1, 2], []),
+        ("AliasProperty", (0,), {}, 1, 0),
+        ("ReferenceListProperty", ((1, 2),), {}, (3, 4), (1, 2)),
+    ],
+)
+@pytest.mark.parametrize("exclude_first", [True, False])
 def test_property_set(
-        kivy_benchmark, name, args, kwargs, val, reset_val, exclude_first):
+    kivy_benchmark, name, args, kwargs, val, reset_val, exclude_first
+):
     event_cls = get_event_class(name, args, kwargs)
 
     # create one just so we don't incur loading cost
@@ -210,10 +219,11 @@ def test_property_set(
     kivy_benchmark(set_property)
 
 
-@pytest.mark.parametrize('n', [1, 10, 100, 1_000])
+@pytest.mark.parametrize("n", [1, 10, 100, 1_000])
 def test_widget_empty_draw(kivy_benchmark, n):
     from kivy.graphics import RenderContext
     from kivy.uix.widget import Widget
+
     ctx = RenderContext()
     root = Widget()
     for x in range(n):
@@ -223,7 +233,7 @@ def test_widget_empty_draw(kivy_benchmark, n):
     kivy_benchmark(ctx.draw)
 
 
-@pytest.mark.parametrize('n', [1, 10, 100, 1_000])
+@pytest.mark.parametrize("n", [1, 10, 100, 1_000])
 def test_widget_dispatch_touch(kivy_benchmark, n):
     from kivy.tests.common import UnitTestTouch
     from kivy.uix.widget import Widget
@@ -238,42 +248,45 @@ def test_widget_dispatch_touch(kivy_benchmark, n):
     touch = UnitTestTouch(10, 10)
 
     def dispatch():
-        root.dispatch('on_touch_down', touch)
-        root.dispatch('on_touch_move', touch)
-        root.dispatch('on_touch_up', touch)
+        root.dispatch("on_touch_down", touch)
+        root.dispatch("on_touch_move", touch)
+        root.dispatch("on_touch_up", touch)
 
     kivy_benchmark(dispatch)
 
 
-@pytest.mark.parametrize('n', [1, 10, 100, 1_000])
-@pytest.mark.parametrize('name', ['label', 'button'])
-@pytest.mark.parametrize('tick', ['tick', 'no_tick'])
+@pytest.mark.parametrize("n", [1, 10, 100, 1_000])
+@pytest.mark.parametrize("name", ["label", "button"])
+@pytest.mark.parametrize("tick", ["tick", "no_tick"])
 def test_random_label_create(kivy_benchmark, n, name, tick):
     from kivy.clock import Clock
     from kivy.uix.label import Label
     from kivy.uix.button import Button
-    label = Label(text='*&^%')
-    button = Button(text='*&^%')
-    cls = Label if name == 'label' else Button
+
+    label = Label(text="*&^%")
+    button = Button(text="*&^%")
+    cls = Label if name == "label" else Button
 
     labels = []
     k = len(ascii_letters)
     for x in range(n):
         label = [ascii_letters[randint(0, k - 1)] for _ in range(10)]
-        labels.append(''.join(label))
+        labels.append("".join(label))
 
     def make_labels():
         o = []
         for text in labels:
             o.append(cls(text=text))
 
-        if tick == 'tick':
+        if tick == "tick":
             Clock.tick()
+
     kivy_benchmark(make_labels)
 
 
 def test_parse_kv(kivy_benchmark):
     from kivy.lang import Builder
+
     suffix = 0
 
     def parse_kv():

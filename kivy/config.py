@@ -1,4 +1,4 @@
-'''
+"""
 Configuration object
 ====================
 
@@ -384,9 +384,9 @@ Available configuration tokens
     have been removed. `keyboard_type` and `keyboard_layout` have been
     removed from the widget. `keyboard_mode` and `keyboard_layout` have
     been added to the kivy section.
-'''
+"""
 
-__all__ = ('Config', 'ConfigParser')
+__all__ = ("Config", "ConfigParser")
 
 try:
     from ConfigParser import ConfigParser as PythonConfigParser
@@ -402,24 +402,24 @@ from kivy.compat import PY2, string_types
 from kivy.logger import Logger, logger_config_update
 from kivy.utils import platform
 
-_is_rpi = exists('/opt/vc/include/bcm_host.h')
+_is_rpi = exists("/opt/vc/include/bcm_host.h")
 
 # Version number of current configuration format
 KIVY_CONFIG_VERSION = 27
 
 Config = None
-'''The default Kivy configuration object. This is a :class:`ConfigParser`
+"""The default Kivy configuration object. This is a :class:`ConfigParser`
 instance with the :attr:`~kivy.config.ConfigParser.name` set to 'kivy'.
 
 .. code-block:: python
 
     Config = ConfigParser(name='kivy')
 
-'''
+"""
 
 
 class ConfigParser(PythonConfigParser, object):
-    '''Enhanced ConfigParser class that supports the addition of default
+    """Enhanced ConfigParser class that supports the addition of default
     sections and default values.
 
     By default, the kivy ConfigParser instance, :attr:`~kivy.config.Config`,
@@ -438,9 +438,9 @@ class ConfigParser(PythonConfigParser, object):
         :class:`~kivy.properties.ConfigParserProperty`.
 
     .. versionadded:: 1.0.7
-    '''
+    """
 
-    def __init__(self, name='', **kwargs):
+    def __init__(self, name="", **kwargs):
         PythonConfigParser.__init__(self, **kwargs)
         self._sections = OrderedDict()
         self.filename = None
@@ -448,27 +448,27 @@ class ConfigParser(PythonConfigParser, object):
         self.name = name
 
     def add_callback(self, callback, section=None, key=None):
-        '''Add a callback to be called when a specific section or key has
+        """Add a callback to be called when a specific section or key has
         changed. If you don't specify a section or key, it will call the
         callback for all section/key changes.
 
         Callbacks will receive 3 arguments: the section, key and value.
 
         .. versionadded:: 1.4.1
-        '''
+        """
         if section is None and key is not None:
-            raise Exception('You cannot specify a key without a section')
+            raise Exception("You cannot specify a key without a section")
         self._callbacks.append((callback, section, key))
 
     def remove_callback(self, callback, section=None, key=None):
-        '''Removes a callback added with :meth:`add_callback`.
+        """Removes a callback added with :meth:`add_callback`.
         :meth:`remove_callback` must be called with the same parameters as
         :meth:`add_callback`.
 
         Raises a `ValueError` if not found.
 
         .. versionadded:: 1.9.0
-        '''
+        """
         self._callbacks.remove((callback, section, key))
 
     def _do_callbacks(self, section, key, value):
@@ -480,17 +480,18 @@ class ConfigParser(PythonConfigParser, object):
             callback(section, key, value)
 
     def read(self, filename):
-        '''Read only one filename. In contrast to the original ConfigParser of
+        """Read only one filename. In contrast to the original ConfigParser of
         Python, this one is able to read only one file at a time. The last
         read file will be used for the :meth:`write` method.
 
         .. versionchanged:: 1.9.0
             :meth:`read` now calls the callbacks if read changed any values.
 
-        '''
+        """
         if not isinstance(filename, string_types):
-            raise Exception('Only one filename is accepted ({})'.format(
-                string_types.__name__))
+            raise Exception(
+                "Only one filename is accepted ({})".format(string_types.__name__)
+            )
         self.filename = filename
         # If we try to open directly the configuration file in utf-8,
         # we correctly get the unicode value by default.
@@ -501,8 +502,9 @@ class ConfigParser(PythonConfigParser, object):
         # "get()", but we internally store them in ascii.
         # with codecs.open(filename, 'r', encoding='utf-8') as f:
         #    self.readfp(f)
-        old_vals = {sect: {k: v for k, v in self.items(sect)} for sect in
-                    self.sections()}
+        old_vals = {
+            sect: {k: v for k, v in self.items(sect)} for sect in self.sections()
+        }
         PythonConfigParser.read(self, filename, encoding="utf-8-sig")
 
         # when reading new file, sections/keys are only increased, not removed
@@ -519,9 +521,9 @@ class ConfigParser(PythonConfigParser, object):
                     f(section, k, v)
 
     def set(self, section, option, value):
-        '''Functions similarly to PythonConfigParser's set method, except that
+        """Functions similarly to PythonConfigParser's set method, except that
         the value is implicitly converted to a string.
-        '''
+        """
         e_value = value
         if not isinstance(value, string_types):
             # might be boolean, int, etc.
@@ -531,9 +533,9 @@ class ConfigParser(PythonConfigParser, object):
         return ret
 
     def setall(self, section, keyvalues):
-        '''Sets multiple key-value pairs in a section. keyvalues should be a
+        """Sets multiple key-value pairs in a section. keyvalues should be a
         dictionary containing the key-value pairs to be set.
-        '''
+        """
         for key, value in keyvalues.items():
             self.set(section, key, value)
 
@@ -541,28 +543,27 @@ class ConfigParser(PythonConfigParser, object):
         value = PythonConfigParser.get(self, section, option, **kwargs)
         if PY2:
             if type(value) is str:
-                return value.decode('utf-8')
+                return value.decode("utf-8")
         return value
 
     def setdefaults(self, section, keyvalues):
-        '''Set multiple key-value defaults in a section. keyvalues should be
+        """Set multiple key-value defaults in a section. keyvalues should be
         a dictionary containing the new key-value defaults.
-        '''
+        """
         self.adddefaultsection(section)
         for key, value in keyvalues.items():
             self.setdefault(section, key, value)
 
     def setdefault(self, section, option, value):
-        '''Set the default value for an option in the specified section.
-        '''
+        """Set the default value for an option in the specified section."""
         if self.has_option(section, option):
             return
         self.set(section, option, value)
 
     def getdefault(self, section, option, defaultvalue):
-        '''Get the value of an option in the specified section. If not found,
+        """Get the value of an option in the specified section. If not found,
         it will return the default value.
-        '''
+        """
         if not self.has_section(section):
             return defaultvalue
         if not self.has_option(section, option):
@@ -570,42 +571,41 @@ class ConfigParser(PythonConfigParser, object):
         return self.get(section, option)
 
     def getdefaultint(self, section, option, defaultvalue):
-        '''Get the value of an option in the specified section. If not found,
+        """Get the value of an option in the specified section. If not found,
         it will return the default value. The value will always be
         returned as an integer.
 
         .. versionadded:: 1.6.0
-        '''
+        """
         return int(self.getdefault(section, option, defaultvalue))
 
     def adddefaultsection(self, section):
-        '''Add a section if the section is missing.
-        '''
+        """Add a section if the section is missing."""
         assert "_" not in section
         if self.has_section(section):
             return
         self.add_section(section)
 
     def write(self):
-        '''Write the configuration to the last file opened using the
+        """Write the configuration to the last file opened using the
         :meth:`read` method.
 
         Return True if the write finished successfully, False otherwise.
-        '''
+        """
         if self.filename is None:
             return False
         try:
-            with open(self.filename, 'w', encoding="utf-8") as fd:
+            with open(self.filename, "w", encoding="utf-8") as fd:
                 PythonConfigParser.write(self, fd)
         except IOError:
-            Logger.exception('Unable to write the config <%s>' % self.filename)
+            Logger.exception("Unable to write the config <%s>" % self.filename)
             return False
         return True
 
     def update_config(self, filename, overwrite=False):
-        '''Upgrade the configuration based on a new default config file.
+        """Upgrade the configuration based on a new default config file.
         Overwrite any existing values if overwrite is True.
-        '''
+        """
         pcp = PythonConfigParser()
         pcp.read(filename)
         confset = self.setall if overwrite else self.setdefaults
@@ -615,7 +615,7 @@ class ConfigParser(PythonConfigParser, object):
 
     @staticmethod
     def _register_named_property(name, widget_ref, *largs):
-        ''' Called by the ConfigParserProperty to register a property which
+        """Called by the ConfigParserProperty to register a property which
         was created with a config name instead of a config object.
 
         When a ConfigParser with this name is later created, the properties
@@ -637,7 +637,7 @@ class ConfigParser(PythonConfigParser, object):
 
                 Then, the first element is a ref to a House instance, and the
                 second is `'address'`.
-        '''
+        """
         configs = ConfigParser._named_configs
         try:
             config, props = configs[name]
@@ -655,13 +655,13 @@ class ConfigParser(PythonConfigParser, object):
 
     @staticmethod
     def get_configparser(name):
-        '''Returns the :class:`ConfigParser` instance whose name is `name`, or
+        """Returns the :class:`ConfigParser` instance whose name is `name`, or
         None if not found.
 
         :Parameters:
             `name`: string
                 The name of the :class:`ConfigParser` instance to return.
-        '''
+        """
         try:
             config = ConfigParser._named_configs[name][0]
             if config is not None:
@@ -675,11 +675,11 @@ class ConfigParser(PythonConfigParser, object):
     # keys are configparser names, values are 2-tuple of (ref(configparser),
     # widget_ref), where widget_ref is same as in _register_named_property
     _named_configs = {}
-    _name = ''
+    _name = ""
 
     @property
     def name(self):
-        ''' The name associated with this ConfigParser instance, if not `''`.
+        """The name associated with this ConfigParser instance, if not `''`.
         Defaults to `''`. It can be safely changed dynamically or set to `''`.
 
         When a ConfigParser is given a name, that config object can be
@@ -690,7 +690,7 @@ class ConfigParser(PythonConfigParser, object):
 
         Setting more than one ConfigParser with the same name will raise a
         `ValueError`.
-        '''
+        """
         return self._name
 
     @name.setter
@@ -720,7 +720,7 @@ class ConfigParser(PythonConfigParser, object):
             return
 
         if config is not None and config() is not None:
-            raise ValueError('A parser named {} already exists'.format(value))
+            raise ValueError("A parser named {} already exists".format(value))
         for widget, prop in props:
             widget = widget()
             if widget:
@@ -728,109 +728,108 @@ class ConfigParser(PythonConfigParser, object):
         configs[value] = (ref(self), props)
 
 
-if not environ.get('KIVY_DOC_INCLUDE'):
-
+if not environ.get("KIVY_DOC_INCLUDE"):
     #
     # Read, analyse configuration file
     # Support upgrade of older config file versions
     #
 
     # Create default configuration
-    Config = ConfigParser(name='kivy')
-    Config.add_callback(logger_config_update, 'kivy', 'log_level')
+    Config = ConfigParser(name="kivy")
+    Config.add_callback(logger_config_update, "kivy", "log_level")
 
     # Read config file if exist
-    if (exists(kivy_config_fn) and
-            'KIVY_USE_DEFAULTCONFIG' not in environ and
-            'KIVY_NO_CONFIG' not in environ):
+    if (
+        exists(kivy_config_fn)
+        and "KIVY_USE_DEFAULTCONFIG" not in environ
+        and "KIVY_NO_CONFIG" not in environ
+    ):
         try:
             Config.read(kivy_config_fn)
         except Exception:
-            Logger.exception('Core: error while reading local'
-                             'configuration')
+            Logger.exception("Core: error while reading localconfiguration")
 
-    version = Config.getdefaultint('kivy', 'config_version', 0)
+    version = Config.getdefaultint("kivy", "config_version", 0)
 
     # Add defaults section
-    Config.adddefaultsection('kivy')
-    Config.adddefaultsection('graphics')
-    Config.adddefaultsection('input')
-    Config.adddefaultsection('postproc')
-    Config.adddefaultsection('widgets')
-    Config.adddefaultsection('modules')
-    Config.adddefaultsection('network')
+    Config.adddefaultsection("kivy")
+    Config.adddefaultsection("graphics")
+    Config.adddefaultsection("input")
+    Config.adddefaultsection("postproc")
+    Config.adddefaultsection("widgets")
+    Config.adddefaultsection("modules")
+    Config.adddefaultsection("network")
 
     # Upgrade default configuration until we have the current version
     need_save = False
-    if version != KIVY_CONFIG_VERSION and 'KIVY_NO_CONFIG' not in environ:
-        Logger.warning('Config: Older configuration version detected'
-                       ' ({0} instead of {1})'.format(
-                           version, KIVY_CONFIG_VERSION))
-        Logger.warning('Config: Upgrading configuration in progress.')
+    if version != KIVY_CONFIG_VERSION and "KIVY_NO_CONFIG" not in environ:
+        Logger.warning(
+            "Config: Older configuration version detected ({0} instead of {1})".format(
+                version, KIVY_CONFIG_VERSION
+            )
+        )
+        Logger.warning("Config: Upgrading configuration in progress.")
         need_save = True
 
     while version < KIVY_CONFIG_VERSION:
-        Logger.debug('Config: Upgrading from %d to %d' %
-                     (version, version + 1))
+        Logger.debug("Config: Upgrading from %d to %d" % (version, version + 1))
 
         if version == 0:
-
             # log level
-            Config.setdefault('kivy', 'keyboard_repeat_delay', '300')
-            Config.setdefault('kivy', 'keyboard_repeat_rate', '30')
-            Config.setdefault('kivy', 'log_dir', 'logs')
-            Config.setdefault('kivy', 'log_enable', '1')
-            Config.setdefault('kivy', 'log_level', 'info')
-            Config.setdefault('kivy', 'log_name', 'kivy_%y-%m-%d_%_.txt')
-            Config.setdefault('kivy', 'window_icon', '')
+            Config.setdefault("kivy", "keyboard_repeat_delay", "300")
+            Config.setdefault("kivy", "keyboard_repeat_rate", "30")
+            Config.setdefault("kivy", "log_dir", "logs")
+            Config.setdefault("kivy", "log_enable", "1")
+            Config.setdefault("kivy", "log_level", "info")
+            Config.setdefault("kivy", "log_name", "kivy_%y-%m-%d_%_.txt")
+            Config.setdefault("kivy", "window_icon", "")
 
             # default graphics parameters
-            Config.setdefault('graphics', 'display', '-1')
-            Config.setdefault('graphics', 'fullscreen', 'no')
-            Config.setdefault('graphics', 'height', '600')
-            Config.setdefault('graphics', 'left', '0')
-            Config.setdefault('graphics', 'maxfps', '0')
-            Config.setdefault('graphics', 'multisamples', '2')
-            Config.setdefault('graphics', 'position', 'auto')
-            Config.setdefault('graphics', 'rotation', '0')
-            Config.setdefault('graphics', 'show_cursor', '1')
-            Config.setdefault('graphics', 'top', '0')
-            Config.setdefault('graphics', 'width', '800')
+            Config.setdefault("graphics", "display", "-1")
+            Config.setdefault("graphics", "fullscreen", "no")
+            Config.setdefault("graphics", "height", "600")
+            Config.setdefault("graphics", "left", "0")
+            Config.setdefault("graphics", "maxfps", "0")
+            Config.setdefault("graphics", "multisamples", "2")
+            Config.setdefault("graphics", "position", "auto")
+            Config.setdefault("graphics", "rotation", "0")
+            Config.setdefault("graphics", "show_cursor", "1")
+            Config.setdefault("graphics", "top", "0")
+            Config.setdefault("graphics", "width", "800")
 
             # input configuration
-            Config.setdefault('input', 'mouse', 'mouse')
+            Config.setdefault("input", "mouse", "mouse")
 
             # activate native input provider in configuration
             # from 1.0.9, don't activate mactouch by default, or app are
             # unusable.
-            if platform == 'win':
-                Config.setdefault('input', 'wm_touch', 'wm_touch')
-                Config.setdefault('input', 'wm_pen', 'wm_pen')
-            elif platform == 'linux':
-                probesysfs = 'probesysfs'
+            if platform == "win":
+                Config.setdefault("input", "wm_touch", "wm_touch")
+                Config.setdefault("input", "wm_pen", "wm_pen")
+            elif platform == "linux":
+                probesysfs = "probesysfs"
                 if _is_rpi:
-                    probesysfs += ',provider=hidinput'
-                Config.setdefault('input', '%(name)s', probesysfs)
+                    probesysfs += ",provider=hidinput"
+                Config.setdefault("input", "%(name)s", probesysfs)
 
             # input postprocessing configuration
-            Config.setdefault('postproc', 'double_tap_distance', '20')
-            Config.setdefault('postproc', 'double_tap_time', '250')
-            Config.setdefault('postproc', 'ignore', '[]')
-            Config.setdefault('postproc', 'jitter_distance', '0')
-            Config.setdefault('postproc', 'jitter_ignore_devices',
-                              'mouse,mactouch,')
-            Config.setdefault('postproc', 'retain_distance', '50')
-            Config.setdefault('postproc', 'retain_time', '0')
+            Config.setdefault("postproc", "double_tap_distance", "20")
+            Config.setdefault("postproc", "double_tap_time", "250")
+            Config.setdefault("postproc", "ignore", "[]")
+            Config.setdefault("postproc", "jitter_distance", "0")
+            Config.setdefault("postproc", "jitter_ignore_devices", "mouse,mactouch,")
+            Config.setdefault("postproc", "retain_distance", "50")
+            Config.setdefault("postproc", "retain_time", "0")
 
             # default configuration for keyboard repetition
-            Config.setdefault('widgets', 'keyboard_layout', 'qwerty')
-            Config.setdefault('widgets', 'keyboard_type', '')
-            Config.setdefault('widgets', 'list_friction', '10')
-            Config.setdefault('widgets', 'list_friction_bound', '20')
-            Config.setdefault('widgets', 'list_trigger_distance', '5')
+            Config.setdefault("widgets", "keyboard_layout", "qwerty")
+            Config.setdefault("widgets", "keyboard_type", "")
+            Config.setdefault("widgets", "list_friction", "10")
+            Config.setdefault("widgets", "list_friction_bound", "20")
+            Config.setdefault("widgets", "list_trigger_distance", "5")
 
         elif version == 1:
-            Config.set('graphics', 'maxfps', '60')
+            Config.set("graphics", "maxfps", "60")
 
         elif version == 2:
             # was a version to automatically copy windows icon in the user
@@ -840,104 +839,106 @@ if not environ.get('KIVY_DOC_INCLUDE'):
 
         elif version == 3:
             # add token for scrollview
-            Config.setdefault('widgets', 'scroll_timeout', '55')
-            Config.setdefault('widgets', 'scroll_distance', '20')
-            Config.setdefault('widgets', 'scroll_friction', '1.')
+            Config.setdefault("widgets", "scroll_timeout", "55")
+            Config.setdefault("widgets", "scroll_distance", "20")
+            Config.setdefault("widgets", "scroll_friction", "1.")
 
             # remove old list_* token
-            Config.remove_option('widgets', 'list_friction')
-            Config.remove_option('widgets', 'list_friction_bound')
-            Config.remove_option('widgets', 'list_trigger_distance')
+            Config.remove_option("widgets", "list_friction")
+            Config.remove_option("widgets", "list_friction_bound")
+            Config.remove_option("widgets", "list_trigger_distance")
 
         elif version == 4:
-            Config.remove_option('widgets', 'keyboard_type')
-            Config.remove_option('widgets', 'keyboard_layout')
+            Config.remove_option("widgets", "keyboard_type")
+            Config.remove_option("widgets", "keyboard_layout")
 
             # add keyboard token
-            Config.setdefault('kivy', 'keyboard_mode', '')
-            Config.setdefault('kivy', 'keyboard_layout', 'qwerty')
+            Config.setdefault("kivy", "keyboard_mode", "")
+            Config.setdefault("kivy", "keyboard_layout", "qwerty")
 
         elif version == 5:
-            Config.setdefault('graphics', 'resizable', '1')
+            Config.setdefault("graphics", "resizable", "1")
 
         elif version == 6:
             # if the timeout is still the default value, change it
-            Config.setdefault('widgets', 'scroll_stoptime', '300')
-            Config.setdefault('widgets', 'scroll_moves', '5')
+            Config.setdefault("widgets", "scroll_stoptime", "300")
+            Config.setdefault("widgets", "scroll_moves", "5")
 
         elif version == 7:
             # desktop bool indicating whether to use desktop specific features
-            is_desktop = int(platform in ('win', 'macosx', 'linux'))
-            Config.setdefault('kivy', 'desktop', is_desktop)
-            Config.setdefault('postproc', 'triple_tap_distance', '20')
-            Config.setdefault('postproc', 'triple_tap_time', '375')
+            is_desktop = int(platform in ("win", "macosx", "linux"))
+            Config.setdefault("kivy", "desktop", is_desktop)
+            Config.setdefault("postproc", "triple_tap_distance", "20")
+            Config.setdefault("postproc", "triple_tap_time", "375")
 
         elif version == 8:
-            if Config.getint('widgets', 'scroll_timeout') == 55:
-                Config.set('widgets', 'scroll_timeout', '250')
+            if Config.getint("widgets", "scroll_timeout") == 55:
+                Config.set("widgets", "scroll_timeout", "250")
 
         elif version == 9:
-            Config.setdefault('kivy', 'exit_on_escape', '1')
+            Config.setdefault("kivy", "exit_on_escape", "1")
 
         elif version == 10:
-            Config.set('graphics', 'fullscreen', '0')
-            Config.setdefault('graphics', 'borderless', '0')
+            Config.set("graphics", "fullscreen", "0")
+            Config.setdefault("graphics", "borderless", "0")
 
         elif version == 11:
-            Config.setdefault('kivy', 'pause_on_minimize', '0')
+            Config.setdefault("kivy", "pause_on_minimize", "0")
 
         elif version == 12:
-            Config.setdefault('graphics', 'window_state', 'visible')
+            Config.setdefault("graphics", "window_state", "visible")
 
         elif version == 13:
-            Config.setdefault('graphics', 'minimum_width', '0')
-            Config.setdefault('graphics', 'minimum_height', '0')
+            Config.setdefault("graphics", "minimum_width", "0")
+            Config.setdefault("graphics", "minimum_height", "0")
 
         elif version == 14:
-            Config.setdefault('graphics', 'min_state_time', '.035')
+            Config.setdefault("graphics", "min_state_time", ".035")
 
         elif version == 15:
-            Config.setdefault('kivy', 'kivy_clock', 'default')
+            Config.setdefault("kivy", "kivy_clock", "default")
 
         elif version == 16:
-            Config.setdefault('kivy', 'default_font', [
-                'Roboto',
-                'data/fonts/Roboto-Regular.ttf',
-                'data/fonts/Roboto-Italic.ttf',
-                'data/fonts/Roboto-Bold.ttf',
-                'data/fonts/Roboto-BoldItalic.ttf'])
-
-        elif version == 17:
-            Config.setdefault('graphics', 'allow_screensaver', '1')
-
-        elif version == 18:
-            Config.setdefault('kivy', 'log_maxfiles', '100')
-
-        elif version == 19:
-            Config.setdefault('graphics', 'shaped', '0')
             Config.setdefault(
-                'kivy', 'window_shape',
-                'data/images/defaultshape.png'
+                "kivy",
+                "default_font",
+                [
+                    "Roboto",
+                    "data/fonts/Roboto-Regular.ttf",
+                    "data/fonts/Roboto-Italic.ttf",
+                    "data/fonts/Roboto-Bold.ttf",
+                    "data/fonts/Roboto-BoldItalic.ttf",
+                ],
             )
 
+        elif version == 17:
+            Config.setdefault("graphics", "allow_screensaver", "1")
+
+        elif version == 18:
+            Config.setdefault("kivy", "log_maxfiles", "100")
+
+        elif version == 19:
+            Config.setdefault("graphics", "shaped", "0")
+            Config.setdefault("kivy", "window_shape", "data/images/defaultshape.png")
+
         elif version == 20:
-            Config.setdefault('network', 'useragent', 'curl')
+            Config.setdefault("network", "useragent", "curl")
 
         elif version == 21:
-            Config.setdefault('graphics', 'vsync', '')
+            Config.setdefault("graphics", "vsync", "")
 
         elif version == 22:
-            Config.setdefault('graphics', 'verify_gl_main_thread', '1')
+            Config.setdefault("graphics", "verify_gl_main_thread", "1")
 
         elif version == 23:
-            Config.setdefault('graphics', 'custom_titlebar', '0')
-            Config.setdefault('graphics', 'custom_titlebar_border', '5')
+            Config.setdefault("graphics", "custom_titlebar", "0")
+            Config.setdefault("graphics", "custom_titlebar_border", "5")
 
         elif version == 24:
             Config.setdefault("network", "implementation", "default")
 
         elif version == 25:
-            Config.setdefault('graphics', 'always_on_top', '0')
+            Config.setdefault("graphics", "always_on_top", "0")
 
         elif version == 26:
             Config.setdefault("graphics", "show_taskbar_icon", "1")
@@ -952,51 +953,51 @@ if not environ.get('KIVY_DOC_INCLUDE'):
         version += 1
 
     # Indicate to the Config that we've upgrade to the latest version.
-    Config.set('kivy', 'config_version', KIVY_CONFIG_VERSION)
+    Config.set("kivy", "config_version", KIVY_CONFIG_VERSION)
 
     # Now, activate log file
-    Logger.logfile_activated = bool(Config.getint('kivy', 'log_enable'))
+    Logger.logfile_activated = bool(Config.getint("kivy", "log_enable"))
 
     # If no configuration exist, write the default one.
-    if ((not exists(kivy_config_fn) or need_save) and
-            'KIVY_NO_CONFIG' not in environ):
+    if (not exists(kivy_config_fn) or need_save) and "KIVY_NO_CONFIG" not in environ:
         try:
             Config.filename = kivy_config_fn
             Config.write()
         except Exception:
-            Logger.exception('Core: Error while saving default config file')
+            Logger.exception("Core: Error while saving default config file")
 
     # Load configuration from env
-    if environ.get('KIVY_NO_ENV_CONFIG', '0') != '1':
+    if environ.get("KIVY_NO_ENV_CONFIG", "0") != "1":
         for key, value in environ.items():
             if not key.startswith("KCFG_"):
                 continue
             try:
                 _, section, name = key.split("_", 2)
             except ValueError:
-                Logger.warning((
-                    "Config: Environ `{}` invalid format, "
-                    "must be KCFG_section_name").format(key))
+                Logger.warning(
+                    (
+                        "Config: Environ `{}` invalid format, must be KCFG_section_name"
+                    ).format(key)
+                )
                 continue
 
             # extract and check section
             section = section.lower()
             if not Config.has_section(section):
                 Logger.warning(
-                    "Config: Environ `{}`: unknown section `{}`".format(
-                        key, section))
+                    "Config: Environ `{}`: unknown section `{}`".format(key, section)
+                )
                 continue
 
             # extract and check the option name
             name = name.lower()
-            sections_to_check = {
-                "kivy", "graphics", "widgets", "postproc", "network"}
-            if (section in sections_to_check and
-                    not Config.has_option(section, name)):
-                Logger.warning((
-                    "Config: Environ `{}` unknown `{}` "
-                    "option in `{}` section.").format(
-                        key, name, section))
+            sections_to_check = {"kivy", "graphics", "widgets", "postproc", "network"}
+            if section in sections_to_check and not Config.has_option(section, name):
+                Logger.warning(
+                    (
+                        "Config: Environ `{}` unknown `{}` option in `{}` section."
+                    ).format(key, name, section)
+                )
                 # we don't avoid to set an unknown option, because maybe
                 # an external modules or widgets (in garden?) may want to
                 # save its own configuration here.

@@ -1,8 +1,8 @@
-'''
+"""
 Text PIL: Draw text with PIL
-'''
+"""
 
-__all__ = ('LabelPIL', )
+__all__ = ("LabelPIL",)
 
 from PIL import Image, ImageFont, ImageDraw
 
@@ -19,15 +19,15 @@ class LabelPIL(LabelBase):
     _cache = {}
 
     def _select_font(self):
-        if self.options['font_size'] < 1:
+        if self.options["font_size"] < 1:
             return None
 
-        fontsize = int(self.options['font_size'])
-        fontname = self.options['font_name_r']
+        fontsize = int(self.options["font_size"])
+        fontname = self.options["font_name_r"]
         try:
-            id = '%s.%s' % (text_type(fontname), text_type(fontsize))
+            id = "%s.%s" % (text_type(fontname), text_type(fontsize))
         except UnicodeDecodeError:
-            id = '%s.%s' % (fontname, fontsize)
+            id = "%s.%s" % (fontname, fontsize)
 
         if id not in self._cache:
             font = ImageFont.truetype(fontname, fontsize)
@@ -43,7 +43,7 @@ class LabelPIL(LabelBase):
         left, top, right, bottom = font.getbbox(text)
         ascent, descent = font.getmetrics()
 
-        if self.options['limit_render_to_text_bbox']:
+        if self.options["limit_render_to_text_bbox"]:
             h = bottom - top
         else:
             h = ascent + descent
@@ -56,7 +56,7 @@ class LabelPIL(LabelBase):
 
     def _render_begin(self):
         # create a surface, context, font...
-        self._pil_im = Image.new('RGBA', self._size, color=(255, 255, 255, 0))
+        self._pil_im = Image.new("RGBA", self._size, color=(255, 255, 255, 0))
         self._pil_draw = ImageDraw.Draw(self._pil_im)
 
     def _render_text(self, text, x, y):
@@ -64,10 +64,10 @@ class LabelPIL(LabelBase):
         if not font:
             return
 
-        color = tuple([int(c * 255) for c in self.options['color']])
+        color = tuple([int(c * 255) for c in self.options["color"]])
 
         # Adjust x and y position to avoid text cutoff
-        if self.options['limit_render_to_text_bbox']:
+        if self.options["limit_render_to_text_bbox"]:
             bbox = font.getbbox(text)
             x -= bbox[0]
             y -= bbox[1]
@@ -75,8 +75,12 @@ class LabelPIL(LabelBase):
         self._pil_draw.text((int(x), int(y)), text, font=font, fill=color)
 
     def _render_end(self):
-        data = ImageData(self._size[0], self._size[1],
-                         self._pil_im.mode.lower(), self._pil_im.tobytes())
+        data = ImageData(
+            self._size[0],
+            self._size[1],
+            self._pil_im.mode.lower(),
+            self._pil_im.tobytes(),
+        )
 
         del self._pil_im
         del self._pil_draw

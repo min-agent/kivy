@@ -1,4 +1,4 @@
-'''
+"""
 Bubble
 ======
 
@@ -96,9 +96,9 @@ You can change the appearance of the bubble::
     as well.
 
 -----------------------------
-'''
+"""
 
-__all__ = ('Bubble', 'BubbleButton', 'BubbleContent')
+__all__ = ("Bubble", "BubbleButton", "BubbleContent")
 
 from kivy.uix.image import Image
 from kivy.uix.scatter import Scatter
@@ -122,18 +122,19 @@ class BubbleException(Exception):
 
 
 class BubbleButton(Button):
-    '''A button intended for use in a BubbleContent widget.
+    """A button intended for use in a BubbleContent widget.
     You can use a "normal" button class, but it will not look good unless the
     background is changed.
 
     Rather use this BubbleButton widget that is already defined and provides a
     suitable background for you.
-    '''
+    """
+
     pass
 
 
 class BubbleContent(BoxLayout):
-    '''A styled BoxLayout that can be used as the content widget of a Bubble.
+    """A styled BoxLayout that can be used as the content widget of a Bubble.
 
     .. versionchanged:: 2.2.0
     The graphical appearance of :class:`BubbleContent` is now based on it's
@@ -141,29 +142,29 @@ class BubbleContent(BoxLayout):
     :attr:`border` and :attr:`border_auto_scale`. The parent widget properties
     are no longer considered. This makes the BubbleContent a standalone themed
     BoxLayout.
-    '''
+    """
 
     background_color = ColorProperty([1, 1, 1, 1])
-    '''Background color, in the format (r, g, b, a). To use it you have to set
+    """Background color, in the format (r, g, b, a). To use it you have to set
     :attr:`background_image` first.
 
     .. versionadded:: 2.2.0
 
     :attr:`background_color` is a :class:`~kivy.properties.ColorProperty` and
     defaults to [1, 1, 1, 1].
-    '''
+    """
 
-    background_image = StringProperty('atlas://data/images/defaulttheme/bubble')
-    '''Background image of the bubble.
+    background_image = StringProperty("atlas://data/images/defaulttheme/bubble")
+    """Background image of the bubble.
 
     .. versionadded:: 2.2.0
 
     :attr:`background_image` is a :class:`~kivy.properties.StringProperty` and
     defaults to 'atlas://data/images/defaulttheme/bubble'.
-    '''
+    """
 
     border = ListProperty([16, 16, 16, 16])
-    '''Border used for :class:`~kivy.graphics.vertex_instructions.BorderImage`
+    """Border used for :class:`~kivy.graphics.vertex_instructions.BorderImage`
     graphics instruction. Used with the :attr:`background_image`.
     It should be used when using custom backgrounds.
 
@@ -174,16 +175,21 @@ class BubbleContent(BoxLayout):
 
     :attr:`border` is a :class:`~kivy.properties.ListProperty` and defaults to
     (16, 16, 16, 16)
-    '''
+    """
 
     border_auto_scale = OptionProperty(
-        'both_lower',
+        "both_lower",
         options=[
-            'off', 'both', 'x_only', 'y_only', 'y_full_x_lower',
-            'x_full_y_lower', 'both_lower'
-        ]
+            "off",
+            "both",
+            "x_only",
+            "y_only",
+            "y_full_x_lower",
+            "x_full_y_lower",
+            "both_lower",
+        ],
     )
-    '''Specifies the :attr:`kivy.graphics.BorderImage.auto_scale`
+    """Specifies the :attr:`kivy.graphics.BorderImage.auto_scale`
     value on the background BorderImage.
 
     .. versionadded:: 2.2.0
@@ -191,15 +197,14 @@ class BubbleContent(BoxLayout):
     :attr:`border_auto_scale` is a
     :class:`~kivy.properties.OptionProperty` and defaults to
     'both_lower'.
-    '''
+    """
 
 
 class Bubble(BoxLayout):
-    '''Bubble class. See module documentation for more information.
-    '''
+    """Bubble class. See module documentation for more information."""
 
     content = ObjectProperty(allownone=True)
-    '''This is the object where the main content of the bubble is held.
+    """This is the object where the main content of the bubble is held.
 
     The content of the Bubble set by 'add_widget' and removed with
     'remove_widget' similarly to the :class:`ActionView` which is placed into
@@ -207,56 +212,62 @@ class Bubble(BoxLayout):
 
     :attr:`content` is a :class:`~kivy.properties.ObjectProperty` and defaults
     to None.
-    '''
+    """
 
-    arrow_image = StringProperty(
-        'atlas://data/images/defaulttheme/bubble_arrow'
-    )
-    ''' Image of the arrow pointing to the bubble.
+    arrow_image = StringProperty("atlas://data/images/defaulttheme/bubble_arrow")
+    """ Image of the arrow pointing to the bubble.
 
     :attr:`arrow_image` is a :class:`~kivy.properties.StringProperty` and
     defaults to 'atlas://data/images/defaulttheme/bubble_arrow'.
-    '''
+    """
 
     arrow_color = ColorProperty([1, 1, 1, 1])
-    '''Arrow color, in the format (r, g, b, a). To use it you have to set
+    """Arrow color, in the format (r, g, b, a). To use it you have to set
     :attr:`arrow_image` first.
 
     .. versionadded:: 2.2.0
 
     :attr:`arrow_color` is a :class:`~kivy.properties.ColorProperty` and
     defaults to [1, 1, 1, 1].
-    '''
+    """
 
     show_arrow = BooleanProperty(True)
-    ''' Indicates whether to show arrow.
+    """ Indicates whether to show arrow.
 
     .. versionadded:: 1.8.0
 
     :attr:`show_arrow` is a :class:`~kivy.properties.BooleanProperty` and
     defaults to `True`.
-    '''
+    """
 
     arrow_pos = OptionProperty(
-        'bottom_mid',
+        "bottom_mid",
         options=(
-            'left_top', 'left_mid', 'left_bottom',
-            'top_left', 'top_mid', 'top_right',
-            'right_top', 'right_mid', 'right_bottom',
-            'bottom_left', 'bottom_mid', 'bottom_right',
-        )
+            "left_top",
+            "left_mid",
+            "left_bottom",
+            "top_left",
+            "top_mid",
+            "top_right",
+            "right_top",
+            "right_mid",
+            "right_bottom",
+            "bottom_left",
+            "bottom_mid",
+            "bottom_right",
+        ),
     )
-    '''Specifies the position of the arrow as predefined relative position to
+    """Specifies the position of the arrow as predefined relative position to
     the bubble.
     Can be one of: left_top, left_mid, left_bottom top_left, top_mid, top_right
     right_top, right_mid, right_bottom bottom_left, bottom_mid, bottom_right.
 
     :attr:`arrow_pos` is a :class:`~kivy.properties.OptionProperty` and
     defaults to 'bottom_mid'.
-    '''
+    """
 
     flex_arrow_pos = ListProperty(None)
-    '''Specifies the position of the arrow as flex coordinate around the
+    """Specifies the position of the arrow as flex coordinate around the
     border of the :class:`Bubble` Widget.
     If this property is set to a proper position (relative pixel coordinates
     within the :class:`Bubble` widget, it overwrites the setting
@@ -266,19 +277,19 @@ class Bubble(BoxLayout):
 
     :attr:`flex_arrow_pos` is a :class:`~kivy.properties.ListProperty` and
     defaults to None.
-    '''
+    """
 
     limit_to = ObjectProperty(None, allownone=True)
-    '''Specifies the widget to which the bubbles position is restricted.
+    """Specifies the widget to which the bubbles position is restricted.
 
     .. versionadded:: 1.6.0
 
     :attr:`limit_to` is a :class:`~kivy.properties.ObjectProperty` and defaults
     to 'None'.
-    '''
+    """
 
     arrow_margin_x = NumericProperty(0)
-    '''Automatically computed margin in x direction that the arrow widget
+    """Automatically computed margin in x direction that the arrow widget
     occupies in pixel.
 
     In combination with the :attr:`content_width`, this property can be used
@@ -290,10 +301,10 @@ class Bubble(BoxLayout):
     :attr:`arrow_margin_x` is a :class:`~kivy.properties.NumericProperty` and
     represents the added margin in x direction due to the arrow widget.
     It defaults to 0 and is read only.
-    '''
+    """
 
     arrow_margin_y = NumericProperty(0)
-    '''Automatically computed margin in y direction that the arrow widget
+    """Automatically computed margin in y direction that the arrow widget
     occupies in pixel.
 
     In combination with the :attr:`content_height`, this property can be used
@@ -305,10 +316,10 @@ class Bubble(BoxLayout):
     :attr:`arrow_margin_y` is a :class:`~kivy.properties.NumericProperty` and
     represents the added margin in y direction due to the arrow widget.
     It defaults to 0 and is read only.
-    '''
+    """
 
     arrow_margin = ReferenceListProperty(arrow_margin_x, arrow_margin_y)
-    '''Automatically computed margin that the arrow widget occupies in
+    """Automatically computed margin that the arrow widget occupies in
     x and y direction in pixel.
 
     Check the description of :attr:`arrow_margin_x` and :attr:`arrow_margin_y`.
@@ -318,37 +329,37 @@ class Bubble(BoxLayout):
     :attr:`arrow_margin` is a :class:`~kivy.properties.ReferenceListProperty`
     of (:attr:`arrow_margin_x`, :attr:`arrow_margin_y`) properties.
     It is read only.
-    '''
+    """
 
     content_width = NumericProperty(0)
-    '''The width of the content Widget.
+    """The width of the content Widget.
 
     .. versionadded:: 2.2.0
 
     :attr:`content_width` is a :class:`~kivy.properties.NumericProperty` and
     is the same as self.content.width if content is not None, else it defaults
     to 0. It is read only.
-    '''
+    """
 
     content_height = NumericProperty(0)
-    '''The height of the content Widget.
+    """The height of the content Widget.
 
     .. versionadded:: 2.2.0
 
     :attr:`content_height` is a :class:`~kivy.properties.NumericProperty` and
     is the same as self.content.height if content is not None, else it defaults
     to 0. It is read only.
-    '''
+    """
 
     content_size = ReferenceListProperty(content_width, content_height)
-    ''' The size of the content Widget.
+    """ The size of the content Widget.
 
     .. versionadded:: 2.2.0
 
     :attr:`content_size` is a :class:`~kivy.properties.ReferenceListProperty`
     of (:attr:`content_width`, :attr:`content_height`) properties.
     It is read only.
-    '''
+    """
 
     # Internal map that specifies the different parameters for fixed arrow
     # position layouts. The flex_arrow_pos uses these parameter sets
@@ -359,18 +370,24 @@ class Bubble(BoxLayout):
     # 3: rotation of the _arrow_image
     # 4: pos_hint of the _arrow_image_layout
     ARROW_LAYOUTS = {
-        "bottom_left":  (   "vertical",  1, (   1, None),   0, {   "top": 1.0,        "x": 0.05}),  # noqa: E201,E241,E501
-        "bottom_mid":   (   "vertical",  1, (   1, None),   0, {   "top": 1.0, "center_x": 0.50}),  # noqa: E201,E241,E501
-        "bottom_right": (   "vertical",  1, (   1, None),   0, {   "top": 1.0,    "right": 0.95}),  # noqa: E201,E241,E501
-        "right_bottom": ( "horizontal",  1, (None,    1),  90, {  "left": 0.0,        "y": 0.05}),  # noqa: E201,E241,E501
-        "right_mid":    ( "horizontal",  1, (None,    1),  90, {  "left": 0.0, "center_y": 0.50}),  # noqa: E201,E241,E501
-        "right_top":    ( "horizontal",  1, (None,    1),  90, {  "left": 0.0,      "top": 0.95}),  # noqa: E201,E241,E501
-        "top_left":     (   "vertical", -1, (   1, None), 180, {"bottom": 0.0,        "x": 0.05}),  # noqa: E201,E241,E501
-        "top_mid":      (   "vertical", -1, (   1, None), 180, {"bottom": 0.0, "center_x": 0.50}),  # noqa: E201,E241,E501
-        "top_right":    (   "vertical", -1, (   1, None), 180, {"bottom": 0.0,    "right": 0.95}),  # noqa: E201,E241,E501
-        "left_bottom":  ( "horizontal", -1, (None,    1), -90, {"right":  1.0,        "y": 0.05}),  # noqa: E201,E241,E501
-        "left_mid":     ( "horizontal", -1, (None,    1), -90, {"right":  1.0, "center_y": 0.50}),  # noqa: E201,E241,E501
-        "left_top":     ( "horizontal", -1, (None,    1), -90, {"right":  1.0,      "top": 0.95}),  # noqa: E201,E241,E501
+        "bottom_left": ("vertical", 1, (1, None), 0, {"top": 1.0, "x": 0.05}),  # noqa: E201,E241,E501
+        "bottom_mid": ("vertical", 1, (1, None), 0, {"top": 1.0, "center_x": 0.50}),  # noqa: E201,E241,E501
+        "bottom_right": ("vertical", 1, (1, None), 0, {"top": 1.0, "right": 0.95}),  # noqa: E201,E241,E501
+        "right_bottom": ("horizontal", 1, (None, 1), 90, {"left": 0.0, "y": 0.05}),  # noqa: E201,E241,E501
+        "right_mid": ("horizontal", 1, (None, 1), 90, {"left": 0.0, "center_y": 0.50}),  # noqa: E201,E241,E501
+        "right_top": ("horizontal", 1, (None, 1), 90, {"left": 0.0, "top": 0.95}),  # noqa: E201,E241,E501
+        "top_left": ("vertical", -1, (1, None), 180, {"bottom": 0.0, "x": 0.05}),  # noqa: E201,E241,E501
+        "top_mid": ("vertical", -1, (1, None), 180, {"bottom": 0.0, "center_x": 0.50}),  # noqa: E201,E241,E501
+        "top_right": ("vertical", -1, (1, None), 180, {"bottom": 0.0, "right": 0.95}),  # noqa: E201,E241,E501
+        "left_bottom": ("horizontal", -1, (None, 1), -90, {"right": 1.0, "y": 0.05}),  # noqa: E201,E241,E501
+        "left_mid": (
+            "horizontal",
+            -1,
+            (None, 1),
+            -90,
+            {"right": 1.0, "center_y": 0.50},
+        ),  # noqa: E201,E241,E501
+        "left_top": ("horizontal", -1, (None, 1), -90, {"right": 1.0, "top": 0.95}),  # noqa: E201,E241,E501
     }
 
     def __init__(self, **kwargs):
@@ -380,9 +397,7 @@ class Bubble(BoxLayout):
         self._temporarily_ignore_limits = False
 
         self._arrow_image = Image(
-            source=self.arrow_image,
-            fit_mode="scale-down",
-            color=self.arrow_color
+            source=self.arrow_image, fit_mode="scale-down", color=self.arrow_color
         )
         self._arrow_image.width = self._arrow_image.texture_size[0]
         self._arrow_image.height = dp(self._arrow_image.texture_size[1])
@@ -413,9 +428,7 @@ class Bubble(BoxLayout):
             self.content.bind(size=self.update_content_size)
             self.reposition_inner_widgets()
         else:
-            raise BubbleException(
-                "Bubble can only contain a single Widget or Layout"
-            )
+            raise BubbleException("Bubble can only contain a single Widget or Layout")
 
     def remove_widget(self, widget, *args, **kwargs):
         if widget == self.content:
@@ -536,11 +549,13 @@ class Bubble(BoxLayout):
             layout_params = self._flex_arrow_layout_params
         else:
             layout_params = Bubble.ARROW_LAYOUTS[self.arrow_pos]
-        (bubble_orientation,
-         widget_order,
-         arrow_size_hint,
-         arrow_rotation,
-         arrow_pos_hint) = layout_params
+        (
+            bubble_orientation,
+            widget_order,
+            arrow_size_hint,
+            arrow_rotation,
+            arrow_pos_hint,
+        ) = layout_params
 
         # rotate the arrow, place it at the right pos and setup the size
         # of the widget, so the BoxLayout can do the rest.

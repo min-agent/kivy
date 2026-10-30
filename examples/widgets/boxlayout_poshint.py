@@ -2,7 +2,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.app import App
 from kivy.lang import Builder
 
-Builder.load_string('''
+Builder.load_string("""
 <Demo>:
     cols: 1
 
@@ -38,7 +38,7 @@ Builder.load_string('''
             size_hint_y: 0.4
             pos_hint: {'top': 1}
             text: 'pos_hint: top=1'
-''')
+""")
 
 
 class Demo(GridLayout):
@@ -50,5 +50,5 @@ class DemoApp(App):
         return Demo()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     DemoApp().run()

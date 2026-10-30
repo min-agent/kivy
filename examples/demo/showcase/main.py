@@ -1,4 +1,4 @@
-'''
+"""
 Showcase of Kivy Features
 =========================
 
@@ -23,7 +23,7 @@ The file android.txt is used to package the application for use with the
 Kivy Launcher Android application. For Android devices, you can
 copy/paste this directory into /sdcard/kivy/showcase on your Android device.
 
-'''
+"""
 
 from time import time
 from kivy.app import App
@@ -44,13 +44,12 @@ class ShowcaseScreen(Screen):
     fullscreen = BooleanProperty(False)
 
     def add_widget(self, *args, **kwargs):
-        if 'content' in self.ids:
+        if "content" in self.ids:
             return self.ids.content.add_widget(*args, **kwargs)
         return super(ShowcaseScreen, self).add_widget(*args, **kwargs)
 
 
 class ShowcaseApp(App):
-
     index = NumericProperty(-1)
     current_title = StringProperty()
     time = NumericProperty(0)
@@ -60,19 +59,39 @@ class ShowcaseApp(App):
     hierarchy = ListProperty([])
 
     def build(self):
-        self.title = 'hello world'
-        Clock.schedule_interval(self._update_clock, 1 / 60.)
+        self.title = "hello world"
+        Clock.schedule_interval(self._update_clock, 1 / 60.0)
         self.screens = {}
-        self.available_screens = sorted([
-            'Buttons', 'ToggleButton', 'Sliders', 'ProgressBar', 'Switches',
-            'CheckBoxes', 'TextInputs', 'Accordions', 'FileChoosers',
-            'Carousel', 'Bubbles', 'CodeInput', 'DropDown', 'Spinner',
-            'Scatter', 'Splitter', 'TabbedPanel + Layouts', 'RstDocument',
-            'Popups', 'ScreenManager'])
+        self.available_screens = sorted(
+            [
+                "Buttons",
+                "ToggleButton",
+                "Sliders",
+                "ProgressBar",
+                "Switches",
+                "CheckBoxes",
+                "TextInputs",
+                "Accordions",
+                "FileChoosers",
+                "Carousel",
+                "Bubbles",
+                "CodeInput",
+                "DropDown",
+                "Spinner",
+                "Scatter",
+                "Splitter",
+                "TabbedPanel + Layouts",
+                "RstDocument",
+                "Popups",
+                "ScreenManager",
+            ]
+        )
         self.screen_names = self.available_screens
         curdir = dirname(__file__)
-        self.available_screens = [join(curdir, 'data', 'screens',
-            '{}.kv'.format(fn).lower()) for fn in self.available_screens]
+        self.available_screens = [
+            join(curdir, "data", "screens", "{}.kv".format(fn).lower())
+            for fn in self.available_screens
+        ]
         self.go_next_screen()
 
     def on_pause(self):
@@ -88,7 +107,7 @@ class ShowcaseApp(App):
         self.index = (self.index - 1) % len(self.available_screens)
         screen = self.load_screen(self.index)
         sm = self.root.ids.sm
-        sm.switch_to(screen, direction='right')
+        sm.switch_to(screen, direction="right")
         self.current_title = screen.name
         self.update_sourcecode()
 
@@ -96,13 +115,13 @@ class ShowcaseApp(App):
         self.index = (self.index + 1) % len(self.available_screens)
         screen = self.load_screen(self.index)
         sm = self.root.ids.sm
-        sm.switch_to(screen, direction='left')
+        sm.switch_to(screen, direction="left")
         self.current_title = screen.name
         self.update_sourcecode()
 
     def go_screen(self, idx):
         self.index = idx
-        self.root.ids.sm.switch_to(self.load_screen(idx), direction='left')
+        self.root.ids.sm.switch_to(self.load_screen(idx), direction="left")
         self.update_sourcecode()
 
     def go_hierarchy_previous(self):
@@ -130,12 +149,11 @@ class ShowcaseApp(App):
     def toggle_source_code(self):
         self.show_sourcecode = not self.show_sourcecode
         if self.show_sourcecode:
-            height = self.root.height * .3
+            height = self.root.height * 0.3
         else:
             height = 0
 
-        Animation(height=height, d=.3, t='out_quart').start(
-                self.root.ids.sv)
+        Animation(height=height, d=0.3, t="out_quart").start(self.root.ids.sv)
 
         self.update_sourcecode()
 
@@ -153,7 +171,8 @@ class ShowcaseApp(App):
                 return
             if len(layout.children) > 5:
                 layout.clear_widgets()
-            layout.add_widget(Builder.load_string('''
+            layout.add_widget(
+                Builder.load_string("""
 #:import random random.random
 Button:
     size_hint: random(), random()
@@ -162,8 +181,10 @@ Button:
         'size_hint x: {} y: {}\\n pos_hint x: {} y: {}'.format(\
             self.size_hint_x, self.size_hint_y, self.pos_hint['x'],\
             self.pos_hint['y'])
-'''))
+""")
+            )
             Clock.schedule_once(add_button, 1)
+
         Clock.schedule_once(add_button)
 
     def showcase_boxlayout(self, layout):
@@ -172,14 +193,18 @@ Button:
             if not layout.get_parent_window():
                 return
             if len(layout.children) > 5:
-                layout.orientation = 'vertical'\
-                    if layout.orientation == 'horizontal' else 'horizontal'
+                layout.orientation = (
+                    "vertical" if layout.orientation == "horizontal" else "horizontal"
+                )
                 layout.clear_widgets()
-            layout.add_widget(Builder.load_string('''
+            layout.add_widget(
+                Builder.load_string("""
 Button:
     text: self.parent.orientation if self.parent else ''
-'''))
+""")
+            )
             Clock.schedule_once(add_button, 1)
+
         Clock.schedule_once(add_button)
 
     def showcase_gridlayout(self, layout):
@@ -191,20 +216,29 @@ Button:
                 layout.rows = 3 if layout.rows is None else None
                 layout.cols = None if layout.rows == 3 else 3
                 layout.clear_widgets()
-            layout.add_widget(Builder.load_string('''
+            layout.add_widget(
+                Builder.load_string("""
 Button:
     text:
         'rows: {}\\ncols: {}'.format(self.parent.rows, self.parent.cols)\
         if self.parent else ''
-'''))
+""")
+            )
             Clock.schedule_once(add_button, 1)
+
         Clock.schedule_once(add_button)
 
     def showcase_stacklayout(self, layout):
-        orientations = ('lr-tb', 'tb-lr',
-                        'rl-tb', 'tb-rl',
-                        'lr-bt', 'bt-lr',
-                        'rl-bt', 'bt-rl')
+        orientations = (
+            "lr-tb",
+            "tb-lr",
+            "rl-tb",
+            "tb-rl",
+            "lr-bt",
+            "bt-lr",
+            "rl-bt",
+            "bt-rl",
+        )
 
         def add_button(*t):
             if not layout.get_parent_window():
@@ -213,12 +247,15 @@ Button:
                 layout.clear_widgets()
                 cur_orientation = orientations.index(layout.orientation)
                 layout.orientation = orientations[cur_orientation - 1]
-            layout.add_widget(Builder.load_string('''
+            layout.add_widget(
+                Builder.load_string("""
 Button:
     text: self.parent.orientation if self.parent else ''
     size_hint: .2, .2
-'''))
+""")
+            )
             Clock.schedule_once(add_button, 1)
+
         Clock.schedule_once(add_button)
 
     def showcase_anchorlayout(self, layout):
@@ -226,18 +263,19 @@ Button:
         def change_anchor(self, *l):
             if not layout.get_parent_window():
                 return
-            anchor_x = ('left', 'center', 'right')
-            anchor_y = ('top', 'center', 'bottom')
-            if layout.anchor_x == 'left':
+            anchor_x = ("left", "center", "right")
+            anchor_y = ("top", "center", "bottom")
+            if layout.anchor_x == "left":
                 layout.anchor_y = anchor_y[anchor_y.index(layout.anchor_y) - 1]
             layout.anchor_x = anchor_x[anchor_x.index(layout.anchor_x) - 1]
 
             Clock.schedule_once(change_anchor, 1)
+
         Clock.schedule_once(change_anchor, 1)
 
     def _update_clock(self, dt):
         self.time = time()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     ShowcaseApp().run()

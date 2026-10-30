@@ -24,9 +24,7 @@ async def test_default_thumbnail(
         "kivy.uix.videoplayer.VideoPlayer._load_thumbnail"
     ) as mock__load_thumbnail, patch(
         "kivy.uix.videoplayer.VideoPlayer._load_annotations"
-    ) as mock__load_annotations, patch(
-        "kivy.uix.videoplayer.exists"
-    ) as mock_exists:
+    ) as mock__load_annotations, patch("kivy.uix.videoplayer.exists") as mock_exists:
         mock_exists.return_value = True
         kivy_app.root.source = "data/video.mp4"
         await kivy_app.wait_clock_frames(2)
@@ -39,9 +37,7 @@ async def test_default_annotation(
 ):
     with patch(
         "kivy.uix.videoplayer.VideoPlayer._load_annotations"
-    ) as mock__load_annotations, patch(
-        "kivy.uix.videoplayer.exists"
-    ) as mock_exists:
+    ) as mock__load_annotations, patch("kivy.uix.videoplayer.exists") as mock_exists:
         mock_exists.return_value = True
         kivy_app.root.source = "data/video.mp4"
         await kivy_app.wait_clock_frames(2)
@@ -56,9 +52,7 @@ async def test_custom_thumbnail(
         "kivy.uix.videoplayer.VideoPlayer._load_thumbnail"
     ) as mock__load_thumbnail, patch(
         "kivy.uix.videoplayer.VideoPlayer._load_annotations"
-    ) as mock__load_annotations, patch(
-        "kivy.uix.videoplayer.exists"
-    ) as mock_exists:
+    ) as mock__load_annotations, patch("kivy.uix.videoplayer.exists") as mock_exists:
         mock_exists.return_value = True
         kivy_app.root.source = "data/video.mp4"
         kivy_app.root.thumbnail = "data/custom.jpg"
@@ -72,9 +66,7 @@ async def test_custom_annotation(
 ):
     with patch(
         "kivy.uix.videoplayer.VideoPlayer._load_annotations"
-    ) as mock__load_annotations, patch(
-        "kivy.uix.videoplayer.exists"
-    ) as mock_exists:
+    ) as mock__load_annotations, patch("kivy.uix.videoplayer.exists") as mock_exists:
         mock_exists.return_value = True
         kivy_app.root.source = "data/video.mp4"
         kivy_app.root.annotations = "data/custom.jsa"
@@ -103,6 +95,7 @@ async def test_custom_annotations_reset_no_fail(
         kivy_app.root.annotations = "data/annotations.jsa"
 
     kivy_app.root.annotations = ""
+
 
 if __name__ == "__main__":
     pytest.main(

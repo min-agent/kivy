@@ -1,10 +1,11 @@
 import pytest
 
 
-@pytest.mark.parametrize('unit', ['inch', 'dp', 'sp', 'pt', 'cm', 'mm'])
+@pytest.mark.parametrize("unit", ["inch", "dp", "sp", "pt", "cm", "mm"])
 def test_metrics_scale_factors(kivy_metrics, unit):
     from kivy.metrics import dpi2px
     import kivy.metrics as m
+
     kivy_metrics.density = 2
     kivy_metrics.dpi = 101
     kivy_metrics.fontscale = 3

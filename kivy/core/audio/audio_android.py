@@ -2,7 +2,7 @@
 AudioAndroid: Kivy audio implementation for Android using native API
 """
 
-__all__ = ("SoundAndroidPlayer", )
+__all__ = ("SoundAndroidPlayer",)
 
 from jnius import autoclass, java_method, PythonJavaClass
 from android import api_version
@@ -31,8 +31,25 @@ class OnCompletionListener(PythonJavaClass):
 class SoundAndroidPlayer(Sound):
     @staticmethod
     def extensions():
-        return ("mp3", "mp4", "aac", "3gp", "flac", "mkv", "wav", "ogg", "m4a",
-                "gsm", "mid", "xmf", "mxmf", "rtttl", "rtx", "ota", "imy")
+        return (
+            "mp3",
+            "mp4",
+            "aac",
+            "3gp",
+            "flac",
+            "mkv",
+            "wav",
+            "ogg",
+            "m4a",
+            "gsm",
+            "mid",
+            "xmf",
+            "mxmf",
+            "rtttl",
+            "rtx",
+            "ota",
+            "imy",
+        )
 
     def __init__(self, **kwargs):
         self._mediaplayer = None
@@ -46,13 +63,12 @@ class SoundAndroidPlayer(Sound):
             self._mediaplayer.setAudioAttributes(
                 AudioAttributesBuilder()
                 .setLegacyStreamType(AudioManager.STREAM_MUSIC)
-                .build())
+                .build()
+            )
         else:
             self._mediaplayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
         self._mediaplayer.setDataSource(self.source)
-        self._completion_listener = OnCompletionListener(
-            self._completion_callback
-        )
+        self._completion_listener = OnCompletionListener(self._completion_callback)
         self._mediaplayer.setOnCompletionListener(self._completion_listener)
         self._mediaplayer.prepare()
 
@@ -80,7 +96,7 @@ class SoundAndroidPlayer(Sound):
 
     def get_pos(self):
         if self._mediaplayer:
-            return self._mediaplayer.getCurrentPosition() / 1000.
+            return self._mediaplayer.getCurrentPosition() / 1000.0
         return super(SoundAndroidPlayer, self).get_pos()
 
     def on_volume(self, instance, volume):
@@ -93,7 +109,7 @@ class SoundAndroidPlayer(Sound):
 
     def _get_length(self):
         if self._mediaplayer:
-            return self._mediaplayer.getDuration() / 1000.
+            return self._mediaplayer.getDuration() / 1000.0
         return super(SoundAndroidPlayer, self)._get_length()
 
     def on_loop(self, instance, loop):

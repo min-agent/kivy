@@ -1,4 +1,4 @@
-'''
+"""
 Metrics
 =======
 
@@ -94,8 +94,7 @@ You can also simulate an alternative user preference for fontscale as follows::
 
     KIVY_METRICS_FONTSCALE=1.2 python main.py
 
-'''
-
+"""
 
 from os import environ
 from kivy.utils import platform
@@ -103,75 +102,82 @@ from kivy.properties import AliasProperty
 from kivy.event import EventDispatcher
 from kivy.setupconfig import USE_SDL2
 from kivy.context import register_context
-from kivy._metrics import dpi2px, NUMERIC_FORMATS, dispatch_pixel_scale, \
-    sync_pixel_scale
+from kivy._metrics import (
+    dpi2px,
+    NUMERIC_FORMATS,
+    dispatch_pixel_scale,
+    sync_pixel_scale,
+)
 
 
 __all__ = (
-    'Metrics', 'MetricsBase', 'pt', 'inch', 'cm', 'mm', 'dp', 'sp', 'dpi2px',
-    'NUMERIC_FORMATS')
+    "Metrics",
+    "MetricsBase",
+    "pt",
+    "inch",
+    "cm",
+    "mm",
+    "dp",
+    "sp",
+    "dpi2px",
+    "NUMERIC_FORMATS",
+)
 
 
 _default_dpi = None
 _default_density = None
 _default_fontscale = None
-if environ.get('KIVY_DOC_INCLUDE', None) == '1':
-    _default_dpi = 132.
+if environ.get("KIVY_DOC_INCLUDE", None) == "1":
+    _default_dpi = 132.0
     _default_density = 1
 else:
-    _custom_dpi = environ.get('KIVY_DPI')
+    _custom_dpi = environ.get("KIVY_DPI")
     if _custom_dpi:
         _default_dpi = float(_custom_dpi)
 
-    _custom_density = environ.get('KIVY_METRICS_DENSITY')
+    _custom_density = environ.get("KIVY_METRICS_DENSITY")
     if _custom_density:
         _default_density = float(_custom_density)
 
-    _custom_fontscale = environ.get('KIVY_METRICS_FONTSCALE')
+    _custom_fontscale = environ.get("KIVY_METRICS_FONTSCALE")
     if _custom_fontscale:
         _default_fontscale = float(_custom_fontscale)
 
 
 def pt(value) -> float:
-    '''Convert from points to pixels
-    '''
-    return dpi2px(value, 'pt')
+    """Convert from points to pixels"""
+    return dpi2px(value, "pt")
 
 
 def inch(value) -> float:
-    '''Convert from inches to pixels
-    '''
-    return dpi2px(value, 'in')
+    """Convert from inches to pixels"""
+    return dpi2px(value, "in")
 
 
 def cm(value) -> float:
-    '''Convert from centimeters to pixels
-    '''
-    return dpi2px(value, 'cm')
+    """Convert from centimeters to pixels"""
+    return dpi2px(value, "cm")
 
 
 def mm(value) -> float:
-    '''Convert from millimeters to pixels
-    '''
-    return dpi2px(value, 'mm')
+    """Convert from millimeters to pixels"""
+    return dpi2px(value, "mm")
 
 
 def dp(value) -> float:
-    '''Convert from density-independent pixels to pixels
-    '''
-    return dpi2px(value, 'dp')
+    """Convert from density-independent pixels to pixels"""
+    return dpi2px(value, "dp")
 
 
 def sp(value) -> float:
-    '''Convert from scale-independent pixels to pixels
-    '''
-    return dpi2px(value, 'sp')
+    """Convert from scale-independent pixels to pixels"""
+    return dpi2px(value, "sp")
 
 
 class MetricsBase(EventDispatcher):
-    '''Class that contains the default attributes for Metrics. Don't use this
+    """Class that contains the default attributes for Metrics. Don't use this
     class directly, but use the `Metrics` instance.
-    '''
+    """
 
     _dpi = _default_dpi
 
@@ -181,28 +187,32 @@ class MetricsBase(EventDispatcher):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.fbind('dpi', dispatch_pixel_scale)
-        self.fbind('density', dispatch_pixel_scale)
-        self.fbind('fontscale', dispatch_pixel_scale)
+        self.fbind("dpi", dispatch_pixel_scale)
+        self.fbind("density", dispatch_pixel_scale)
+        self.fbind("fontscale", dispatch_pixel_scale)
 
     def get_dpi(self, force_recompute=False):
         if not force_recompute and self._dpi is not None:
             return self._dpi
 
-        if platform == 'android':
+        if platform == "android":
             if USE_SDL2:
                 import jnius
-                Hardware = jnius.autoclass('org.renpy.android.Hardware')
+
+                Hardware = jnius.autoclass("org.renpy.android.Hardware")
                 value = Hardware.getDPI()
             else:
                 import android
+
                 value = android.get_dpi()
-        elif platform == 'ios':
+        elif platform == "ios":
             import ios
+
             value = ios.get_dpi()
         else:
             # for all other platforms..
             from kivy.base import EventLoop
+
             EventLoop.ensure_window()
             value = EventLoop.window.dpi
 
@@ -218,7 +228,7 @@ class MetricsBase(EventDispatcher):
         return True
 
     dpi: float = AliasProperty(get_dpi, set_dpi, cache=True)
-    '''The DPI of the screen.
+    """The DPI of the screen.
 
     Depending on the platform, the DPI can be taken from the Window provider
     (Desktop mainly) or from a platform-specific module (like android/ios).
@@ -226,7 +236,7 @@ class MetricsBase(EventDispatcher):
     :attr:`dpi` is a :class:`~kivy.properties.AliasProperty` and can be
     set to change the value. But, the :attr:`density` is reloaded and reset if
     we got it from the Window and the Window ``dpi`` changed.
-    '''
+    """
 
     def get_dpi_rounded(self):
         dpi = self.dpi
@@ -238,29 +248,30 @@ class MetricsBase(EventDispatcher):
             return 240
         return 320
 
-    dpi_rounded: int = AliasProperty(
-        get_dpi_rounded, None, bind=('dpi', ), cache=True)
-    '''Return the :attr:`dpi` of the screen, rounded to the nearest of 120,
+    dpi_rounded: int = AliasProperty(get_dpi_rounded, None, bind=("dpi",), cache=True)
+    """Return the :attr:`dpi` of the screen, rounded to the nearest of 120,
     160, 240 or 320.
 
     :attr:`dpi_rounded` is a :class:`~kivy.properties.AliasProperty` and
     updates when :attr:`dpi` changes.
-    '''
+    """
 
     def get_density(self, force_recompute=False):
         if not force_recompute and self._density is not None:
             return self._density
 
         value = 1.0
-        if platform == 'android':
+        if platform == "android":
             import jnius
-            Hardware = jnius.autoclass('org.renpy.android.Hardware')
+
+            Hardware = jnius.autoclass("org.renpy.android.Hardware")
             value = Hardware.metrics.scaledDensity
-        elif platform == 'ios':
+        elif platform == "ios":
             import ios
+
             value = ios.get_scale()
-        elif platform in ('macosx', 'win'):
-            value = self.dpi / 96.
+        elif platform in ("macosx", "win"):
+            value = self.dpi / 96.0
 
         sync_pixel_scale(density=value)
         return value
@@ -270,9 +281,8 @@ class MetricsBase(EventDispatcher):
         sync_pixel_scale(density=value)
         return True
 
-    density: float = AliasProperty(
-        get_density, set_density, bind=('dpi', ), cache=True)
-    '''The density of the screen.
+    density: float = AliasProperty(get_density, set_density, bind=("dpi",), cache=True)
+    """The density of the screen.
 
     This value is 1 by default on desktops but varies on android depending on
     the screen.
@@ -280,19 +290,20 @@ class MetricsBase(EventDispatcher):
     :attr:`density` is a :class:`~kivy.properties.AliasProperty` and can be
     set to change the value. But, the :attr:`density` is reloaded and reset if
     we got it from the Window and the Window ``density`` changed.
-    '''
+    """
 
     def get_fontscale(self, force_recompute=False):
         if not force_recompute and self._fontscale is not None:
             return self._fontscale
 
         value = 1.0
-        if platform == 'android':
+        if platform == "android":
             from jnius import autoclass
+
             if USE_SDL2:
-                PythonActivity = autoclass('org.kivy.android.PythonActivity')
+                PythonActivity = autoclass("org.kivy.android.PythonActivity")
             else:
-                PythonActivity = autoclass('org.renpy.android.PythonActivity')
+                PythonActivity = autoclass("org.renpy.android.PythonActivity")
             config = PythonActivity.mActivity.getResources().getConfiguration()
             value = config.fontScale
 
@@ -305,23 +316,24 @@ class MetricsBase(EventDispatcher):
         return True
 
     fontscale: float = AliasProperty(get_fontscale, set_fontscale, cache=True)
-    '''The fontscale user preference.
+    """The fontscale user preference.
 
     This value is 1 by default but can vary between 0.8 and 1.2.
 
     :attr:`fontscale` is a :class:`~kivy.properties.AliasProperty` and can be
     set to change the value.
-    '''
+    """
 
     def get_in(self):
         # we bind to all dpi, density, fontscale, even though not all may be
         # used for a specific suffix, because we don't want to rely on the
         # internal details of dpi2px. But it will be one of the three. But it's
         # an issue, since it won't trigger the prop if the value doesn't change
-        return dpi2px(1, 'in')
+        return dpi2px(1, "in")
 
     inch: float = AliasProperty(
-        get_in, None, bind=('dpi', 'density', 'fontscale'), cache=True)
+        get_in, None, bind=("dpi", "density", "fontscale"), cache=True
+    )
     """The scaling factor that converts from inches to pixels.
 
     :attr:`inch` is a :class:`~kivy.properties.AliasProperty` containing the
@@ -330,10 +342,11 @@ class MetricsBase(EventDispatcher):
     """
 
     def get_dp(self):
-        return dpi2px(1, 'dp')
+        return dpi2px(1, "dp")
 
     dp: float = AliasProperty(
-        get_dp, None, bind=('dpi', 'density', 'fontscale'), cache=True)
+        get_dp, None, bind=("dpi", "density", "fontscale"), cache=True
+    )
     """The scaling factor that converts from density-independent pixels to
     pixels.
 
@@ -343,10 +356,11 @@ class MetricsBase(EventDispatcher):
     """
 
     def get_sp(self):
-        return dpi2px(1, 'sp')
+        return dpi2px(1, "sp")
 
     sp: float = AliasProperty(
-        get_sp, None, bind=('dpi', 'density', 'fontscale'), cache=True)
+        get_sp, None, bind=("dpi", "density", "fontscale"), cache=True
+    )
     """The scaling factor that converts from scale-independent pixels to
     pixels.
 
@@ -356,10 +370,11 @@ class MetricsBase(EventDispatcher):
     """
 
     def get_pt(self):
-        return dpi2px(1, 'pt')
+        return dpi2px(1, "pt")
 
     pt: float = AliasProperty(
-        get_pt, None, bind=('dpi', 'density', 'fontscale'), cache=True)
+        get_pt, None, bind=("dpi", "density", "fontscale"), cache=True
+    )
     """The scaling factor that converts from points to pixels.
 
     :attr:`pt` is a :class:`~kivy.properties.AliasProperty` containing the
@@ -368,10 +383,11 @@ class MetricsBase(EventDispatcher):
     """
 
     def get_cm(self):
-        return dpi2px(1, 'cm')
+        return dpi2px(1, "cm")
 
     cm: float = AliasProperty(
-        get_cm, None, bind=('dpi', 'density', 'fontscale'), cache=True)
+        get_cm, None, bind=("dpi", "density", "fontscale"), cache=True
+    )
     """The scaling factor that converts from centimeters to pixels.
 
     :attr:`cm` is a :class:`~kivy.properties.AliasProperty` containing the
@@ -380,10 +396,11 @@ class MetricsBase(EventDispatcher):
     """
 
     def get_mm(self):
-        return dpi2px(1, 'mm')
+        return dpi2px(1, "mm")
 
     mm: float = AliasProperty(
-        get_mm, None, bind=('dpi', 'density', 'fontscale'), cache=True)
+        get_mm, None, bind=("dpi", "density", "fontscale"), cache=True
+    )
     """The scaling factor that converts from millimeters to pixels.
 
     :attr:`mm` is a :class:`~kivy.properties.AliasProperty` containing the
@@ -409,7 +426,7 @@ class MetricsBase(EventDispatcher):
         dispatch_pixel_scale()
 
 
-Metrics: MetricsBase = register_context('Metrics', MetricsBase)
+Metrics: MetricsBase = register_context("Metrics", MetricsBase)
 """The metrics object storing the window scaling factors.
 
 .. versionadded:: 1.7.0

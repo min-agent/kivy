@@ -5,7 +5,6 @@ from kivy.logger import LoggerHistory
 
 
 class WindowBaseTest(GraphicUnitTest):
-
     def test_to_normalized_pos(self):
         win = self.Window
         old_system_size = win.system_size[:]
@@ -22,7 +21,6 @@ class WindowBaseTest(GraphicUnitTest):
 
 
 class WindowOpacityTest(GraphicUnitTest):
-
     def setUp(self):
         super().setUp()
         self._prev_window_opacity = self.Window.opacity

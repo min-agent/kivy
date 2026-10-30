@@ -1,9 +1,9 @@
-'''
+"""
 TabbedPanel
 ============
 
 Test of the widget TabbedPanel.
-'''
+"""
 
 from kivy.app import App
 from kivy.uix.tabbedpanel import TabbedPanel
@@ -46,5 +46,5 @@ class TabbedPanelApp(App):
         return Test()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     TabbedPanelApp().run()

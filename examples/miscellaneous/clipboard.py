@@ -5,7 +5,7 @@ from kivy.uix.boxlayout import BoxLayout
 
 import os
 
-Builder.load_string('''
+Builder.load_string("""
 #:import Clipboard kivy.core.clipboard.Clipboard
 <Clip>:
     orientation: 'vertical'
@@ -37,7 +37,7 @@ Builder.load_string('''
             id: container
             size_hint_y: None
             height: self.minimum_height
-''')
+""")
 
 
 class Clip(BoxLayout):

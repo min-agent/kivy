@@ -1,5 +1,5 @@
 # found a way to include it more easily.
-'''
+"""
 SDL2 Window
 ===========
 
@@ -11,9 +11,9 @@ TODO:
     - clean code
     - manage correctly all sdl events
 
-'''
+"""
 
-__all__ = ('WindowSDL', )
+__all__ = ("WindowSDL",)
 
 from os.path import join
 import sys
@@ -24,12 +24,13 @@ from kivy.base import EventLoop
 from kivy.clock import Clock
 from kivy.config import Config
 from kivy.core.window import WindowBase
+
 try:
     from kivy.core.window._window_sdl2 import _WindowSDL2Storage
 except ImportError:
     from kivy.core import handle_win_lib_import_error
-    handle_win_lib_import_error(
-        'window', 'sdl2', 'kivy.core.window._window_sdl2')
+
+    handle_win_lib_import_error("window", "sdl2", "kivy.core.window._window_sdl2")
     raise
 from kivy.input.provider import MotionEventProvider
 from kivy.input.motionevent import MotionEvent
@@ -105,12 +106,11 @@ SDLK_F15 = 1073741896
 
 
 class SDL2MotionEvent(MotionEvent):
-
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault('is_touch', True)
-        kwargs.setdefault('type_id', 'touch')
+        kwargs.setdefault("is_touch", True)
+        kwargs.setdefault("type_id", "touch")
         super().__init__(*args, **kwargs)
-        self.profile = ('pos', 'pressure')
+        self.profile = ("pos", "pressure")
 
     def depack(self, args):
         self.sx, self.sy, self.pressure = args
@@ -133,25 +133,22 @@ class SDL2MotionEventProvider(MotionEventProvider):
             action, fid, x, y, pressure = value
             y = 1 - y
             if fid not in touchmap:
-                touchmap[fid] = me = SDL2MotionEvent(
-                    'sdl', fid, (x, y, pressure)
-                )
+                touchmap[fid] = me = SDL2MotionEvent("sdl", fid, (x, y, pressure))
             else:
                 me = touchmap[fid]
                 me.move((x, y, pressure))
-            if action == 'fingerdown':
-                dispatch_fn('begin', me)
-            elif action == 'fingerup':
+            if action == "fingerdown":
+                dispatch_fn("begin", me)
+            elif action == "fingerup":
                 me.update_time_end()
-                dispatch_fn('end', me)
+                dispatch_fn("end", me)
                 del touchmap[fid]
             else:
-                dispatch_fn('update', me)
+                dispatch_fn("update", me)
 
 
 class WindowSDL(WindowBase):
-
-    _win_dpi_watch: Optional['_WindowsSysDPIWatch'] = None
+    _win_dpi_watch: Optional["_WindowsSysDPIWatch"] = None
 
     _do_resize_ev = None
 
@@ -166,52 +163,97 @@ class WindowSDL(WindowBase):
         self.titlebar_widget = None
         self._mouse_x = self._mouse_y = -1
         self._meta_keys = (
-            KMOD_LCTRL, KMOD_RCTRL, KMOD_RSHIFT,
-            KMOD_LSHIFT, KMOD_RALT, KMOD_LALT, KMOD_LGUI,
-            KMOD_RGUI, KMOD_NUM, KMOD_CAPS, KMOD_MODE)
+            KMOD_LCTRL,
+            KMOD_RCTRL,
+            KMOD_RSHIFT,
+            KMOD_LSHIFT,
+            KMOD_RALT,
+            KMOD_LALT,
+            KMOD_LGUI,
+            KMOD_RGUI,
+            KMOD_NUM,
+            KMOD_CAPS,
+            KMOD_MODE,
+        )
         self.command_keys = {
-                    27: 'escape',
-                    9: 'tab',
-                    8: 'backspace',
-                    13: 'enter',
-                    127: 'del',
-                    271: 'enter',
-                    273: 'up',
-                    274: 'down',
-                    275: 'right',
-                    276: 'left',
-                    278: 'home',
-                    279: 'end',
-                    280: 'pgup',
-                    281: 'pgdown'}
+            27: "escape",
+            9: "tab",
+            8: "backspace",
+            13: "enter",
+            127: "del",
+            271: "enter",
+            273: "up",
+            274: "down",
+            275: "right",
+            276: "left",
+            278: "home",
+            279: "end",
+            280: "pgup",
+            281: "pgdown",
+        }
         self._mouse_buttons_down = set()
-        self.key_map = {SDLK_LEFT: 276, SDLK_RIGHT: 275, SDLK_UP: 273,
-                        SDLK_DOWN: 274, SDLK_HOME: 278, SDLK_END: 279,
-                        SDLK_PAGEDOWN: 281, SDLK_PAGEUP: 280, SDLK_SHIFTR: 303,
-                        SDLK_SHIFTL: 304, SDLK_SUPER: 309, SDLK_LCTRL: 305,
-                        SDLK_RCTRL: 306, SDLK_LALT: 308, SDLK_RALT: 307,
-                        SDLK_CAPS: 301, SDLK_INSERT: 277, SDLK_F1: 282,
-                        SDLK_F2: 283, SDLK_F3: 284, SDLK_F4: 285, SDLK_F5: 286,
-                        SDLK_F6: 287, SDLK_F7: 288, SDLK_F8: 289, SDLK_F9: 290,
-                        SDLK_F10: 291, SDLK_F11: 292, SDLK_F12: 293,
-                        SDLK_F13: 294, SDLK_F14: 295, SDLK_F15: 296,
-                        SDLK_KEYPADNUM: 300, SDLK_KP_DIVIDE: 267,
-                        SDLK_KP_MULTIPLY: 268, SDLK_KP_MINUS: 269,
-                        SDLK_KP_PLUS: 270, SDLK_KP_ENTER: 271,
-                        SDLK_KP_DOT: 266, SDLK_KP_0: 256, SDLK_KP_1: 257,
-                        SDLK_KP_2: 258, SDLK_KP_3: 259, SDLK_KP_4: 260,
-                        SDLK_KP_5: 261, SDLK_KP_6: 262, SDLK_KP_7: 263,
-                        SDLK_KP_8: 264, SDLK_KP_9: 265}
-        if platform == 'ios':
+        self.key_map = {
+            SDLK_LEFT: 276,
+            SDLK_RIGHT: 275,
+            SDLK_UP: 273,
+            SDLK_DOWN: 274,
+            SDLK_HOME: 278,
+            SDLK_END: 279,
+            SDLK_PAGEDOWN: 281,
+            SDLK_PAGEUP: 280,
+            SDLK_SHIFTR: 303,
+            SDLK_SHIFTL: 304,
+            SDLK_SUPER: 309,
+            SDLK_LCTRL: 305,
+            SDLK_RCTRL: 306,
+            SDLK_LALT: 308,
+            SDLK_RALT: 307,
+            SDLK_CAPS: 301,
+            SDLK_INSERT: 277,
+            SDLK_F1: 282,
+            SDLK_F2: 283,
+            SDLK_F3: 284,
+            SDLK_F4: 285,
+            SDLK_F5: 286,
+            SDLK_F6: 287,
+            SDLK_F7: 288,
+            SDLK_F8: 289,
+            SDLK_F9: 290,
+            SDLK_F10: 291,
+            SDLK_F11: 292,
+            SDLK_F12: 293,
+            SDLK_F13: 294,
+            SDLK_F14: 295,
+            SDLK_F15: 296,
+            SDLK_KEYPADNUM: 300,
+            SDLK_KP_DIVIDE: 267,
+            SDLK_KP_MULTIPLY: 268,
+            SDLK_KP_MINUS: 269,
+            SDLK_KP_PLUS: 270,
+            SDLK_KP_ENTER: 271,
+            SDLK_KP_DOT: 266,
+            SDLK_KP_0: 256,
+            SDLK_KP_1: 257,
+            SDLK_KP_2: 258,
+            SDLK_KP_3: 259,
+            SDLK_KP_4: 260,
+            SDLK_KP_5: 261,
+            SDLK_KP_6: 262,
+            SDLK_KP_7: 263,
+            SDLK_KP_8: 264,
+            SDLK_KP_9: 265,
+        }
+        if platform == "ios":
             # XXX ios keyboard suck, when backspace is hit, the delete
             # keycode is sent. fix it.
             self.key_map[127] = 8
-        elif platform == 'android':
+        elif platform == "android":
             # map android back button to escape
             self.key_map[1073742094] = 27
 
-        self.bind(minimum_width=self._set_minimum_size,
-                  minimum_height=self._set_minimum_size)
+        self.bind(
+            minimum_width=self._set_minimum_size, minimum_height=self._set_minimum_size
+        )
 
         self.bind(allow_screensaver=self._set_allow_screensaver)
         self.bind(always_on_top=self._set_always_on_top)
@@ -226,8 +268,9 @@ class WindowSDL(WindowBase):
             self._win.set_minimum_size(minimum_width, minimum_height)
         elif minimum_width or minimum_height:
             Logger.warning(
-                'Both Window.minimum_width and Window.minimum_height must be '
-                'bigger than 0 for the size restriction to take effect.')
+                "Both Window.minimum_width and Window.minimum_height must be "
+                "bigger than 0 for the size restriction to take effect."
+            )
 
     def _set_always_on_top(self, *args):
         self._win.set_always_on_top(self.always_on_top)
@@ -237,33 +280,34 @@ class WindowSDL(WindowBase):
 
     def _event_filter(self, action, *largs):
         from kivy.app import App
-        if action == 'app_terminating':
+
+        if action == "app_terminating":
             EventLoop.quit = True
 
-        elif action == 'app_lowmemory':
-            self.dispatch('on_memorywarning')
+        elif action == "app_lowmemory":
+            self.dispatch("on_memorywarning")
 
-        elif action == 'app_willenterbackground':
+        elif action == "app_willenterbackground":
             from kivy.base import stopTouchApp
+
             app = App.get_running_app()
             if not app:
-                Logger.info('WindowSDL: No running App found, pause.')
+                Logger.info("WindowSDL: No running App found, pause.")
 
-            elif not app.dispatch('on_pause'):
-                if platform == 'android':
-                    Logger.info(
-                        'WindowSDL: App stopped, on_pause() returned False.')
+            elif not app.dispatch("on_pause"):
+                if platform == "android":
+                    Logger.info("WindowSDL: App stopped, on_pause() returned False.")
                     from android import mActivity
+
                     mActivity.finishAndRemoveTask()
                 else:
-                    Logger.info(
-                        'WindowSDL: App doesn\'t support pause mode, stop.')
+                    Logger.info("WindowSDL: App doesn't support pause mode, stop.")
                     stopTouchApp()
                     return 0
 
             self._pause_loop = True
 
-        elif action == 'app_didenterforeground':
+        elif action == "app_didenterforeground":
             # on iOS, the did enter foreground is launched at the start
             # of the application. in our case, we want it only when the app
             # is resumed
@@ -271,9 +315,9 @@ class WindowSDL(WindowBase):
                 self._pause_loop = False
                 app = App.get_running_app()
                 if app:
-                    app.dispatch('on_resume')
+                    app.dispatch("on_resume")
 
-        elif action == 'windowresized':
+        elif action == "windowresized":
             self._size = largs
             self._win.resize_window(*self._size)
             # Force kivy to render the frame now, so that the canvas is drawn.
@@ -285,24 +329,25 @@ class WindowSDL(WindowBase):
         if self._fake_fullscreen:
             if not self.borderless:
                 self.fullscreen = self._fake_fullscreen = False
-            elif not self.fullscreen or self.fullscreen == 'auto':
-                self.custom_titlebar = \
-                    self.borderless = self._fake_fullscreen = False
+            elif not self.fullscreen or self.fullscreen == "auto":
+                self.custom_titlebar = self.borderless = self._fake_fullscreen = False
             elif self.custom_titlebar:
-                if platform == 'win':
+                if platform == "win":
                     # use custom behavior
                     # To handle aero snapping and rounded corners
                     self.borderless = False
-        if self.fullscreen == 'fake':
+        if self.fullscreen == "fake":
             self.borderless = self._fake_fullscreen = True
-            Logger.warning("The 'fake' fullscreen option has been "
-                           "deprecated, use Window.borderless or the "
-                           "borderless Config option instead.")
+            Logger.warning(
+                "The 'fake' fullscreen option has been "
+                "deprecated, use Window.borderless or the "
+                "borderless Config option instead."
+            )
 
         if not self.initialized:
-            if self.position == 'auto':
+            if self.position == "auto":
                 pos = None, None
-            elif self.position == 'custom':
+            elif self.position == "custom":
                 pos = self.left, self.top
 
             # ensure we have an event filter
@@ -310,13 +355,19 @@ class WindowSDL(WindowBase):
 
             # setup window
             w, h = self.system_size
-            resizable = Config.getboolean('graphics', 'resizable')
-            state = (Config.get('graphics', 'window_state')
-                     if self._is_desktop else None)
+            resizable = Config.getboolean("graphics", "resizable")
+            state = Config.get("graphics", "window_state") if self._is_desktop else None
             self.system_size = self._win.setup_window(
-                pos[0], pos[1], w, h, self.borderless,
-                self.fullscreen, resizable, state,
-                self.get_gl_backend_name())
+                pos[0],
+                pos[1],
+                w,
+                h,
+                self.borderless,
+                self.fullscreen,
+                resizable,
+                state,
+                self.get_gl_backend_name(),
+            )
 
             # We don't have a density or dpi yet set, so let's ask for an update
             self._update_density_and_dpi()
@@ -328,17 +379,18 @@ class WindowSDL(WindowBase):
             self._set_allow_screensaver()
             self._set_always_on_top()
 
-            if state == 'hidden':
+            if state == "hidden":
                 self._focus = False
         else:
             w, h = self.system_size
             self._win.resize_window(w, h)
-            if platform == 'win':
+            if platform == "win":
                 if self.custom_titlebar:
                     # check dragging+resize or just dragging
-                    if Config.getboolean('graphics', 'resizable'):
+                    if Config.getboolean("graphics", "resizable"):
                         import win32con
                         import ctypes
+
                         self._win.set_border_state(False)
                         # make windows dispatch,
                         # WM_NCCALCSIZE explicitly
@@ -347,15 +399,14 @@ class WindowSDL(WindowBase):
                             win32con.HWND_TOP,
                             *self._win.get_window_pos(),
                             *self.system_size,
-                            win32con.SWP_FRAMECHANGED
+                            win32con.SWP_FRAMECHANGED,
                         )
                     else:
                         self._win.set_border_state(True)
                 else:
                     self._win.set_border_state(self.borderless)
             else:
-                self._win.set_border_state(self.borderless
-                                           or self.custom_titlebar)
+                self._win.set_border_state(self.borderless or self.custom_titlebar)
             self._win.set_fullscreen_mode(self.fullscreen)
 
         super(WindowSDL, self).create_window()
@@ -366,34 +417,36 @@ class WindowSDL(WindowBase):
             return
 
         # auto add input provider
-        Logger.info('Window: auto add sdl2 input provider')
+        Logger.info("Window: auto add sdl2 input provider")
         SDL2MotionEventProvider.win = self
-        EventLoop.add_input_provider(SDL2MotionEventProvider('sdl', ''))
+        EventLoop.add_input_provider(SDL2MotionEventProvider("sdl", ""))
 
         # set window icon before calling set_mode
         try:
-            filename_icon = self.icon or Config.get('kivy', 'window_icon')
-            if filename_icon == '':
+            filename_icon = self.icon or Config.get("kivy", "window_icon")
+            if filename_icon == "":
                 logo_size = 32
-                if platform == 'macosx':
+                if platform == "macosx":
                     logo_size = 512
-                elif platform == 'win':
+                elif platform == "win":
                     logo_size = 64
-                filename_icon = 'kivy-icon-{}.png'.format(logo_size)
+                filename_icon = "kivy-icon-{}.png".format(logo_size)
                 filename_icon = resource_find(
-                        join(kivy_data_dir, 'logo', filename_icon))
+                    join(kivy_data_dir, "logo", filename_icon)
+                )
             self.set_icon(filename_icon)
         except:
-            Logger.exception('Window: cannot set icon')
+            Logger.exception("Window: cannot set icon")
 
-        if platform == 'win' and self._win_dpi_watch is None:
+        if platform == "win" and self._win_dpi_watch is None:
             self._win_dpi_watch = _WindowsSysDPIWatch(window=self)
             self._win_dpi_watch.start()
 
     def _update_density_and_dpi(self):
-        if platform == 'win':
+        if platform == "win":
             from ctypes import windll
-            self._density = 1.
+
+            self._density = 1.0
             try:
                 hwnd = windll.user32.GetActiveWindow()
                 self.dpi = float(windll.user32.GetDpiForWindow(hwnd))
@@ -403,7 +456,7 @@ class WindowSDL(WindowBase):
         else:
             self._density = self._win._get_gl_size()[0] / self._size[0]
             if self._is_desktop:
-                self.dpi = self._density * 96.
+                self.dpi = self._density * 96.0
 
     def close(self):
         self._win.teardown_window()
@@ -418,37 +471,37 @@ class WindowSDL(WindowBase):
         if self._is_desktop:
             self._win.maximize_window()
         else:
-            Logger.warning('Window: maximize() is used only on desktop OSes.')
+            Logger.warning("Window: maximize() is used only on desktop OSes.")
 
     def minimize(self):
         if self._is_desktop:
             self._win.minimize_window()
         else:
-            Logger.warning('Window: minimize() is used only on desktop OSes.')
+            Logger.warning("Window: minimize() is used only on desktop OSes.")
 
     def restore(self):
         if self._is_desktop:
             self._win.restore_window()
         else:
-            Logger.warning('Window: restore() is used only on desktop OSes.')
+            Logger.warning("Window: restore() is used only on desktop OSes.")
 
     def hide(self):
         if self._is_desktop:
             self._win.hide_window()
         else:
-            Logger.warning('Window: hide() is used only on desktop OSes.')
+            Logger.warning("Window: hide() is used only on desktop OSes.")
 
     def show(self):
         if self._is_desktop:
             self._win.show_window()
         else:
-            Logger.warning('Window: show() is used only on desktop OSes.')
+            Logger.warning("Window: show() is used only on desktop OSes.")
 
     def raise_window(self):
         if self._is_desktop:
             self._win.raise_window()
         else:
-            Logger.warning('Window: show() is used only on desktop OSes.')
+            Logger.warning("Window: show() is used only on desktop OSes.")
 
     def set_title(self, title):
         self._win.set_window_title(title)
@@ -462,10 +515,11 @@ class WindowSDL(WindowBase):
             return
 
         from kivy.graphics.opengl import glReadPixels, GL_RGB, GL_UNSIGNED_BYTE
+
         width, height = self.size
         data = glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE)
         self._win.save_bytes_in_png(filename, data, width, height)
-        Logger.debug('Window: Screenshot saved at <%s>' % filename)
+        Logger.debug("Window: Screenshot saved at <%s>" % filename)
         return filename
 
     def flip(self):
@@ -493,15 +547,11 @@ class WindowSDL(WindowBase):
     def _is_shaped(self):
         return self._win.is_window_shaped()
 
-    def _set_shape(self, shape_image, mode='default',
-                   cutoff=False, color_key=None):
-        modes = ('default', 'binalpha', 'reversebinalpha', 'colorkey')
+    def _set_shape(self, shape_image, mode="default", cutoff=False, color_key=None):
+        modes = ("default", "binalpha", "reversebinalpha", "colorkey")
         color_key = color_key or (0, 0, 0, 1)
         if mode not in modes:
-            Logger.warning(
-                'Window: shape mode can be only '
-                '{}'.format(', '.join(modes))
-            )
+            Logger.warning("Window: shape mode can be only {}".format(", ".join(modes)))
             return
         if not isinstance(color_key, (tuple, list)):
             return
@@ -509,19 +559,17 @@ class WindowSDL(WindowBase):
             return
         if len(color_key) == 3:
             color_key = (color_key[0], color_key[1], color_key[2], 1)
-            Logger.warning(
-                'Window: Shape color_key must be only tuple or list'
-            )
+            Logger.warning("Window: Shape color_key must be only tuple or list")
             return
         color_key = (
             color_key[0] * 255,
             color_key[1] * 255,
             color_key[2] * 255,
-            color_key[3] * 255
+            color_key[3] * 255,
         )
 
         assert cutoff in (1, 0)
-        shape_image = shape_image or Config.get('kivy', 'window_shape')
+        shape_image = shape_image or Config.get("kivy", "window_shape")
         shape_image = resource_find(shape_image) or shape_image
         self._win.set_shape(shape_image, mode, cutoff, color_key)
 
@@ -531,10 +579,12 @@ class WindowSDL(WindowBase):
     def _set_shaped_mode(self, value):
         self._set_shape(
             shape_image=self.shape_image,
-            mode=value, cutoff=self.shape_cutoff,
-            color_key=self.shape_color_key
+            mode=value,
+            cutoff=self.shape_cutoff,
+            color_key=self.shape_color_key,
         )
         return self._win.get_shaped_mode()
+
     # twb end
 
     def _set_cursor_state(self, value):
@@ -543,7 +593,7 @@ class WindowSDL(WindowBase):
     def _fix_mouse_pos(self, x, y):
         self.mouse_pos = (
             x * self._density,
-            (self.system_size[1] - 1 - y) * self._density
+            (self.system_size[1] - 1 - y) * self._density,
         )
         return x, y
 
@@ -563,7 +613,7 @@ class WindowSDL(WindowBase):
             # A drop is send while the app is still in pause.loop
             # we need to dispatch it
             action, args = event[0], event[1:]
-            if action.startswith('drop'):
+            if action.startswith("drop"):
                 self._dispatch_drop_event(action, args)
             # app_terminating event might be received while the app is paused
             # in this case EventLoop.quit will be set at _event_filter
@@ -578,61 +628,61 @@ class WindowSDL(WindowBase):
                 continue
 
             action, args = event[0], event[1:]
-            if action == 'quit':
-                if self.dispatch('on_request_close'):
+            if action == "quit":
+                if self.dispatch("on_request_close"):
                     continue
                 EventLoop.quit = True
                 break
 
-            elif action in ('fingermotion', 'fingerdown', 'fingerup'):
+            elif action in ("fingermotion", "fingerdown", "fingerup"):
                 # for finger, pass the raw event to SDL motion event provider
                 # XXX this is problematic. On OSX, it generates touches with 0,
                 # 0 coordinates, at the same times as mouse. But it works.
                 # We have a conflict of using either the mouse or the finger.
                 # Right now, we have no mechanism that we could use to know
                 # which is the preferred one for the application.
-                if platform in ('ios', 'android'):
+                if platform in ("ios", "android"):
                     SDL2MotionEventProvider.q.appendleft(event)
                 pass
 
-            elif action == 'mousemotion':
+            elif action == "mousemotion":
                 x, y = args
                 x, y = self._fix_mouse_pos(x, y)
                 self._mouse_x = x
                 self._mouse_y = y
                 if not self._cursor_entered:
                     self._cursor_entered = True
-                    self.dispatch('on_cursor_enter')
+                    self.dispatch("on_cursor_enter")
                 # don't dispatch motion if no button are pressed
                 if len(self._mouse_buttons_down) == 0:
                     continue
                 self._mouse_meta = self.modifiers
-                self.dispatch('on_mouse_move', x, y, self.modifiers)
+                self.dispatch("on_mouse_move", x, y, self.modifiers)
 
-            elif action in ('mousebuttondown', 'mousebuttonup'):
+            elif action in ("mousebuttondown", "mousebuttonup"):
                 x, y, button = args
                 x, y = self._fix_mouse_pos(x, y)
                 self._mouse_x = x
                 self._mouse_y = y
                 if not self._cursor_entered:
                     self._cursor_entered = True
-                    self.dispatch('on_cursor_enter')
-                btn = 'left'
+                    self.dispatch("on_cursor_enter")
+                btn = "left"
                 if button == 3:
-                    btn = 'right'
+                    btn = "right"
                 elif button == 2:
-                    btn = 'middle'
+                    btn = "middle"
                 elif button == 4:
                     btn = "mouse4"
                 elif button == 5:
                     btn = "mouse5"
-                eventname = 'on_mouse_down'
+                eventname = "on_mouse_down"
                 self._mouse_buttons_down.add(button)
-                if action == 'mousebuttonup':
-                    eventname = 'on_mouse_up'
+                if action == "mousebuttonup":
+                    eventname = "on_mouse_up"
                     self._mouse_buttons_down.remove(button)
                 self.dispatch(eventname, x, y, btn, self.modifiers)
-            elif action.startswith('mousewheel'):
+            elif action.startswith("mousewheel"):
                 x, y = self._win.get_relative_mouse_pos()
                 if not self._collide_and_dispatch_cursor_enter(x, y):
                     # Ignore if the cursor position is on the window title bar
@@ -640,13 +690,13 @@ class WindowSDL(WindowBase):
                     continue
                 self._update_modifiers()
                 x, y, button = args
-                btn = 'scrolldown'
-                if action.endswith('up'):
-                    btn = 'scrollup'
-                elif action.endswith('right'):
-                    btn = 'scrollright'
-                elif action.endswith('left'):
-                    btn = 'scrollleft'
+                btn = "scrolldown"
+                if action.endswith("up"):
+                    btn = "scrollup"
+                elif action.endswith("right"):
+                    btn = "scrollright"
+                elif action.endswith("left"):
+                    btn = "scrollleft"
 
                 self._mouse_meta = self.modifiers
                 self._mouse_btn = btn
@@ -654,86 +704,88 @@ class WindowSDL(WindowBase):
                 # times = min(abs(times), 100)
                 # for k in range(times):
                 self._mouse_down = True
-                self.dispatch('on_mouse_down',
-                    self._mouse_x, self._mouse_y, btn, self.modifiers)
+                self.dispatch(
+                    "on_mouse_down", self._mouse_x, self._mouse_y, btn, self.modifiers
+                )
                 self._mouse_down = False
-                self.dispatch('on_mouse_up',
-                    self._mouse_x, self._mouse_y, btn, self.modifiers)
+                self.dispatch(
+                    "on_mouse_up", self._mouse_x, self._mouse_y, btn, self.modifiers
+                )
 
-            elif action.startswith('drop'):
+            elif action.startswith("drop"):
                 self._dispatch_drop_event(action, args)
             # video resize
-            elif action == 'windowresized':
+            elif action == "windowresized":
                 self._size = self._win.window_size
                 # don't use trigger here, we want to delay the resize event
                 ev = self._do_resize_ev
                 if ev is None:
-                    ev = Clock.schedule_once(self._do_resize, .1)
+                    ev = Clock.schedule_once(self._do_resize, 0.1)
                     self._do_resize_ev = ev
                 else:
                     ev()
-            elif action == 'windowdisplaychanged':
+            elif action == "windowdisplaychanged":
                 Logger.info(f"WindowSDL: Window is now on display {args[0]}")
 
                 # The display has changed, so the density and dpi
                 # may have changed too.
                 self._update_density_and_dpi()
 
-            elif action == 'windowmoved':
-                self.dispatch('on_move')
+            elif action == "windowmoved":
+                self.dispatch("on_move")
 
-            elif action == 'windowrestored':
-                self.dispatch('on_restore')
+            elif action == "windowrestored":
+                self.dispatch("on_restore")
                 self.canvas.ask_update()
 
-            elif action == 'windowexposed':
+            elif action == "windowexposed":
                 self.canvas.ask_update()
 
-            elif action == 'windowminimized':
-                self.dispatch('on_minimize')
-                if Config.getboolean('kivy', 'pause_on_minimize'):
+            elif action == "windowminimized":
+                self.dispatch("on_minimize")
+                if Config.getboolean("kivy", "pause_on_minimize"):
                     self.do_pause()
 
-            elif action == 'windowmaximized':
-                self.dispatch('on_maximize')
+            elif action == "windowmaximized":
+                self.dispatch("on_maximize")
 
-            elif action == 'windowhidden':
-                self.dispatch('on_hide')
+            elif action == "windowhidden":
+                self.dispatch("on_hide")
 
-            elif action == 'windowshown':
-                self.dispatch('on_show')
+            elif action == "windowshown":
+                self.dispatch("on_show")
 
-            elif action == 'windowfocusgained':
+            elif action == "windowfocusgained":
                 self._focus = True
 
-            elif action == 'windowfocuslost':
+            elif action == "windowfocuslost":
                 self._focus = False
 
-            elif action == 'windowenter':
+            elif action == "windowenter":
                 x, y = self._win.get_relative_mouse_pos()
                 self._collide_and_dispatch_cursor_enter(x, y)
 
-            elif action == 'windowleave':
+            elif action == "windowleave":
                 self._cursor_entered = False
-                self.dispatch('on_cursor_leave')
+                self.dispatch("on_cursor_leave")
 
-            elif action == 'joyaxismotion':
+            elif action == "joyaxismotion":
                 stickid, axisid, value = args
-                self.dispatch('on_joy_axis', stickid, axisid, value)
-            elif action == 'joyhatmotion':
+                self.dispatch("on_joy_axis", stickid, axisid, value)
+            elif action == "joyhatmotion":
                 stickid, hatid, value = args
-                self.dispatch('on_joy_hat', stickid, hatid, value)
-            elif action == 'joyballmotion':
+                self.dispatch("on_joy_hat", stickid, hatid, value)
+            elif action == "joyballmotion":
                 stickid, ballid, xrel, yrel = args
-                self.dispatch('on_joy_ball', stickid, ballid, xrel, yrel)
-            elif action == 'joybuttondown':
+                self.dispatch("on_joy_ball", stickid, ballid, xrel, yrel)
+            elif action == "joybuttondown":
                 stickid, buttonid = args
-                self.dispatch('on_joy_button_down', stickid, buttonid)
-            elif action == 'joybuttonup':
+                self.dispatch("on_joy_button_down", stickid, buttonid)
+            elif action == "joybuttonup":
                 stickid, buttonid = args
-                self.dispatch('on_joy_button_up', stickid, buttonid)
+                self.dispatch("on_joy_button_up", stickid, buttonid)
 
-            elif action in ('keydown', 'keyup'):
+            elif action in ("keydown", "keyup"):
                 mod, key, scancode, kstr = args
 
                 try:
@@ -741,23 +793,21 @@ class WindowSDL(WindowBase):
                 except KeyError:
                     pass
 
-                if action == 'keydown':
+                if action == "keydown":
                     self._update_modifiers(mod, key)
                 else:
                     # ignore the key, it has been released
                     self._update_modifiers(mod)
 
                 # if mod in self._meta_keys:
-                if (key not in self._modifiers and
-                        key not in self.command_keys.keys()):
+                if key not in self._modifiers and key not in self.command_keys.keys():
                     try:
                         kstr_chr = unichr(key)
                         try:
                             # On android, there is no 'encoding' attribute.
                             # On other platforms, if stdout is redirected,
                             # 'encoding' may be None
-                            encoding = getattr(sys.stdout, 'encoding',
-                                               'utf8') or 'utf8'
+                            encoding = getattr(sys.stdout, "encoding", "utf8") or "utf8"
                             kstr_chr.encode(encoding)
                             kstr = kstr_chr
                         except UnicodeError:
@@ -768,44 +818,40 @@ class WindowSDL(WindowBase):
                 #        not in self.command_keys.keys():
                 #    return
 
-                if action == 'keyup':
-                    self.dispatch('on_key_up', key, scancode)
+                if action == "keyup":
+                    self.dispatch("on_key_up", key, scancode)
                     continue
 
                 # don't dispatch more key if down event is accepted
-                if self.dispatch('on_key_down', key,
-                                 scancode, kstr,
-                                 self.modifiers):
+                if self.dispatch("on_key_down", key, scancode, kstr, self.modifiers):
                     continue
-                self.dispatch('on_keyboard', key,
-                              scancode, kstr,
-                              self.modifiers)
+                self.dispatch("on_keyboard", key, scancode, kstr, self.modifiers)
 
-            elif action == 'textinput':
+            elif action == "textinput":
                 text = args[0]
-                self.dispatch('on_textinput', text)
+                self.dispatch("on_textinput", text)
 
-            elif action == 'textedit':
+            elif action == "textedit":
                 text = args[0]
-                self.dispatch('on_textedit', text)
+                self.dispatch("on_textedit", text)
 
             # unhandled event !
             else:
-                Logger.trace('WindowSDL: Unhandled event %s' % str(event))
+                Logger.trace("WindowSDL: Unhandled event %s" % str(event))
 
     def _dispatch_drop_event(self, action, args):
         x, y = (0, 0) if self._drop_pos is None else self._drop_pos
-        if action == 'dropfile':
-            self.dispatch('on_drop_file', args[0], x, y)
-        elif action == 'droptext':
-            self.dispatch('on_drop_text', args[0], x, y)
-        elif action == 'dropbegin':
+        if action == "dropfile":
+            self.dispatch("on_drop_file", args[0], x, y)
+        elif action == "droptext":
+            self.dispatch("on_drop_text", args[0], x, y)
+        elif action == "dropbegin":
             self._drop_pos = x, y = self._win.get_relative_mouse_pos()
             self._collide_and_dispatch_cursor_enter(x, y)
-            self.dispatch('on_drop_begin', x, y)
-        elif action == 'dropend':
+            self.dispatch("on_drop_begin", x, y)
+        elif action == "dropend":
             self._drop_pos = None
-            self.dispatch('on_drop_end', x, y)
+            self.dispatch("on_drop_end", x, y)
 
     def _collide_and_dispatch_cursor_enter(self, x, y):
         # x, y are relative to window left/top position
@@ -814,23 +860,24 @@ class WindowSDL(WindowBase):
             self._mouse_x, self._mouse_y = self._fix_mouse_pos(x, y)
             if not self._cursor_entered:
                 self._cursor_entered = True
-                self.dispatch('on_cursor_enter')
+                self.dispatch("on_cursor_enter")
             return True
 
     def _do_resize(self, dt):
-        Logger.debug('Window: Resize window to %s' % str(self.size))
+        Logger.debug("Window: Resize window to %s" % str(self.size))
         self._win.resize_window(*self._size)
-        self.dispatch('on_pre_resize', *self.size)
+        self.dispatch("on_pre_resize", *self.size)
 
     def do_pause(self):
         # should go to app pause mode (desktop style)
         from kivy.app import App
         from kivy.base import stopTouchApp
+
         app = App.get_running_app()
         if not app:
-            Logger.info('WindowSDL: No running App found, pause.')
-        elif not app.dispatch('on_pause'):
-            Logger.info('WindowSDL: App doesn\'t support pause mode, stop.')
+            Logger.info("WindowSDL: No running App found, pause.")
+        elif not app.dispatch("on_pause"):
+            Logger.info("WindowSDL: App doesn't support pause mode, stop.")
             stopTouchApp()
             return
 
@@ -843,16 +890,16 @@ class WindowSDL(WindowBase):
                 continue
 
             action, args = event[0], event[1:]
-            if action == 'quit':
+            if action == "quit":
                 EventLoop.quit = True
                 break
-            elif action == 'app_willenterforeground':
+            elif action == "app_willenterforeground":
                 break
-            elif action == 'windowrestored':
+            elif action == "windowrestored":
                 break
 
         if app:
-            app.dispatch('on_resume')
+            app.dispatch("on_resume")
 
     def _update_modifiers(self, mods=None, key=None):
         if mods is None and key is None:
@@ -861,40 +908,39 @@ class WindowSDL(WindowBase):
 
         if mods is not None:
             if mods & (KMOD_RSHIFT | KMOD_LSHIFT):
-                modifiers.add('shift')
+                modifiers.add("shift")
             if mods & (KMOD_RALT | KMOD_LALT | KMOD_MODE):
-                modifiers.add('alt')
+                modifiers.add("alt")
             if mods & (KMOD_RCTRL | KMOD_LCTRL):
-                modifiers.add('ctrl')
+                modifiers.add("ctrl")
             if mods & (KMOD_RGUI | KMOD_LGUI):
-                modifiers.add('meta')
+                modifiers.add("meta")
             if mods & KMOD_NUM:
-                modifiers.add('numlock')
+                modifiers.add("numlock")
             if mods & KMOD_CAPS:
-                modifiers.add('capslock')
+                modifiers.add("capslock")
 
         if key is not None:
             if key in (KMOD_RSHIFT, KMOD_LSHIFT):
-                modifiers.add('shift')
+                modifiers.add("shift")
             if key in (KMOD_RALT, KMOD_LALT, KMOD_MODE):
-                modifiers.add('alt')
+                modifiers.add("alt")
             if key in (KMOD_RCTRL, KMOD_LCTRL):
-                modifiers.add('ctrl')
+                modifiers.add("ctrl")
             if key in (KMOD_RGUI, KMOD_LGUI):
-                modifiers.add('meta')
+                modifiers.add("meta")
             if key == KMOD_NUM:
-                modifiers.add('numlock')
+                modifiers.add("numlock")
             if key == KMOD_CAPS:
-                modifiers.add('capslock')
+                modifiers.add("capslock")
 
         self._modifiers = list(modifiers)
         return
 
     def request_keyboard(
-            self, callback, target, input_type='text', keyboard_suggestions=True
+        self, callback, target, input_type="text", keyboard_suggestions=True
     ):
-        self._sdl_keyboard = super(WindowSDL, self).\
-            request_keyboard(
+        self._sdl_keyboard = super(WindowSDL, self).request_keyboard(
             callback, target, input_type, keyboard_suggestions
         )
         self._win.show_keyboard(
@@ -903,7 +949,7 @@ class WindowSDL(WindowBase):
             input_type,
             keyboard_suggestions,
         )
-        Clock.schedule_interval(self._check_keyboard_shown, 1 / 5.)
+        Clock.schedule_interval(self._check_keyboard_shown, 1 / 5.0)
         return self._sdl_keyboard
 
     def release_keyboard(self, *largs):
@@ -933,15 +979,16 @@ class WindowSDL(WindowBase):
 
     def set_custom_titlebar(self, titlebar_widget):
         if not self.custom_titlebar:
-            Logger.warning("Window: Window.custom_titlebar not set to True… "
-                           "can't set custom titlebar")
+            Logger.warning(
+                "Window: Window.custom_titlebar not set to True… "
+                "can't set custom titlebar"
+            )
             return
         self.titlebar_widget = titlebar_widget
         return self._win.set_custom_titlebar(self.titlebar_widget) == 0
 
 
 class _WindowsSysDPIWatch:
-
     hwnd = None
 
     new_windProc = None
@@ -954,26 +1001,25 @@ class _WindowsSysDPIWatch:
         self.window = window
 
     def start(self):
-        from kivy.input.providers.wm_common import WNDPROC, \
-            SetWindowLong_WndProc_wrapper
+        from kivy.input.providers.wm_common import (
+            WNDPROC,
+            SetWindowLong_WndProc_wrapper,
+        )
         from ctypes import windll
 
         self.hwnd = windll.user32.GetActiveWindow()
 
         # inject our own handler to handle messages before window manager
         self.new_windProc = WNDPROC(self._wnd_proc)
-        self.old_windProc = SetWindowLong_WndProc_wrapper(
-            self.hwnd, self.new_windProc)
+        self.old_windProc = SetWindowLong_WndProc_wrapper(self.hwnd, self.new_windProc)
 
     def stop(self):
-        from kivy.input.providers.wm_common import \
-            SetWindowLong_WndProc_wrapper
+        from kivy.input.providers.wm_common import SetWindowLong_WndProc_wrapper
 
         if self.hwnd is None:
             return
 
-        self.new_windProc = SetWindowLong_WndProc_wrapper(
-            self.hwnd, self.old_windProc)
+        self.new_windProc = SetWindowLong_WndProc_wrapper(self.hwnd, self.old_windProc)
         self.hwnd = self.new_windProc = self.old_windProc = None
 
     def _wnd_proc(self, hwnd, msg, wParam, lParam):
@@ -984,16 +1030,19 @@ class _WindowsSysDPIWatch:
 
             def clock_callback(*args):
                 if x_dpi != y_dpi:
-                    raise ValueError(
-                        'Can only handle DPI that are same for x and y')
+                    raise ValueError("Can only handle DPI that are same for x and y")
 
                 self.window.dpi = x_dpi
 
             x_dpi = wParam & 0xFFFF
             y_dpi = wParam >> 16
             Clock.schedule_once(clock_callback, -1)
-        elif Config.getboolean('graphics', 'resizable') \
-                and msg == WM_NCCALCSIZE and self.window.custom_titlebar:
+        elif (
+            Config.getboolean("graphics", "resizable")
+            and msg == WM_NCCALCSIZE
+            and self.window.custom_titlebar
+        ):
             return 0
         return windll.user32.CallWindowProcW(
-            self.old_windProc, hwnd, msg, wParam, lParam)
+            self.old_windProc, hwnd, msg, wParam, lParam
+        )

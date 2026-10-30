@@ -4,6 +4,7 @@ from shutil import copyfile, rmtree
 from tempfile import mkdtemp
 from threading import Event
 from zipfile import ZipFile
+
 try:
     from urllib import urlretrieve
 except ImportError:
@@ -13,15 +14,16 @@ from kivy.tests.common import GraphicUnitTest, ensure_web_server
 
 
 class AsyncImageTestCase(GraphicUnitTest):
-
     @classmethod
     def setUpClass(cls):
         from kivy import kivy_examples_dir
+
         ensure_web_server(kivy_examples_dir)
 
     def setUp(self):
         from kivy.config import Config
-        self.maxfps = Config.getint('graphics', 'maxfps')
+
+        self.maxfps = Config.getint("graphics", "maxfps")
         assert self.maxfps > 0
         super(AsyncImageTestCase, self).setUp()
 
@@ -38,6 +40,7 @@ class AsyncImageTestCase(GraphicUnitTest):
     def load_zipimage(self, source, frames):
         # load ZIP with images named: 000.png, 001.png, ...
         from kivy.uix.image import AsyncImage
+
         event = Event()
         image = AsyncImage(anim_delay=0.0333333333333333)
         # bind to 'on_load' because there are various
@@ -54,10 +57,7 @@ class AsyncImageTestCase(GraphicUnitTest):
 
     def test_remote_zipsequence(self):
         # cube ZIP has 63 PNGs used for animation
-        zip_cube = (
-            'http://localhost:8000/widgets/'
-            'sequenced_images/data/images/cube.zip'
-        )
+        zip_cube = "http://localhost:8000/widgets/sequenced_images/data/images/cube.zip"
         # ref Loader._load_urllib
         tempf, headers = urlretrieve(zip_cube)
         zip_pngs = self.zip_frames(tempf)
@@ -65,26 +65,33 @@ class AsyncImageTestCase(GraphicUnitTest):
         image = self.load_zipimage(zip_cube, zip_pngs)
         # pure delay * fps isn't enough and
         # just +1 isn't either (index collisions)
-        self.assertTrue(self.check_sequence_frames(
-            image._coreimage,
-            int(image._coreimage.anim_delay * self.maxfps + 3)
-        ))
+        self.assertTrue(
+            self.check_sequence_frames(
+                image._coreimage, int(image._coreimage.anim_delay * self.maxfps + 3)
+            )
+        )
 
     def test_local_zipsequence(self):
         # cube ZIP has 63 PNGs used for animation
         from kivy import kivy_examples_dir
+
         zip_cube = join(
-            kivy_examples_dir, 'widgets', 'sequenced_images',
-            'data', 'images', 'cube.zip'
+            kivy_examples_dir,
+            "widgets",
+            "sequenced_images",
+            "data",
+            "images",
+            "cube.zip",
         )
         zip_pngs = self.zip_frames(zip_cube)
         image = self.load_zipimage(zip_cube, zip_pngs)
         # pure delay * fps isn't enough and
         # just +1 isn't either (index collisions)
-        self.assertTrue(self.check_sequence_frames(
-            image._coreimage,
-            int(image._coreimage.anim_delay * self.maxfps + 3)
-        ))
+        self.assertTrue(
+            self.check_sequence_frames(
+                image._coreimage, int(image._coreimage.anim_delay * self.maxfps + 3)
+            )
+        )
 
     def check_sequence_frames(self, img, frames, slides=5):
         # check whether it really changes the images
@@ -107,8 +114,8 @@ class AsyncImageTestCase(GraphicUnitTest):
         image = AsyncImage()
         image.bind(on_load=lambda *args, **kwargs: event.set())
 
-        fn = resource_find('data/logo/kivy-icon-16.png')
-        source = join(temp_dir, 'source.png')
+        fn = resource_find("data/logo/kivy-icon-16.png")
+        source = join(temp_dir, "source.png")
         copyfile(fn, source)
         event.clear()
         image.source = source
@@ -117,7 +124,7 @@ class AsyncImageTestCase(GraphicUnitTest):
         self.assertEqual(image.texture_size, [16, 16])
         remove(source)
 
-        fn = resource_find('data/logo/kivy-icon-32.png')
+        fn = resource_find("data/logo/kivy-icon-32.png")
         copyfile(fn, source)
         event.clear()
         image.reload()
@@ -128,6 +135,7 @@ class AsyncImageTestCase(GraphicUnitTest):
         rmtree(temp_dir)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import unittest
+
     unittest.main()

@@ -1,8 +1,8 @@
-'''
+"""
 Bubble unit tests
 =================
 author: Anthony Zimmermann (Anthony.Zimmermann@protonmail.com)
-'''
+"""
 
 import pytest
 from kivy.tests.common import GraphicUnitTest
@@ -15,7 +15,6 @@ from kivy.uix.bubble import BubbleButton
 
 
 class _TestBubbleButton(BubbleButton):
-
     def __init__(self, button_size=(None, None), *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -29,7 +28,6 @@ class _TestBubbleButton(BubbleButton):
 
 
 class _TestBubbleContent(BubbleContent):
-
     def update_size(self, instance, value):
         self.size = self.minimum_size
 
@@ -40,7 +38,6 @@ class _TestBubbleContent(BubbleContent):
 
 
 class _TestBubble(Bubble):
-
     @property
     def arrow_length(self):
         return self._arrow_image.height
@@ -70,43 +67,43 @@ class _TestBubble(Bubble):
 
 # (bubble_width, button_height, arrow_pos)
 bubble_layout_with_predefined_arrow_pos_test_params = [
-    (158.9, 34.3, "bottom_left"),   # noqa: E201,E241
-    (651.4, 26.1, "bottom_mid"),    # noqa: E201,E241
-    (  6.5, 44.7, "bottom_right"),  # noqa: E201,E241
-    (754.6, 50.6, "top_left"),      # noqa: E201,E241
-    (957.8, 74.1, "top_mid"),       # noqa: E201,E241
-    (852.1, 33.1, "top_right"),     # noqa: E201,E241
-    (472.9, 45.1, "left_top"),      # noqa: E201,E241
-    (578.3, 52.7, "left_mid"),      # noqa: E201,E241
-    (687.8, 17.7, "left_bottom"),   # noqa: E201,E241
-    (313.7,  8.6, "right_top"),     # noqa: E201,E241
-    (194.3, 46.4, "right_mid"),     # noqa: E201,E241
-    ( 59.3, 29.7, "right_bottom"),  # noqa: E201,E241
+    (158.9, 34.3, "bottom_left"),  # noqa: E201,E241
+    (651.4, 26.1, "bottom_mid"),  # noqa: E201,E241
+    (6.5, 44.7, "bottom_right"),  # noqa: E201,E241
+    (754.6, 50.6, "top_left"),  # noqa: E201,E241
+    (957.8, 74.1, "top_mid"),  # noqa: E201,E241
+    (852.1, 33.1, "top_right"),  # noqa: E201,E241
+    (472.9, 45.1, "left_top"),  # noqa: E201,E241
+    (578.3, 52.7, "left_mid"),  # noqa: E201,E241
+    (687.8, 17.7, "left_bottom"),  # noqa: E201,E241
+    (313.7, 8.6, "right_top"),  # noqa: E201,E241
+    (194.3, 46.4, "right_mid"),  # noqa: E201,E241
+    (59.3, 29.7, "right_bottom"),  # noqa: E201,E241
 ]
 
 bubble_layout_with_flex_arrow_pos_test_params = [
-    (101.3, 346.0,   0.0,  73.6, "l"),  # noqa: E201,E241
-    (489.0, 535.1,   0.0, 442.1, "l"),  # noqa: E201,E241
-    (390.9, 728.1,   0.0, 114.3, "l"),  # noqa: E201,E241
-    (224.5, 675.5,   0.0, 560.6, "l"),  # noqa: E201,E241
-    (264.9, 677.3,   0.0,   8.3, "l"),  # noqa: E201,E241
-    (544.6, 126.0,   0.0, 120.9, "l"),  # noqa: E201,E241
-    (290.9, 962.6,   0.0, 275.5, "l"),  # noqa: E201,E241
-    (358.4, 514.4,   0.0, 427.1, "l"),  # noqa: E201,E241
-    (604.3, 648.2,   0.0, 226.1, "l"),  # noqa: E201,E241
-    (287.4, 875.6,   0.0, 446.5, "l"),  # noqa: E201,E241
-    (755.7, 103.5, 444.6,   0.0, "b"),  # noqa: E201,E241
-    (307.9, 471.7,  80.9,   0.0, "b"),  # noqa: E201,E241
-    (849.9, 194.8, 652.7,   0.0, "b"),  # noqa: E201,E241
-    (975.7, 691.0, 120.9,   0.0, "b"),  # noqa: E201,E241
-    (539.1, 903.3, 530.6,   0.0, "b"),  # noqa: E201,E241
-    ( 37.5, 727.5,  37.0,   0.0, "b"),  # noqa: E201,E241
-    (856.5, 779.0, 565.5,   0.0, "b"),  # noqa: E201,E241
-    (536.7, 228.3,  48.4,   0.0, "b"),  # noqa: E201,E241
-    (170.9, 870.4, 127.6,   0.0, "b"),  # noqa: E201,E241
-    (955.7, 530.6, 526.0,   0.0, "b"),  # noqa: E201,E241
-    (878.1, 690.4, 878.1,  18.8, "r"),  # noqa: E201,E241
-    (771.6, 365.2, 771.6,  31.1, "r"),  # noqa: E201,E241
+    (101.3, 346.0, 0.0, 73.6, "l"),  # noqa: E201,E241
+    (489.0, 535.1, 0.0, 442.1, "l"),  # noqa: E201,E241
+    (390.9, 728.1, 0.0, 114.3, "l"),  # noqa: E201,E241
+    (224.5, 675.5, 0.0, 560.6, "l"),  # noqa: E201,E241
+    (264.9, 677.3, 0.0, 8.3, "l"),  # noqa: E201,E241
+    (544.6, 126.0, 0.0, 120.9, "l"),  # noqa: E201,E241
+    (290.9, 962.6, 0.0, 275.5, "l"),  # noqa: E201,E241
+    (358.4, 514.4, 0.0, 427.1, "l"),  # noqa: E201,E241
+    (604.3, 648.2, 0.0, 226.1, "l"),  # noqa: E201,E241
+    (287.4, 875.6, 0.0, 446.5, "l"),  # noqa: E201,E241
+    (755.7, 103.5, 444.6, 0.0, "b"),  # noqa: E201,E241
+    (307.9, 471.7, 80.9, 0.0, "b"),  # noqa: E201,E241
+    (849.9, 194.8, 652.7, 0.0, "b"),  # noqa: E201,E241
+    (975.7, 691.0, 120.9, 0.0, "b"),  # noqa: E201,E241
+    (539.1, 903.3, 530.6, 0.0, "b"),  # noqa: E201,E241
+    (37.5, 727.5, 37.0, 0.0, "b"),  # noqa: E201,E241
+    (856.5, 779.0, 565.5, 0.0, "b"),  # noqa: E201,E241
+    (536.7, 228.3, 48.4, 0.0, "b"),  # noqa: E201,E241
+    (170.9, 870.4, 127.6, 0.0, "b"),  # noqa: E201,E241
+    (955.7, 530.6, 526.0, 0.0, "b"),  # noqa: E201,E241
+    (878.1, 690.4, 878.1, 18.8, "r"),  # noqa: E201,E241
+    (771.6, 365.2, 771.6, 31.1, "r"),  # noqa: E201,E241
     (679.7, 305.4, 679.7, 259.6, "r"),  # noqa: E201,E241
     (700.2, 614.6, 700.2, 105.4, "r"),  # noqa: E201,E241
     (444.1, 864.5, 444.1, 152.3, "r"),  # noqa: E201,E241
@@ -115,21 +112,20 @@ bubble_layout_with_flex_arrow_pos_test_params = [
     (518.5, 338.5, 518.5, 194.6, "r"),  # noqa: E201,E241
     (982.1, 666.1, 982.1, 282.5, "r"),  # noqa: E201,E241
     (926.4, 565.1, 926.4, 187.3, "r"),  # noqa: E201,E241
-    (375.2, 746.6,  36.2, 746.6, "t"),  # noqa: E201,E241
+    (375.2, 746.6, 36.2, 746.6, "t"),  # noqa: E201,E241
     (448.9, 228.5, 297.4, 228.5, "t"),  # noqa: E201,E241
     (792.3, 593.5, 746.2, 593.5, "t"),  # noqa: E201,E241
-    (856.1,  89.7,  23.1,  89.7, "t"),  # noqa: E201,E241
+    (856.1, 89.7, 23.1, 89.7, "t"),  # noqa: E201,E241
     (721.3, 319.0, 356.5, 319.0, "t"),  # noqa: E201,E241
-    (127.7, 355.7,  69.3, 355.7, "t"),  # noqa: E201,E241
+    (127.7, 355.7, 69.3, 355.7, "t"),  # noqa: E201,E241
     (412.3, 493.8, 163.2, 493.8, "t"),  # noqa: E201,E241
-    ( 40.8, 115.8,  15.8, 115.8, "t"),  # noqa: E201,E241
+    (40.8, 115.8, 15.8, 115.8, "t"),  # noqa: E201,E241
     (233.9, 148.5, 189.4, 148.5, "t"),  # noqa: E201,E241
     (982.4, 661.5, 105.9, 661.5, "t"),  # noqa: E201,E241
 ]
 
 
 class BubbleTest(GraphicUnitTest):
-
     def move_frames(self, t):
         for i in range(t):
             EventLoop.idle()
@@ -149,6 +145,7 @@ class BubbleTest(GraphicUnitTest):
 
     def test_add_arbitrary_content(self):
         from kivy.uix.gridlayout import GridLayout
+
         bubble = Bubble()
         content = GridLayout()
         bubble.add_widget(content)
@@ -156,6 +153,7 @@ class BubbleTest(GraphicUnitTest):
 
     def test_add_two_content_widgets_fails(self):
         from kivy.uix.bubble import BubbleException
+
         bubble = Bubble()
         content_1 = BubbleContent()
         content_2 = BubbleContent()
@@ -314,9 +312,7 @@ class BubbleTest(GraphicUnitTest):
 
             with self.subTest():
                 print(
-                    "(bubble_width={}, button_height={}, arrow_pos={})".format(
-                        *params
-                    )
+                    "(bubble_width={}, button_height={}, arrow_pos={})".format(*params)
                 )
                 bubble = _TestBubble(arrow_pos=arrow_pos)
                 bubble.size_hint = (None, None)
@@ -327,6 +323,7 @@ class BubbleTest(GraphicUnitTest):
                     w = bubble_width
                     h = bubble.content_height + bubble.arrow_margin_y
                     bubble.size = (w, h)
+
                 bubble.bind(
                     content_size=update_bubble_size,
                     arrow_margin=update_bubble_size,
@@ -337,7 +334,7 @@ class BubbleTest(GraphicUnitTest):
                     content.add_widget(
                         _TestBubbleButton(
                             button_size=(None, button_height),
-                            text="Option {}".format(i)
+                            text="Option {}".format(i),
                         )
                     )
 
@@ -357,14 +354,14 @@ class BubbleTest(GraphicUnitTest):
             w = bubble_width
             h = bubble.content_height
             bubble.size = (w, h)
+
         bubble.bind(content_size=update_bubble_size)
 
         content = _TestBubbleContent(orientation="vertical")
         for i in range(7):
             content.add_widget(
                 _TestBubbleButton(
-                    button_size=(None, button_height),
-                    text="Option_{}".format(i)
+                    button_size=(None, button_height), text="Option_{}".format(i)
                 )
             )
 

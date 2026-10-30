@@ -504,6 +504,7 @@ def test_logger_fix_8345():
     to None.
     """
     from kivy.logger import Logger, add_kivy_handlers, ConsoleHandler
+
     original_sys_stderr = sys.stderr
     sys.stderr = None
     add_kivy_handlers(Logger)
@@ -511,6 +512,6 @@ def test_logger_fix_8345():
     console_handler_found = any(
         isinstance(handler, ConsoleHandler) for handler in Logger.handlers
     )
-    assert (
-        not console_handler_found
-    ), "Console handler added, despite sys.stderr being None"
+    assert not console_handler_found, (
+        "Console handler added, despite sys.stderr being None"
+    )

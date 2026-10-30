@@ -1,17 +1,18 @@
-'''
+"""
 Clipboard windows: an implementation of the Clipboard using ctypes.
-'''
+"""
 
-__all__ = ('ClipboardWindows', )
+__all__ = ("ClipboardWindows",)
 
 from kivy.utils import platform
 from kivy.core.clipboard import ClipboardBase
 
-if platform != 'win':
-    raise SystemError('unsupported platform for Windows clipboard')
+if platform != "win":
+    raise SystemError("unsupported platform for Windows clipboard")
 
 import ctypes
 from ctypes import wintypes
+
 user32 = ctypes.windll.user32
 kernel32 = ctypes.windll.kernel32
 msvcrt = ctypes.cdll.msvcrt
@@ -31,12 +32,11 @@ GMEM_MOVEABLE = 0x0002
 
 
 class ClipboardWindows(ClipboardBase):
-
     def _copy(self, data):
         self._ensure_clipboard()
         self.put(data, self._clip_mime_type)
 
-    def get(self, mimetype='text/plain'):
+    def get(self, mimetype="text/plain"):
         GetClipboardData = user32.GetClipboardData
         GetClipboardData.argtypes = [wintypes.UINT]
         GetClipboardData.restype = wintypes.HANDLE
@@ -52,7 +52,7 @@ class ClipboardWindows(ClipboardBase):
         # and the clipboard is locked if not closed properly
         if not pcontents:
             user32.CloseClipboard()
-            return ''
+            return ""
 
         # The handle returned by GetClipboardData is a memory object
         # and needs to be locked to get the actual pointer to the data
@@ -85,9 +85,7 @@ class ClipboardWindows(ClipboardBase):
         # See: https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setclipboarddata  # noqa: E501
         # The size of the memory object is the number of wide characters in
         # the string plus one for the terminating null character
-        hCd = GlobalAlloc(
-            GMEM_MOVEABLE, ctypes.sizeof(ctypes.c_wchar) * text_len
-        )
+        hCd = GlobalAlloc(GMEM_MOVEABLE, ctypes.sizeof(ctypes.c_wchar) * text_len)
 
         # Since the memory object is allocated with GMEM_MOVEABLE, should be
         # locked to get the actual pointer to the data.
@@ -104,4 +102,4 @@ class ClipboardWindows(ClipboardBase):
         user32.CloseClipboard()
 
     def get_types(self):
-        return ['text/plain']
+        return ["text/plain"]

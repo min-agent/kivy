@@ -1,4 +1,4 @@
-'''
+"""
 TUIO Input Provider
 ===================
 
@@ -34,10 +34,9 @@ You must add the provider before your application is run, like this::
             # Then do the usual things
             # ...
             return
-'''
+"""
 
-__all__ = ('TuioMotionEventProvider', 'Tuio2dCurMotionEvent',
-           'Tuio2dObjMotionEvent')
+__all__ = ("TuioMotionEventProvider", "Tuio2dCurMotionEvent", "Tuio2dObjMotionEvent")
 
 from kivy.logger import Logger
 
@@ -50,7 +49,7 @@ from kivy.input.shape import ShapeRect
 
 
 class TuioMotionEventProvider(MotionEventProvider):
-    '''The TUIO provider listens to a socket and handles some of the incoming
+    """The TUIO provider listens to a socket and handles some of the incoming
     OSC messages:
 
         * /tuio/2Dcur
@@ -83,27 +82,27 @@ class TuioMotionEventProvider(MotionEventProvider):
         associated with the path that you pass to the ``register()``
         function. To keep things simple, you should name your class after the
         path that it handles, though.
-    '''
+    """
 
     __handlers__ = {}
 
     def __init__(self, device, args):
         super().__init__(device, args)
-        args = args.split(',')
+        args = args.split(",")
         if len(args) == 0:
-            Logger.error('Tuio: Invalid configuration for TUIO provider')
-            Logger.error('Tuio: Format must be ip:port (eg. 127.0.0.1:3333)')
-            err = 'Tuio: Current configuration is <%s>' % (str(','.join(args)))
+            Logger.error("Tuio: Invalid configuration for TUIO provider")
+            Logger.error("Tuio: Format must be ip:port (eg. 127.0.0.1:3333)")
+            err = "Tuio: Current configuration is <%s>" % (str(",".join(args)))
             Logger.error(err)
             return
-        ipport = args[0].split(':')
+        ipport = args[0].split(":")
         if len(ipport) != 2:
-            Logger.error('Tuio: Invalid configuration for TUIO provider')
-            Logger.error('Tuio: Format must be ip:port (eg. 127.0.0.1:3333)')
-            err = 'Tuio: Current configuration is <%s>' % (str(','.join(args)))
+            Logger.error("Tuio: Invalid configuration for TUIO provider")
+            Logger.error("Tuio: Format must be ip:port (eg. 127.0.0.1:3333)")
+            err = "Tuio: Current configuration is <%s>" % (str(",".join(args)))
             Logger.error(err)
             return
-        self.ip, self.port = args[0].split(':')
+        self.ip, self.port = args[0].split(":")
         self.port = int(self.port)
         self.handlers = {}
         self.oscid = None
@@ -112,30 +111,29 @@ class TuioMotionEventProvider(MotionEventProvider):
 
     @staticmethod
     def register(oscpath, classname):
-        '''Register a new path to handle in TUIO provider'''
+        """Register a new path to handle in TUIO provider"""
         TuioMotionEventProvider.__handlers__[oscpath] = classname
 
     @staticmethod
     def unregister(oscpath, classname):
-        '''Unregister a path to stop handling it in the TUIO provider'''
+        """Unregister a path to stop handling it in the TUIO provider"""
         if oscpath in TuioMotionEventProvider.__handlers__:
             del TuioMotionEventProvider.__handlers__[oscpath]
 
     @staticmethod
     def create(oscpath, **kwargs):
-        '''Create a touch event from a TUIO path'''
+        """Create a touch event from a TUIO path"""
         if oscpath not in TuioMotionEventProvider.__handlers__:
-            raise Exception('Unknown %s touch path' % oscpath)
+            raise Exception("Unknown %s touch path" % oscpath)
         return TuioMotionEventProvider.__handlers__[oscpath](**kwargs)
 
     def start(self):
-        '''Start the TUIO provider'''
+        """Start the TUIO provider"""
         try:
             from oscpy.server import OSCThreadServer
         except ImportError:
             Logger.info(
-                'Please install the oscpy python module to use the TUIO '
-                'provider.'
+                "Please install the oscpy python module to use the TUIO provider."
             )
             raise
         self.oscid = osc = OSCThreadServer()
@@ -145,11 +143,11 @@ class TuioMotionEventProvider(MotionEventProvider):
             osc.bind(oscpath, partial(self._osc_tuio_cb, oscpath))
 
     def stop(self):
-        '''Stop the TUIO provider'''
+        """Stop the TUIO provider"""
         self.oscid.stop_all()
 
     def update(self, dispatch_fn):
-        '''Update the TUIO provider (pop events from the queue)'''
+        """Update the TUIO provider (pop events from the queue)"""
 
         # read the Queue with event
         while True:
@@ -167,26 +165,27 @@ class TuioMotionEventProvider(MotionEventProvider):
         oscpath, command, args = value
 
         # verify commands
-        if command not in [b'alive', b'set']:
+        if command not in [b"alive", b"set"]:
             return
 
         # move or create a new touch
-        if command == b'set':
+        if command == b"set":
             id = args[0]
             if id not in self.touches[oscpath]:
                 # new touch
                 touch = TuioMotionEventProvider.__handlers__[oscpath](
-                    self.device, id, args[1:])
+                    self.device, id, args[1:]
+                )
                 self.touches[oscpath][id] = touch
-                dispatch_fn('begin', touch)
+                dispatch_fn("begin", touch)
             else:
                 # update a current touch
                 touch = self.touches[oscpath][id]
                 touch.move(args[1:])
-                dispatch_fn('update', touch)
+                dispatch_fn("update", touch)
 
         # alive event, check for deleted touch
-        if command == b'alive':
+        if command == b"alive":
             alives = args
             to_delete = []
             for id in self.touches[oscpath]:
@@ -197,12 +196,12 @@ class TuioMotionEventProvider(MotionEventProvider):
                         to_delete.append(touch)
 
             for touch in to_delete:
-                dispatch_fn('end', touch)
+                dispatch_fn("end", touch)
                 del self.touches[oscpath][touch.id]
 
 
 class TuioMotionEvent(MotionEvent):
-    '''Abstraction for TUIO touches/fiducials.
+    """Abstraction for TUIO touches/fiducials.
 
     Depending on the tracking software you use (e.g. Movid, CCV, etc.) and its
     TUIO implementation, the TuioMotionEvent object can support multiple
@@ -215,12 +214,13 @@ class TuioMotionEvent(MotionEvent):
         * Rotation velocity: profile name 'rot', attribute ``.A``
         * Motion acceleration: profile name 'motacc', attribute ``.m``
         * Rotation acceleration: profile name 'rotacc', attribute ``.r``
-    '''
-    __attrs__ = ('a', 'b', 'c', 'X', 'Y', 'Z', 'A', 'B', 'C', 'm', 'r')
+    """
+
+    __attrs__ = ("a", "b", "c", "X", "Y", "Z", "A", "B", "C", "m", "r")
 
     def __init__(self, *args, **kwargs):
-        kwargs.setdefault('is_touch', True)
-        kwargs.setdefault('type_id', 'touch')
+        kwargs.setdefault("is_touch", True)
+        kwargs.setdefault("type_id", "touch")
         super().__init__(*args, **kwargs)
         # Default argument for TUIO touches
         self.a = 0.0
@@ -244,22 +244,21 @@ class TuioMotionEvent(MotionEvent):
 
 
 class Tuio2dCurMotionEvent(TuioMotionEvent):
-    '''A 2dCur TUIO touch.'''
+    """A 2dCur TUIO touch."""
 
     def depack(self, args):
         if len(args) < 5:
             self.sx, self.sy = list(map(float, args[0:2]))
-            self.profile = ('pos', )
+            self.profile = ("pos",)
         elif len(args) == 5:
-            self.sx, self.sy, self.X, self.Y, self.m = list(map(float,
-                                                                args[0:5]))
+            self.sx, self.sy, self.X, self.Y, self.m = list(map(float, args[0:5]))
             self.Y = -self.Y
-            self.profile = ('pos', 'mov', 'motacc')
+            self.profile = ("pos", "mov", "motacc")
         else:
             self.sx, self.sy, self.X, self.Y = list(map(float, args[0:4]))
             self.m, width, height = list(map(float, args[4:7]))
             self.Y = -self.Y
-            self.profile = ('pos', 'mov', 'motacc', 'shape')
+            self.profile = ("pos", "mov", "motacc", "shape")
             if self.shape is None:
                 self.shape = ShapeRect()
             self.shape.width = width
@@ -269,25 +268,39 @@ class Tuio2dCurMotionEvent(TuioMotionEvent):
 
 
 class Tuio2dObjMotionEvent(TuioMotionEvent):
-    '''A 2dObj TUIO object.
-    '''
+    """A 2dObj TUIO object."""
 
     def depack(self, args):
         if len(args) < 5:
             self.sx, self.sy = args[0:2]
-            self.profile = ('pos', )
+            self.profile = ("pos",)
         elif len(args) == 9:
             self.fid, self.sx, self.sy, self.a, self.X, self.Y = args[:6]
             self.A, self.m, self.r = args[6:9]
             self.Y = -self.Y
-            self.profile = ('markerid', 'pos', 'angle', 'mov', 'rot',
-                            'motacc', 'rotacc')
+            self.profile = (
+                "markerid",
+                "pos",
+                "angle",
+                "mov",
+                "rot",
+                "motacc",
+                "rotacc",
+            )
         else:
             self.fid, self.sx, self.sy, self.a, self.X, self.Y = args[:6]
             self.A, self.m, self.r, width, height = args[6:11]
             self.Y = -self.Y
-            self.profile = ('markerid', 'pos', 'angle', 'mov', 'rot', 'rotacc',
-                            'acc', 'shape')
+            self.profile = (
+                "markerid",
+                "pos",
+                "angle",
+                "mov",
+                "rot",
+                "rotacc",
+                "acc",
+                "shape",
+            )
             if self.shape is None:
                 self.shape = ShapeRect()
                 self.shape.width = width
@@ -297,19 +310,20 @@ class Tuio2dObjMotionEvent(TuioMotionEvent):
 
 
 class Tuio2dBlbMotionEvent(TuioMotionEvent):
-    '''A 2dBlb TUIO object.
+    """A 2dBlb TUIO object.
     # FIXME 3d shape are not supported
     /tuio/2Dobj set s i x y a       X Y A m r
     /tuio/2Dblb set s   x y a w h f X Y A m r
-    '''
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.profile = ('pos', 'angle', 'mov', 'rot', 'rotacc', 'acc', 'shape')
+        self.profile = ("pos", "angle", "mov", "rot", "rotacc", "acc", "shape")
 
     def depack(self, args):
-        self.sx, self.sy, self.a, self.X, self.Y, sw, sh, sd, \
-            self.A, self.m, self.r = args
+        self.sx, self.sy, self.a, self.X, self.Y, sw, sh, sd, self.A, self.m, self.r = (
+            args
+        )
         self.Y = -self.Y
         if self.shape is None:
             self.shape = ShapeRect()
@@ -320,7 +334,7 @@ class Tuio2dBlbMotionEvent(TuioMotionEvent):
 
 
 # registers
-TuioMotionEventProvider.register(b'/tuio/2Dcur', Tuio2dCurMotionEvent)
-TuioMotionEventProvider.register(b'/tuio/2Dobj', Tuio2dObjMotionEvent)
-TuioMotionEventProvider.register(b'/tuio/2Dblb', Tuio2dBlbMotionEvent)
-MotionEventFactory.register('tuio', TuioMotionEventProvider)
+TuioMotionEventProvider.register(b"/tuio/2Dcur", Tuio2dCurMotionEvent)
+TuioMotionEventProvider.register(b"/tuio/2Dobj", Tuio2dObjMotionEvent)
+TuioMotionEventProvider.register(b"/tuio/2Dblb", Tuio2dBlbMotionEvent)
+MotionEventFactory.register("tuio", TuioMotionEventProvider)

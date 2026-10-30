@@ -1,9 +1,9 @@
-'''
+"""
 AudioAvplayer: implementation of Sound using pyobjus / AVFoundation.
 Works on iOS / OSX.
-'''
+"""
 
-__all__ = ('SoundAvplayer', )
+__all__ = ("SoundAvplayer",)
 
 from kivy.core.audio import Sound, SoundLoader
 from pyobjus import autoclass, protocol
@@ -19,8 +19,21 @@ class SoundAvplayer(Sound):
     @staticmethod
     def extensions():
         # taken from https://goo.gl/015kvU
-        return ("aac", "adts", "aif", "aiff", "aifc", "caf", "mp3", "mp4",
-                "m4a", "snd", "au", "sd2", "wav")
+        return (
+            "aac",
+            "adts",
+            "aif",
+            "aiff",
+            "aifc",
+            "caf",
+            "mp3",
+            "mp4",
+            "m4a",
+            "snd",
+            "au",
+            "sd2",
+            "wav",
+        )
 
     def __init__(self, **kwargs):
         self._avplayer = None
@@ -30,8 +43,7 @@ class SoundAvplayer(Sound):
         self.unload()
         fn = NSString.alloc().initWithUTF8String_(self.source)
         url = NSURL.alloc().initFileURLWithPath_(fn)
-        self._avplayer = AVAudioPlayer.alloc().initWithContentsOfURL_error_(
-            url, None)
+        self._avplayer = AVAudioPlayer.alloc().initWithContentsOfURL_error_(url, None)
 
     def unload(self):
         self.stop()
@@ -57,7 +69,7 @@ class SoundAvplayer(Sound):
         avplayer = self._avplayer
         avplayer.stop()
         avplayer.currentTime = float(position)
-        if self.state == 'play':
+        if self.state == "play":
             avplayer.play()
 
     def get_pos(self):

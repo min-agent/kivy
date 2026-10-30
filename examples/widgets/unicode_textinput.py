@@ -11,7 +11,7 @@ from kivy.uix.popup import Popup
 import os
 
 
-Builder.load_string('''
+Builder.load_string("""
 #: import utils kivy
 #: import os os
 #: import Factory kivy.factory.Factory
@@ -109,7 +109,7 @@ Builder.load_string('''
                     text: "load"
                     on_release: filechooser.selection != [] and root.load\
 (filechooser.path, filechooser.selection)
-''')
+""")
 
 
 class FntSpinnerOption(SpinnerOption):
@@ -122,7 +122,6 @@ class LoadDialog(FloatLayout):
 
 
 class Unicode_TextInput(BoxLayout):
-
     txt_input = ObjectProperty(None)
     unicode_string = StringProperty("""Latin-1 supplement: éé çç ßß
 
@@ -204,14 +203,13 @@ Yiddish:        דער גיך ברוין פוקס דזשאַמפּס איבער 
 
     def load(self, _path, _fname):
         self.txt_input.font_name = _fname[0]
-        _f_name = _fname[0][_fname[0].rfind(os.sep) + 1:]
-        self.spnr_fnt.text = _f_name[:_f_name.rfind('.')]
+        _f_name = _fname[0][_fname[0].rfind(os.sep) + 1 :]
+        self.spnr_fnt.text = _f_name[: _f_name.rfind(".")]
         self._popup.dismiss()
 
     def show_load(self):
         content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
-        self._popup = Popup(title="load file", content=content,
-            size_hint=(0.9, 0.9))
+        self._popup = Popup(title="load file", content=content, size_hint=(0.9, 0.9))
         self._popup.open()
 
 
@@ -219,26 +217,23 @@ from kivy.utils import reify
 
 
 class unicode_app(App):
-
     def build(self):
         return Unicode_TextInput()
 
     @reify
     def get_font_list(self):
-        '''Get a list of all the fonts available on this system.
-        '''
+        """Get a list of all the fonts available on this system."""
 
         fonts_path = CoreLabel.get_system_fonts_dir()
         flist = []
 
         for fdir in fonts_path:
             for fpath in sorted(os.listdir(fdir)):
-                if fpath.endswith('.ttf'):
+                if fpath.endswith(".ttf"):
                     flist.append(fpath[:-4])
 
         return sorted(flist)
 
 
-if __name__ == '__main__':
-
+if __name__ == "__main__":
     unicode_app().run()

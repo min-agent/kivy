@@ -1,9 +1,9 @@
-'''
+"""
 Graphics tests
 ==============
 
 Testing the simple vertex instructions
-'''
+"""
 
 import sys
 import pytest
@@ -13,7 +13,6 @@ from kivy.tests.common import GraphicUnitTest, requires_graphics
 
 
 class BoxShadowTest(GraphicUnitTest):
-
     def test_create(self):
         from kivy.graphics.boxshadow import BoxShadow
         from kivy.uix.widget import Widget
@@ -105,7 +104,7 @@ class BoxShadowTest(GraphicUnitTest):
             pos=(50, 50),
             size=raw_size,
             blur_radius=80,
-            spread_radius=(10, -10)
+            spread_radius=(10, -10),
         )
         adjusted_size = (
             max(
@@ -146,14 +145,8 @@ class BoxShadowTest(GraphicUnitTest):
         # If the size of the rectangle containing the FBO texture (shadow)
         # changes, its position will need to be adjusted.
         adjusted_pos = (
-            raw_pos[0]
-            - bs.blur_radius * 1.5
-            - bs.spread_radius[0]
-            + bs.offset[0],
-            raw_pos[0]
-            - bs.blur_radius * 1.5
-            - bs.spread_radius[1]
-            + bs.offset[1],
+            raw_pos[0] - bs.blur_radius * 1.5 - bs.spread_radius[0] + bs.offset[0],
+            raw_pos[0] - bs.blur_radius * 1.5 - bs.spread_radius[1] + bs.offset[1],
         )
 
         assert bs.pos == adjusted_pos
@@ -174,17 +167,11 @@ class BoxShadowTest(GraphicUnitTest):
             size=raw_size,
             offset=offset,
             blur_radius=80,
-            spread_radius=(10, -10)
+            spread_radius=(10, -10),
         )
         adjusted_pos = (
-            raw_pos[0]
-            - bs.blur_radius * 1.5
-            - bs.spread_radius[0]
-            + bs.offset[0],
-            raw_pos[0]
-            - bs.blur_radius * 1.5
-            - bs.spread_radius[1]
-            + bs.offset[1],
+            raw_pos[0] - bs.blur_radius * 1.5 - bs.spread_radius[0] + bs.offset[0],
+            raw_pos[0] - bs.blur_radius * 1.5 - bs.spread_radius[1] + bs.offset[1],
         )
 
         assert bs.pos == raw_pos
@@ -269,7 +256,6 @@ class BoxShadowTest(GraphicUnitTest):
 
 
 class VertexInstructionTest(GraphicUnitTest):
-
     def test_circle(self):
         from kivy.uix.widget import Widget
         from kivy.graphics import Ellipse, Color
@@ -354,19 +340,16 @@ class VertexInstructionTest(GraphicUnitTest):
     def test_line_rounded_rectangle(self):
         from kivy.uix.widget import Widget
         from kivy.graphics import Line, Color
+
         r = self.render
 
         # basic rounded_rectangle
         wid = Widget()
         with wid.canvas:
             Color(1, 1, 1)
-            line = Line(
-                rounded_rectangle=(100, 100, 100, 100, 10, 20, 30, 40, 100)
-            )
+            line = Line(rounded_rectangle=(100, 100, 100, 100, 10, 20, 30, 40, 100))
         r(wid)
-        assert line.rounded_rectangle == (
-            100, 100, 100, 100, 10, 20, 30, 40, 100
-        )
+        assert line.rounded_rectangle == (100, 100, 100, 100, 10, 20, 30, 40, 100)
 
         # The largest angle allowed is equal to the smallest dimension (width
         # or height) minus the largest angle value between the anterior angle
@@ -374,29 +357,17 @@ class VertexInstructionTest(GraphicUnitTest):
         wid = Widget()
         with wid.canvas:
             Color(1, 1, 1)
-            line = Line(
-                rounded_rectangle=(
-                    100, 100, 100, 100, 100, 20, 10, 30, 100
-                )
-            )
+            line = Line(rounded_rectangle=(100, 100, 100, 100, 100, 20, 10, 30, 100))
         r(wid)
-        assert line.rounded_rectangle == (
-            100, 100, 100, 100, 70, 20, 10, 30, 100
-        )
+        assert line.rounded_rectangle == (100, 100, 100, 100, 70, 20, 10, 30, 100)
 
         # Same approach as above
         wid = Widget()
         with wid.canvas:
             Color(1, 1, 1)
-            line = Line(
-                rounded_rectangle=(
-                    100, 100, 100, 100, 100, 25, 100, 50, 100
-                )
-            )
+            line = Line(rounded_rectangle=(100, 100, 100, 100, 100, 25, 100, 50, 100))
         r(wid)
-        assert line.rounded_rectangle == (
-            100, 100, 100, 100, 50, 25, 50, 50, 100
-        )
+        assert line.rounded_rectangle == (100, 100, 100, 100, 50, 25, 50, 50, 100)
 
         # A circle should be generated if width and height are equal, and all
         # angles passed are greater than or equal to the smallest dimension.
@@ -404,46 +375,31 @@ class VertexInstructionTest(GraphicUnitTest):
         with wid.canvas:
             Color(1, 1, 1)
             line = Line(
-                rounded_rectangle=(
-                    100, 100, 100, 100, 150, 50, 50.001, 51, 100
-                )
+                rounded_rectangle=(100, 100, 100, 100, 150, 50, 50.001, 51, 100)
             )
         r(wid)
-        assert line.rounded_rectangle == (
-            100, 100, 100, 100, 50, 50, 50, 50, 100
-        )
+        assert line.rounded_rectangle == (100, 100, 100, 100, 50, 50, 50, 50, 100)
 
         # Currently the minimum radius should be 1, to avoid rendering issues
         wid = Widget()
         with wid.canvas:
             Color(1, 1, 1)
-            line = Line(
-                rounded_rectangle=(
-                    100, 100, 100, 100, 0, 0, 0, 0, 100
-                )
-            )
+            line = Line(rounded_rectangle=(100, 100, 100, 100, 0, 0, 0, 0, 100))
         r(wid)
-        assert line.rounded_rectangle == (
-            100, 100, 100, 100, 1, 1, 1, 1, 100
-        )
+        assert line.rounded_rectangle == (100, 100, 100, 100, 1, 1, 1, 1, 100)
 
         # Angles adjustment + avoid issue if radius is less than 1
         wid = Widget()
         with wid.canvas:
             Color(1, 1, 1)
-            line = Line(
-                rounded_rectangle=(
-                    100, 100, 100, 100, 100, 0, 0, 0, 100
-                )
-            )
+            line = Line(rounded_rectangle=(100, 100, 100, 100, 100, 0, 0, 0, 100))
         r(wid)
-        assert line.rounded_rectangle == (
-            100, 100, 100, 100, 99, 1, 1, 1, 100
-        )
+        assert line.rounded_rectangle == (100, 100, 100, 100, 99, 1, 1, 1, 100)
 
     def test_smoothline_rounded_rectangle(self):
         from kivy.uix.widget import Widget
         from kivy.graphics import SmoothLine, Color
+
         r = self.render
 
         # If width and/or height < 2px, the figure should not be rendered.
@@ -459,41 +415,30 @@ class VertexInstructionTest(GraphicUnitTest):
 
     def test_enlarged_line(self):
         from kivy.uix.widget import Widget
-        from kivy.graphics import Line, Color, PushMatrix, PopMatrix, Scale, \
-            Translate
+        from kivy.graphics import Line, Color, PushMatrix, PopMatrix, Scale, Translate
+
         r = self.render
         wid = Widget()
         with wid.canvas:
             Color(1, 1, 1)
 
             # Normal line with width 1
-            Line(
-                points=(10, 10, 10, 90),
-                width=1
-            )
+            Line(points=(10, 10, 10, 90), width=1)
 
             # Normal line with width 3
-            Line(
-                points=(20, 10, 20, 90),
-                width=3
-            )
+            Line(points=(20, 10, 20, 90), width=3)
 
             # Enlarged line that should look width 3
             PushMatrix()
             Translate(30, 10, 1)  # So the enlargement goes around 0, 0, 0
             Scale(3, 1, 1)  # X scaled by 3 so the line width should become 3
-            Line(
-                points=(0, 0, 0, 80),
-                width=1,
-                force_custom_drawing_method=True
-            )
+            Line(points=(0, 0, 0, 80), width=1, force_custom_drawing_method=True)
             PopMatrix()
 
         r(wid)
 
 
 class SmoothVertexInstructionTest(GraphicUnitTest):
-
     # Code defined in the points setter of AntiAliasingLine class.
     def _convert_points(self, points):
         if points and isinstance(points[0], (list, tuple)):
@@ -516,7 +461,7 @@ class SmoothVertexInstructionTest(GraphicUnitTest):
             x1, y1 = p[index], p[index + 1]
             x2, y2 = p[index + 2], p[index + 3]
             if abs(x2 - x1) < 1.0 and abs(y2 - y1) < 1.0:
-                del p[index + 2: index + 4]
+                del p[index + 2 : index + 4]
             else:
                 index += 2
         if abs(p[0] - p[-2]) < 1.0 and abs(p[1] - p[-1]) < 1.0:
@@ -525,6 +470,7 @@ class SmoothVertexInstructionTest(GraphicUnitTest):
 
     def _get_texture(self):
         from kivy.graphics.texture import Texture
+
         return Texture.create()
 
     def test_antialiasing_line(self):
@@ -556,54 +502,98 @@ class SmoothVertexInstructionTest(GraphicUnitTest):
 
         # This set of points should be reduced from 16 to 8.
         points_2 = [
-            261.0, 275.0,
-            335.0, 349.0,
-            335.0, 349.0,
-            409.0, 275.0,
-            409.0, 275.0,
-            335.0, 201.0,
-            335.0, 201.0,
-            261.0, 275.0
+            261.0,
+            275.0,
+            335.0,
+            349.0,
+            335.0,
+            349.0,
+            409.0,
+            275.0,
+            409.0,
+            275.0,
+            335.0,
+            201.0,
+            335.0,
+            201.0,
+            261.0,
+            275.0,
         ]
 
         # This set of points should be reduced from 72 to 50.
         points_3 = [
-            260.0, 275.0,
-            261.0, 275.0,
-            261.0, 275.0,
-            261.999999999999, 275.99999999,
-            261.06667650085353, 278.14064903651496,
-            261.26658584785304, 281.2756384111877,
-            261.56658584785305, 281.3756384111877,
-            261.5993677908431, 284.39931866126904,
-            262.0644226342696, 287.50606070381684,
-            262.0644226342696, 287.50606070381684,
-            262.6609123178712, 290.59026597968375,
-            263.3877619269211, 293.6463765424993,
-            264.2436616292954, 296.66888507446475,
-            265.22706903587977, 299.65234481091227,
-            265.22706903587977, 299.65234481091227,
-            266.3362119800583, 302.59137935574284,
-            267.5690917112779, 305.48069237005546,
-            268.9234864969319, 308.31507711650784,
-            270.39695562607204, 311.089425842209,
-            270.89695562607204, 311.589425842209,
-            271.98684380773494, 313.7987389832352,
-            273.69028595595563, 316.4381341741821,
-            275.50421235284637, 319.00285504651725,
-            275.50421235284637, 319.00285504651725,
-            277.4253541804354, 321.48827979987755,
-            279.45024941129833, 323.8899295308661,
-            281.57524904736516, 326.20347630433844,
-            283.79652369566156, 328.4247509526349,
-            283.99652369566156, 328.7247509526349,
-            286.1100704691339, 330.54975058870167,
-            288.5117202001224, 332.5746458195646,
-            288.5117202001224, 332.5746458195646,
-            290.99714495348275, 334.4957876471537,
-            293.5618658258179, 336.3097140440444,
-            293.5618658258179, 336.3097140440444,
-            293.2618658258179, 336.1097140440444
+            260.0,
+            275.0,
+            261.0,
+            275.0,
+            261.0,
+            275.0,
+            261.999999999999,
+            275.99999999,
+            261.06667650085353,
+            278.14064903651496,
+            261.26658584785304,
+            281.2756384111877,
+            261.56658584785305,
+            281.3756384111877,
+            261.5993677908431,
+            284.39931866126904,
+            262.0644226342696,
+            287.50606070381684,
+            262.0644226342696,
+            287.50606070381684,
+            262.6609123178712,
+            290.59026597968375,
+            263.3877619269211,
+            293.6463765424993,
+            264.2436616292954,
+            296.66888507446475,
+            265.22706903587977,
+            299.65234481091227,
+            265.22706903587977,
+            299.65234481091227,
+            266.3362119800583,
+            302.59137935574284,
+            267.5690917112779,
+            305.48069237005546,
+            268.9234864969319,
+            308.31507711650784,
+            270.39695562607204,
+            311.089425842209,
+            270.89695562607204,
+            311.589425842209,
+            271.98684380773494,
+            313.7987389832352,
+            273.69028595595563,
+            316.4381341741821,
+            275.50421235284637,
+            319.00285504651725,
+            275.50421235284637,
+            319.00285504651725,
+            277.4253541804354,
+            321.48827979987755,
+            279.45024941129833,
+            323.8899295308661,
+            281.57524904736516,
+            326.20347630433844,
+            283.79652369566156,
+            328.4247509526349,
+            283.99652369566156,
+            328.7247509526349,
+            286.1100704691339,
+            330.54975058870167,
+            288.5117202001224,
+            332.5746458195646,
+            288.5117202001224,
+            332.5746458195646,
+            290.99714495348275,
+            334.4957876471537,
+            293.5618658258179,
+            336.3097140440444,
+            293.5618658258179,
+            336.3097140440444,
+            293.2618658258179,
+            336.1097140440444,
         ]
 
         # This set of points should be reduced to [].
@@ -642,10 +632,7 @@ class SmoothVertexInstructionTest(GraphicUnitTest):
             rect = SmoothRectangle(pos=(100, 100), size=(150, 150))
         r(wid)
         filtered_points = self._filtered_points(rect.points)
-        assert (
-            rect.antialiasing_line_points
-            == filtered_points + filtered_points[:2]
-        )
+        assert rect.antialiasing_line_points == filtered_points + filtered_points[:2]
 
         # test if antialiasing is disabled if the graphic has one of its
         # dimensions decreased to less than 4px.
@@ -660,10 +647,7 @@ class SmoothVertexInstructionTest(GraphicUnitTest):
         # re-enable antialiasing line rendering.
         rect.size = (150, 150)
         r(wid)
-        assert (
-            rect.antialiasing_line_points
-            == filtered_points + filtered_points[:2]
-        )
+        assert rect.antialiasing_line_points == filtered_points + filtered_points[:2]
 
         # disabling antialiasing.
         rect.texture = self._get_texture()
@@ -673,10 +657,7 @@ class SmoothVertexInstructionTest(GraphicUnitTest):
         # re-enable antialiasing.
         rect.source = ""
         r(wid)
-        assert (
-            rect.antialiasing_line_points
-            == filtered_points + filtered_points[:2]
-        )
+        assert rect.antialiasing_line_points == filtered_points + filtered_points[:2]
 
         # test if antialiasing is disabled if the graphic is initialized with
         # at least one of its dimensions less than 4px.
@@ -765,18 +746,14 @@ class SmoothVertexInstructionTest(GraphicUnitTest):
         wid = Widget()
         with wid.canvas:
             Color(1, 1, 1, 0.5)
-            rounded_rect = SmoothRoundedRectangle(
-                pos=(100, 100), size=(150, -3)
-            )
+            rounded_rect = SmoothRoundedRectangle(pos=(100, 100), size=(150, -3))
         r(wid)
         assert rounded_rect.antialiasing_line_points == []
 
         wid = Widget()
         with wid.canvas:
             Color(1, 1, 1, 0.5)
-            rounded_rect = SmoothRoundedRectangle(
-                pos=(100, 100), size=(3.99, 3.99)
-            )
+            rounded_rect = SmoothRoundedRectangle(pos=(100, 100), size=(3.99, 3.99))
         r(wid)
         assert rounded_rect.antialiasing_line_points == []
 
@@ -795,13 +772,8 @@ class SmoothVertexInstructionTest(GraphicUnitTest):
             ellipse.pos[0] + ellipse.size[0] / 2,
             ellipse.pos[1] + ellipse.size[1] / 2,
         ]
-        filtered_points = self._filtered_points(
-            ellipse.points + ellipse_center
-        )
-        assert (
-            ellipse.antialiasing_line_points
-            == filtered_points + filtered_points[:2]
-        )
+        filtered_points = self._filtered_points(ellipse.points + ellipse_center)
+        assert ellipse.antialiasing_line_points == filtered_points + filtered_points[:2]
 
         # test if antialiasing is disabled if the graphic has one of its
         # dimensions decreased to less than 4px
@@ -816,10 +788,7 @@ class SmoothVertexInstructionTest(GraphicUnitTest):
         # re-enable antialiasing line rendering.
         ellipse.size = (150, 150)
         r(wid)
-        assert (
-            ellipse.antialiasing_line_points
-            == filtered_points + filtered_points[:2]
-        )
+        assert ellipse.antialiasing_line_points == filtered_points + filtered_points[:2]
 
         # disabling antialiasing.
         ellipse.texture = self._get_texture()
@@ -829,10 +798,7 @@ class SmoothVertexInstructionTest(GraphicUnitTest):
         # re-enable antialiasing.
         ellipse.source = ""
         r(wid)
-        assert (
-            ellipse.antialiasing_line_points
-            == filtered_points + filtered_points[:2]
-        )
+        assert ellipse.antialiasing_line_points == filtered_points + filtered_points[:2]
 
         wid = Widget()
         with wid.canvas:
@@ -845,13 +811,8 @@ class SmoothVertexInstructionTest(GraphicUnitTest):
             ellipse.pos[0] + ellipse.size[0] / 2,
             ellipse.pos[1] + ellipse.size[1] / 2,
         ]
-        filtered_points = self._filtered_points(
-            ellipse.points + ellipse_center
-        )
-        assert (
-            ellipse.antialiasing_line_points
-            == filtered_points + filtered_points[:2]
-        )
+        filtered_points = self._filtered_points(ellipse.points + ellipse_center)
+        assert ellipse.antialiasing_line_points == filtered_points + filtered_points[:2]
 
         # test if antialiasing is disabled if the graphic is initialized with
         # at least one of its dimensions less than 4px.
@@ -880,17 +841,22 @@ class SmoothVertexInstructionTest(GraphicUnitTest):
             Color(1, 0, 0, 0.5)
             triangle = SmoothTriangle(
                 points=[
-                    100, 100,
-                    200, 100,
-                    150, 200,
-                    500, 500, 400, 400  # Irrelevant, just for testing purposes
+                    100,
+                    100,
+                    200,
+                    100,
+                    150,
+                    200,
+                    500,
+                    500,
+                    400,
+                    400,  # Irrelevant, just for testing purposes
                 ]
             )
         r(wid)
         filtered_points = self._filtered_points(triangle.points[:6])
         assert (
-            triangle.antialiasing_line_points
-            == filtered_points + filtered_points[:2]
+            triangle.antialiasing_line_points == filtered_points + filtered_points[:2]
         )
 
         wid = Widget()
@@ -898,26 +864,29 @@ class SmoothVertexInstructionTest(GraphicUnitTest):
             Color(0, 0, 1, 0.5)
             triangle = SmoothTriangle(
                 points=[
-                    125, 200,
-                    200, 100,
-                    100, 100,
-                    500, 500, 400, 400  # Irrelevant, just for testing purposes
+                    125,
+                    200,
+                    200,
+                    100,
+                    100,
+                    100,
+                    500,
+                    500,
+                    400,
+                    400,  # Irrelevant, just for testing purposes
                 ]
             )
         r(wid)
         filtered_points = self._filtered_points(triangle.points[:6])
         assert (
-            triangle.antialiasing_line_points
-            == filtered_points + filtered_points[:2]
+            triangle.antialiasing_line_points == filtered_points + filtered_points[:2]
         )
 
         # Test disabling antialiasing if the points are very close.
         wid = Widget()
         with wid.canvas:
             Color(0, 1, 0, 0.5)
-            triangle = SmoothTriangle(
-                points=[100, 100, 100.5, 100, 100, 100.5]
-            )
+            triangle = SmoothTriangle(points=[100, 100, 100.5, 100, 100, 100.5])
         r(wid)
         assert triangle.antialiasing_line_points == []
 
@@ -925,8 +894,7 @@ class SmoothVertexInstructionTest(GraphicUnitTest):
         triangle.points = [125, 200, 200, 100, 100, 100]
         r(wid)
         assert (
-            triangle.antialiasing_line_points
-            == filtered_points + filtered_points[:2]
+            triangle.antialiasing_line_points == filtered_points + filtered_points[:2]
         )
 
         # disabling antialiasing.
@@ -938,8 +906,7 @@ class SmoothVertexInstructionTest(GraphicUnitTest):
         triangle.source = ""
         r(wid)
         assert (
-            triangle.antialiasing_line_points
-            == filtered_points + filtered_points[:2]
+            triangle.antialiasing_line_points == filtered_points + filtered_points[:2]
         )
 
     def test_smoothquad(self):
@@ -954,10 +921,7 @@ class SmoothVertexInstructionTest(GraphicUnitTest):
             quad = SmoothQuad(points=[100, 100, 100, 200, 200, 200, 200, 100])
         r(wid)
         filtered_points = self._filtered_points(quad.points)
-        assert (
-            quad.antialiasing_line_points
-            == filtered_points + filtered_points[:2]
-        )
+        assert quad.antialiasing_line_points == filtered_points + filtered_points[:2]
 
         wid = Widget()
         with wid.canvas:
@@ -965,28 +929,20 @@ class SmoothVertexInstructionTest(GraphicUnitTest):
             quad = SmoothQuad(points=[200, 100, 200, 200, 100, 200, 100, 100])
         r(wid)
         filtered_points = self._filtered_points(quad.points)
-        assert (
-            quad.antialiasing_line_points
-            == filtered_points + filtered_points[:2]
-        )
+        assert quad.antialiasing_line_points == filtered_points + filtered_points[:2]
 
         # Test disabling antialiasing if the points are very close.
         wid = Widget()
         with wid.canvas:
             Color(0, 1, 0, 0.5)
-            quad = SmoothQuad(
-                points=[200, 100, 200, 100.8, 100, 100.8, 100, 100]
-            )
+            quad = SmoothQuad(points=[200, 100, 200, 100.8, 100, 100.8, 100, 100])
         r(wid)
         assert quad.antialiasing_line_points == []
 
         # re-enable antialiasing line rendering.
         quad.points = [200, 100, 200, 200, 100, 200, 100, 100]
         r(wid)
-        assert (
-            quad.antialiasing_line_points
-            == filtered_points + filtered_points[:2]
-        )
+        assert quad.antialiasing_line_points == filtered_points + filtered_points[:2]
 
         # disabling antialiasing.
         quad.texture = self._get_texture()
@@ -996,14 +952,10 @@ class SmoothVertexInstructionTest(GraphicUnitTest):
         # re-enable antialiasing.
         quad.source = ""
         r(wid)
-        assert (
-            quad.antialiasing_line_points
-            == filtered_points + filtered_points[:2]
-        )
+        assert quad.antialiasing_line_points == filtered_points + filtered_points[:2]
 
 
 class FBOInstructionTestCase(GraphicUnitTest):
-
     def test_fbo_pixels(self):
         from kivy.graphics import Fbo, ClearColor, ClearBuffers, Ellipse
 
@@ -1014,11 +966,10 @@ class FBOInstructionTestCase(GraphicUnitTest):
             Ellipse(pos=(100, 100), size=(100, 100))
         fbo.draw()
         data = fbo.pixels
-        fbo.texture.save('results.png')
+        fbo.texture.save("results.png")
 
 
 class TransformationsTestCase(GraphicUnitTest):
-
     def test_identity_creation(self):
         from kivy.graphics import LoadIdentity
 
@@ -1044,28 +995,31 @@ class TransformationsTestCase(GraphicUnitTest):
 
     def test_translate_creation(self):
         from kivy.graphics import Translate
+
         self.check_transform_works(Translate)
 
     def test_scale_creation(self):
         from kivy.graphics import Scale
+
         self.check_transform_works(Scale)
 
 
 class CallbackInstructionTest(GraphicUnitTest):
-
     def test_from_kv(self):
         from textwrap import dedent
         from kivy.lang import Builder
 
-        root = Builder.load_string(dedent("""\
+        root = Builder.load_string(
+            dedent("""\
         Widget:
             canvas:
                 Callback:
                     callback: lambda __: setattr(self, 'callback_test', 'TEST')
-        """))
+        """)
+        )
         r = self.render
         r(root)
-        self.assertTrue(root.callback_test == 'TEST')
+        self.assertTrue(root.callback_test == "TEST")
 
 
 @pytest.fixture
@@ -1073,30 +1027,31 @@ def widget_verify_thread(request):
     from kivy.uix.widget import Widget
     from kivy.config import Config
 
-    original = Config.get('graphics', 'verify_gl_main_thread')
-    Config.set('graphics', 'verify_gl_main_thread', request.param)
+    original = Config.get("graphics", "verify_gl_main_thread")
+    Config.set("graphics", "verify_gl_main_thread", request.param)
 
     widget = Widget()
     yield widget, request.param
 
-    Config.set('graphics', 'verify_gl_main_thread', original)
+    Config.set("graphics", "verify_gl_main_thread", original)
 
 
 @requires_graphics
-@pytest.mark.parametrize('widget_verify_thread', ['0', '1'], indirect=True)
+@pytest.mark.parametrize("widget_verify_thread", ["0", "1"], indirect=True)
 def test_graphics_main_thread(widget_verify_thread):
     from kivy.graphics import Color
 
     widget, verify_thread = widget_verify_thread
     with widget.canvas:
         color = Color()
-    color.rgb = .1, .2, .3
+    color.rgb = 0.1, 0.2, 0.3
 
 
 @requires_graphics
-@pytest.mark.parametrize('widget_verify_thread', ['0', '1'], indirect=True)
+@pytest.mark.parametrize("widget_verify_thread", ["0", "1"], indirect=True)
 def test_create_graphics_second_thread(widget_verify_thread):
     from kivy.graphics import Color
+
     widget, verify_thread = widget_verify_thread
     exception = None
 
@@ -1104,7 +1059,7 @@ def test_create_graphics_second_thread(widget_verify_thread):
         nonlocal exception
         try:
             with widget.canvas:
-                if verify_thread == '1':
+                if verify_thread == "1":
                     with pytest.raises(TypeError):
                         Color()
                 else:
@@ -1121,9 +1076,10 @@ def test_create_graphics_second_thread(widget_verify_thread):
 
 
 @requires_graphics
-@pytest.mark.parametrize('widget_verify_thread', ['0', '1'], indirect=True)
+@pytest.mark.parametrize("widget_verify_thread", ["0", "1"], indirect=True)
 def test_change_graphics_second_thread(widget_verify_thread):
     from kivy.graphics import Color
+
     widget, verify_thread = widget_verify_thread
     with widget.canvas:
         color = Color()
@@ -1133,11 +1089,11 @@ def test_change_graphics_second_thread(widget_verify_thread):
     def callback():
         nonlocal exception
         try:
-            if verify_thread == '1':
+            if verify_thread == "1":
                 with pytest.raises(TypeError):
-                    color.rgb = .1, .2, .3
+                    color.rgb = 0.1, 0.2, 0.3
             else:
-                color.rgb = .1, .2, .3
+                color.rgb = 0.1, 0.2, 0.3
         except BaseException as e:
             exception = e, sys.exc_info()[2]
             raise

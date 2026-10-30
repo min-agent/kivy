@@ -2,6 +2,7 @@
 Resource loading tests
 ======================
 """
+
 import pytest
 import tempfile
 import os
@@ -69,11 +70,11 @@ def test_timestamp_and_lastaccess(test_file):
     ts = Cache.get_timestamp(RESOURCE_CACHE, test_file)
     last_access = Cache.get_lastaccess(RESOURCE_CACHE, test_file)
 
-    assert ts >= start, 'Last timestamp not accurate.'
-    assert last_access >= start, 'Last access time is not accurate.'
+    assert ts >= start, "Last timestamp not accurate."
+    assert last_access >= start, "Last access time is not accurate."
 
 
 def test_print_usage():
-    with patch('kivy.cache.print') as mock_print:
+    with patch("kivy.cache.print") as mock_print:
         Cache.print_usage()
         mock_print.assert_called()

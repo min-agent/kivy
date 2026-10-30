@@ -1,4 +1,4 @@
-'''
+"""
 FFmpeg based video abstraction
 ==============================
 
@@ -41,9 +41,9 @@ Finally, before running you need to ensure that ffpyplayer is in python's path.
     MediaPlayer object, those threads will remain alive, hanging kivy. What
     this means is that you have to be sure to delete the MediaPlayer object
     before kivy exits by setting it to None.
-'''
+"""
 
-__all__ = ('VideoFFPy', )
+__all__ = ("VideoFFPy",)
 
 try:
     import ffpyplayer
@@ -64,19 +64,25 @@ from kivy.graphics.fbo import Fbo
 from kivy.weakmethod import WeakMethod
 import time
 
-Logger.info('VideoFFPy: Using ffpyplayer {}'.format(ffpyplayer.version))
+Logger.info("VideoFFPy: Using ffpyplayer {}".format(ffpyplayer.version))
 
 
-logger_func = {'quiet': Logger.critical, 'panic': Logger.critical,
-               'fatal': Logger.critical, 'error': Logger.error,
-               'warning': Logger.warning, 'info': Logger.info,
-               'verbose': Logger.debug, 'debug': Logger.debug}
+logger_func = {
+    "quiet": Logger.critical,
+    "panic": Logger.critical,
+    "fatal": Logger.critical,
+    "error": Logger.error,
+    "warning": Logger.warning,
+    "info": Logger.info,
+    "verbose": Logger.debug,
+    "debug": Logger.debug,
+}
 
 
 def _log_callback(message, level):
     message = message.strip()
     if message:
-        logger_func[level]('ffpyplayer: {}'.format(message))
+        logger_func[level]("ffpyplayer: {}".format(message))
 
 
 if not get_log_callback():
@@ -84,7 +90,6 @@ if not get_log_callback():
 
 
 class VideoFFPy(VideoBase):
-
     YUV_RGB_FS = """
     $HEADER$
     uniform sampler2D tex_y;
@@ -121,7 +126,7 @@ class VideoFFPy(VideoBase):
         # player paused and can probably be removed as soon as the 'eof'
         # receiving issue is solved.
         # See https://github.com/matham/ffpyplayer/issues/142
-        return self.filename.startswith('rtsp://')
+        return self.filename.startswith("rtsp://")
 
     def __del__(self):
         self.unload()
@@ -141,9 +146,11 @@ class VideoFFPy(VideoBase):
     def _player_callback(self, selector, value):
         if self._ffplayer is None:
             return
-        if selector == 'quit':
+        if selector == "quit":
+
             def close(*args):
                 self.unload()
+
             Clock.schedule_once(close, 0)
 
     def _get_position(self):
@@ -162,19 +169,19 @@ class VideoFFPy(VideoBase):
     def _get_duration(self):
         if self._ffplayer is None:
             return 0
-        return self._ffplayer.get_metadata()['duration']
+        return self._ffplayer.get_metadata()["duration"]
 
     @mainthread
     def _do_eos(self):
-        if self.eos == 'pause':
+        if self.eos == "pause":
             self.pause()
-        elif self.eos == 'stop':
+        elif self.eos == "stop":
             self.stop()
-        elif self.eos == 'loop':
+        elif self.eos == "loop":
             # this causes a seek to zero
             self.position = 0
 
-        self.dispatch('on_eos')
+        self.dispatch("on_eos")
 
     @mainthread
     def _finish_setup(self):
@@ -184,7 +191,7 @@ class VideoFFPy(VideoBase):
         # it if user didn't request pause meanwhile
         if self._ffplayer is not None:
             self._ffplayer.set_volume(self._volume)
-            self._ffplayer.set_pause(self._state == 'paused')
+            self._ffplayer.set_pause(self._state == "paused")
             self._wakeup_thread()
 
     def _redraw(self, *args):
@@ -198,48 +205,43 @@ class VideoFFPy(VideoBase):
         if img.get_size() != self._size or self._texture is None:
             self._size = w, h = img.get_size()
 
-            if self._out_fmt == 'yuv420p':
+            if self._out_fmt == "yuv420p":
                 w2 = int(w / 2)
                 h2 = int(h / 2)
-                self._tex_y = Texture.create(
-                    size=(w, h), colorfmt='luminance')
-                self._tex_u = Texture.create(
-                    size=(w2, h2), colorfmt='luminance')
-                self._tex_v = Texture.create(
-                    size=(w2, h2), colorfmt='luminance')
+                self._tex_y = Texture.create(size=(w, h), colorfmt="luminance")
+                self._tex_u = Texture.create(size=(w2, h2), colorfmt="luminance")
+                self._tex_v = Texture.create(size=(w2, h2), colorfmt="luminance")
                 self._fbo = fbo = Fbo(size=self._size)
                 with fbo:
                     BindTexture(texture=self._tex_u, index=1)
                     BindTexture(texture=self._tex_v, index=2)
                     Rectangle(size=fbo.size, texture=self._tex_y)
                 fbo.shader.fs = VideoFFPy.YUV_RGB_FS
-                fbo['tex_y'] = 0
-                fbo['tex_u'] = 1
-                fbo['tex_v'] = 2
+                fbo["tex_y"] = 0
+                fbo["tex_u"] = 1
+                fbo["tex_v"] = 2
                 self._texture = fbo.texture
             else:
-                self._texture = Texture.create(size=self._size,
-                                               colorfmt='rgba')
+                self._texture = Texture.create(size=self._size, colorfmt="rgba")
 
             # XXX FIXME
             # self.texture.add_reload_observer(self.reload_buffer)
             self._texture.flip_vertical()
-            self.dispatch('on_load')
+            self.dispatch("on_load")
 
         if self._texture:
-            if self._out_fmt == 'yuv420p':
+            if self._out_fmt == "yuv420p":
                 dy, du, dv, _ = img.to_memoryview()
                 if dy and du and dv:
-                    self._tex_y.blit_buffer(dy, colorfmt='luminance')
-                    self._tex_u.blit_buffer(du, colorfmt='luminance')
-                    self._tex_v.blit_buffer(dv, colorfmt='luminance')
+                    self._tex_y.blit_buffer(dy, colorfmt="luminance")
+                    self._tex_u.blit_buffer(du, colorfmt="luminance")
+                    self._tex_v.blit_buffer(dv, colorfmt="luminance")
                     self._fbo.ask_update()
                     self._fbo.draw()
             else:
-                self._texture.blit_buffer(
-                    img.to_memoryview()[0], colorfmt='rgba')
+                self._texture.blit_buffer(img.to_memoryview()[0], colorfmt="rgba")
 
-            self.dispatch('on_frame')
+            self.dispatch("on_frame")
 
     def _next_frame_run(self, ffplayer):
         sleep = time.sleep
@@ -253,15 +255,15 @@ class VideoFFPy(VideoBase):
         # for buffer conversion to rgba
         # wait until we get frame metadata
         while not self._ffplayer_need_quit:
-            src_pix_fmt = ffplayer.get_metadata().get('src_pix_fmt')
+            src_pix_fmt = ffplayer.get_metadata().get("src_pix_fmt")
             if not src_pix_fmt:
                 wait_for_wakeup(0.005)
                 continue
 
             # ffpyplayer reports src_pix_fmt as bytes. this may or may not
             # change in future, so we check for both bytes and str
-            if src_pix_fmt in (b'yuv420p', 'yuv420p'):
-                self._out_fmt = 'yuv420p'
+            if src_pix_fmt in (b"yuv420p", "yuv420p"):
+                self._out_fmt = "yuv420p"
                 ffplayer.set_output_pix_fmt(self._out_fmt)
             break
 
@@ -278,12 +280,12 @@ class VideoFFPy(VideoBase):
             seek_happened = False
             if seek_queue:
                 vals = seek_queue[:]
-                del seek_queue[:len(vals)]
+                del seek_queue[: len(vals)]
                 percent, precise = vals[-1]
                 ffplayer.seek(
-                    percent * ffplayer.get_metadata()['duration'],
+                    percent * ffplayer.get_metadata()["duration"],
                     relative=False,
-                    accurate=precise
+                    accurate=precise,
                 )
                 seek_happened = True
                 did_dispatch_eof = False
@@ -300,7 +302,7 @@ class VideoFFPy(VideoBase):
                     while True:
                         frame, val = ffplayer.get_frame(show=False)
                         # Exit loop on invalid val:
-                        if val in ('paused', 'eof'):
+                        if val in ("paused", "eof"):
                             break
                         # Exit loop on seek_queue updated:
                         if seek_queue:
@@ -316,7 +318,7 @@ class VideoFFPy(VideoBase):
                     # Assuming last frame is actual, just get it:
                     frame, val = ffplayer.get_frame(force_refresh=True)
                 finally:
-                    ffplayer.set_pause(bool(self._state == 'paused'))
+                    ffplayer.set_pause(bool(self._state == "paused"))
                     # todo: this is not safe because user could have updated
                     # volume between us reading it and setting it
                     ffplayer.set_volume(self._volume)
@@ -324,12 +326,12 @@ class VideoFFPy(VideoBase):
             else:
                 frame, val = ffplayer.get_frame()
 
-            if val == 'eof':
+            if val == "eof":
                 if not did_dispatch_eof:
                     self._do_eos()
                     did_dispatch_eof = True
                 wait_for_wakeup(None)
-            elif val == 'paused':
+            elif val == "paused":
                 did_dispatch_eof = False
                 wait_for_wakeup(None)
             else:
@@ -338,14 +340,19 @@ class VideoFFPy(VideoBase):
                     self._next_frame = frame
                     trigger()
                 else:
-                    val = val if val else (1 / 30.)
+                    val = val if val else (1 / 30.0)
                 wait_for_wakeup(val)
 
         ffplayer.close_player()
 
     def seek(self, percent, precise=True):
         # still save seek while thread is setting up
-        self._seek_queue.append((percent, precise,))
+        self._seek_queue.append(
+            (
+                percent,
+                precise,
+            )
+        )
         self._wakeup_thread()
 
     def stop(self):
@@ -354,71 +361,71 @@ class VideoFFPy(VideoBase):
     def pause(self):
         # if state hasn't been set (empty), there's no player. If it's
         # paused, nothing to do so just handle playing
-        if self._state == 'playing':
+        if self._state == "playing":
             # we could be in limbo while player is setting up so check. Player
             # will pause when finishing setting up
             if self._ffplayer is not None:
                 self._ffplayer.set_pause(True)
             # even in limbo, indicate to start in paused state
-            self._state = 'paused'
+            self._state = "paused"
             self._wakeup_thread()
 
     def play(self):
         # _state starts empty and is empty again after unloading
         if self._ffplayer:
             # player is already setup, just handle unpausing
-            assert self._state in ('paused', 'playing')
-            if self._state == 'paused':
+            assert self._state in ("paused", "playing")
+            if self._state == "paused":
                 self._ffplayer.set_pause(False)
-                self._state = 'playing'
+                self._state = "playing"
                 self._wakeup_thread()
             return
 
         # we're now either in limbo state waiting for thread to setup,
         # or no thread has been started
-        if self._state == 'playing':
+        if self._state == "playing":
             # in limbo, just wait for thread to setup player
             return
-        elif self._state == 'paused':
+        elif self._state == "paused":
             # in limbo, still unpause for when player becomes ready
-            self._state = 'playing'
+            self._state = "playing"
             self._wakeup_thread()
             return
 
         # load first unloads
         self.load()
-        self._out_fmt = 'rgba'
+        self._out_fmt = "rgba"
         # if no stream, it starts internally paused, but unpauses itself
         # if stream and we start paused, we sometimes receive eof after a
         # few frames, depending on the stream producer.
         # XXX: This probably needs to be figured out in ffpyplayer, using
         #      ffplay directly works.
         ff_opts = {
-            'paused': not self._is_stream,
-            'out_fmt': self._out_fmt,
-            'sn': True,
-            'volume': self._volume,
+            "paused": not self._is_stream,
+            "out_fmt": self._out_fmt,
+            "sn": True,
+            "volume": self._volume,
         }
         ffplayer = MediaPlayer(
-            self._filename, callback=self._player_callback,
-            thread_lib='SDL',
-            loglevel='info', ff_opts=ff_opts
+            self._filename,
+            callback=self._player_callback,
+            thread_lib="SDL",
+            loglevel="info",
+            ff_opts=ff_opts,
         )
 
         # Disabled as an attempt to fix kivy issue #6210
         # self._ffplayer.set_volume(self._volume)
 
         self._thread = Thread(
-            target=self._next_frame_run,
-            name='Next frame',
-            args=(ffplayer, )
+            target=self._next_frame_run, name="Next frame", args=(ffplayer,)
         )
         # todo: remove
         self._thread.daemon = True
 
         # start in playing mode, but _ffplayer isn't set until ready. We're
         # now in a limbo state
-        self._state = 'playing'
+        self._state = "playing"
         self._thread.start()
 
     def load(self):
@@ -441,7 +448,7 @@ class VideoFFPy(VideoBase):
             self._ffplayer = None
         self._next_frame = None
         self._size = (0, 0)
-        self._state = ''
+        self._state = ""
         self._seek_queue = []
 
         # reset for next load since thread is dead for sure

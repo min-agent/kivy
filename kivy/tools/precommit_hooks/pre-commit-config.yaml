@@ -21,10 +21,12 @@ repos:
     -   id: pretty-format-json
         args:
         - --autofix
--   repo: https://github.com/pycqa/flake8
-    rev: 3.8.4
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.3
     hooks:
-    -   id: flake8
+    -   id: ruff-check
+    #   args: [ --fix ]
+    # - id: ruff-format
 -   repo: https://github.com/Lucas-C/pre-commit-hooks
     rev: v1.1.7
     hooks:

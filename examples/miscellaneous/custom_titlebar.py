@@ -3,6 +3,7 @@ from kivy.app import App
 from kivy.lang.builder import Builder
 from kivy.core.window import Window
 from kivy.logger import Logger
+
 kv = """
 #:import rgba kivy.utils.rgba
 <TitleBar>:
@@ -37,7 +38,6 @@ class TitleBar(BoxLayout):
 
 
 class CustomTitleBar(App):
-
     def build(self):
         root = Builder.load_string(kv)
         Window.custom_titlebar = True
@@ -46,8 +46,7 @@ class CustomTitleBar(App):
         if Window.set_custom_titlebar(title_bar):
             Logger.info("Window: setting custom titlebar successful")
         else:
-            Logger.info("Window: setting custom titlebar "
-                        "Not allowed on this system ")
+            Logger.info("Window: setting custom titlebar Not allowed on this system ")
         self.title = "MyApp"
         return root
 

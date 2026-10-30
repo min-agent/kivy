@@ -4,9 +4,9 @@ from shutil import rmtree
 
 
 class WidgetTestCase(unittest.TestCase):
-
     def setUp(self):
         from kivy.uix.widget import Widget
+
         self.cls = Widget
         self.root = Widget()
 
@@ -21,6 +21,7 @@ class WidgetTestCase(unittest.TestCase):
 
     def test_invalid_add_widget(self):
         from kivy.uix.widget import WidgetException
+
         try:
             # None of them should work
             self.root.add_widget(None)
@@ -104,23 +105,24 @@ class WidgetTestCase(unittest.TestCase):
         from kivy.uix.button import Button
         from os.path import join
 
-        wid = Button(text='test', size=(200, 100), size_hint=(None, None))
+        wid = Button(text="test", size=(200, 100), size_hint=(None, None))
         self.root.add_widget(wid)
 
         tmp = mkdtemp()
-        wid.export_to_png(join(tmp, 'a.png'))
-        wid.export_to_png(join(tmp, 'b.png'), scale=.5)
-        wid.export_to_png(join(tmp, 'c.png'), scale=2)
+        wid.export_to_png(join(tmp, "a.png"))
+        wid.export_to_png(join(tmp, "b.png"), scale=0.5)
+        wid.export_to_png(join(tmp, "c.png"), scale=2)
 
-        self.assertEqual(CoreImage(join(tmp, 'a.png')).size, (200, 100))
-        self.assertEqual(CoreImage(join(tmp, 'b.png')).size, (100, 50))
-        self.assertEqual(CoreImage(join(tmp, 'c.png')).size, (400, 200))
+        self.assertEqual(CoreImage(join(tmp, "a.png")).size, (200, 100))
+        self.assertEqual(CoreImage(join(tmp, "b.png")).size, (100, 50))
+        self.assertEqual(CoreImage(join(tmp, "c.png")).size, (400, 200))
         rmtree(tmp)
 
         self.root.remove_widget(wid)
 
     def test_disabled(self):
         from kivy.uix.widget import Widget
+
         w = Widget(disabled=None)
         w.disabled = False
         w.disabled = True

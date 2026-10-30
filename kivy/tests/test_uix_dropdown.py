@@ -8,7 +8,6 @@ def dropdown_app():
     from kivy.uix.label import Label
 
     class RootButton(Button):
-
         dropdown = None
 
         def on_touch_down(self, touch):
@@ -25,14 +24,14 @@ def dropdown_app():
 
     class TestApp(UnitKivyApp, App):
         def build(self):
-            root = RootButton(text='Root')
-            self.attach_widget = Label(text='Attached widget')
+            root = RootButton(text="Root")
+            self.attach_widget = Label(text="Attached widget")
             root.add_widget(self.attach_widget)
 
             root.dropdown = self.dropdown = DropDown(
-                auto_dismiss=True, min_state_time=0)
-            self.inner_widget = w = Label(
-                size_hint=(None, None), text='Dropdown')
+                auto_dismiss=True, min_state_time=0
+            )
+            self.inner_widget = w = Label(size_hint=(None, None), text="Dropdown")
             root.dropdown.add_widget(w)
             return root
 
@@ -73,8 +72,8 @@ async def test_dropdown_app(kivy_app):
 
     # start outside but release in dropdown - should close
     async for _ in kivy_app.do_touch_drag(
-            pos=(button.center_x + button.width / 4, button.center_y),
-            target_widget=button):
+        pos=(button.center_x + button.width / 4, button.center_y), target_widget=button
+    ):
         pass
     assert dropdown.attach_to is None
 
@@ -86,6 +85,7 @@ async def test_dropdown_app(kivy_app):
 
     # press outside dropdown area to close it - should close
     async for _ in kivy_app.do_touch_down_up(
-            pos=(button.center_x + button.width / 4, button.center_y)):
+        pos=(button.center_x + button.width / 4, button.center_y)
+    ):
         pass
     assert dropdown.attach_to is None

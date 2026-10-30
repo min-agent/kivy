@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-'''
+"""
 on_textedit event sample.
-'''
+"""
+
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.lang import Builder
@@ -28,7 +29,7 @@ class MainWidget(Widget):
 
     def __init__(self, **kwargs):
         super(MainWidget, self).__init__(**kwargs)
-        self.text = ''
+        self.text = ""
 
     def confim(self):
         self.text = self.ids["text_box"].text
@@ -48,8 +49,8 @@ class TextEditTestApp(App):
         return MainWidget()
 
 
-if __name__ == '__main__':
-    Builder.load_string('''
+if __name__ == "__main__":
+    Builder.load_string("""
 <MainWidget>:
     BoxLayout:
         orientation: 'vertical'
@@ -100,5 +101,5 @@ if __name__ == '__main__':
                     Rectangle:
                         pos: self.pos
                         size: self.size
-    ''')
+    """)
     TextEditTestApp().run()

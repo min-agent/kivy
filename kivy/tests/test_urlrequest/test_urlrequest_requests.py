@@ -2,6 +2,7 @@
 UrlRequest tests
 ================
 """
+
 import threading
 from base64 import b64encode
 from datetime import datetime
@@ -253,7 +254,7 @@ class TestCallbacks:
             body="x" * 100,
             status=200,
             content_type="text/plain",
-            auto_calculate_content_length=True
+            auto_calculate_content_length=True,
         )
 
         req = UrlRequest(
@@ -280,7 +281,7 @@ class TestCallbacks:
             body="x" * 100,
             status=200,
             content_type="text/plain",
-            auto_calculate_content_length=True
+            auto_calculate_content_length=True,
         )
 
         req = UrlRequest(
@@ -344,7 +345,7 @@ class TestCallbacks:
             req_headers=head,
             on_finish=_queue._on_finish,
             debug=True,
-            auth=HTTPBasicAuth("exampleuser", "examplepassword")
+            auth=HTTPBasicAuth("exampleuser", "examplepassword"),
         )
         self.wait_request_is_finished(kivy_clock, req)
 

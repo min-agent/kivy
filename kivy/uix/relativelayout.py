@@ -1,4 +1,4 @@
-'''
+"""
 Relative Layout
 ===============
 
@@ -259,23 +259,22 @@ use the :attr:`pos_hint` property:
     :class:`Scatter` (e.g. inverse matrix, recalculating multiple properties
     etc.)
 
-'''
+"""
 
-__all__ = ('RelativeLayout', )
+__all__ = ("RelativeLayout",)
 
 from kivy.uix.floatlayout import FloatLayout
 
 
 class RelativeLayout(FloatLayout):
-    '''RelativeLayout class, see module documentation for more information.
-    '''
+    """RelativeLayout class, see module documentation for more information."""
 
     def __init__(self, **kw):
         super(RelativeLayout, self).__init__(**kw)
         funbind = self.funbind
         trigger = self._trigger_layout
-        funbind('pos', trigger)
-        funbind('pos_hint', trigger)
+        funbind("pos", trigger)
+        funbind("pos_hint", trigger)
 
     def do_layout(self, *args):
         super(RelativeLayout, self).do_layout(pos=(0, 0))
@@ -291,7 +290,7 @@ class RelativeLayout(FloatLayout):
         return super(RelativeLayout, self)._apply_transform(m, (0, 0))
 
     def on_motion(self, etype, me):
-        if me.type_id in self.motion_filter and 'pos' in me.profile:
+        if me.type_id in self.motion_filter and "pos" in me.profile:
             me.push()
             me.apply_transform_2d(self.to_local)
             ret = super().on_motion(etype, me)

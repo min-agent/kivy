@@ -1,7 +1,8 @@
 from kivy.base import runTouchApp
 from kivy.lang import Builder
 
-runTouchApp(Builder.load_string('''
+runTouchApp(
+    Builder.load_string("""
 ActionBar:
     pos_hint: {'top':1}
     ActionView:
@@ -29,4 +30,5 @@ ActionBar:
                 text: 'Btn6'
             ActionButton:
                 text: 'Btn7'
-'''))
+""")
+)

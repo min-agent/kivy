@@ -1,9 +1,9 @@
-'''
+"""
 Svg tests
 ==============
 
 Testing Svg rendering.
-'''
+"""
 
 from kivy.tests.common import GraphicUnitTest
 
@@ -34,7 +34,6 @@ ROTATE_SVG = """<?xml version="1.0" standalone="no"?>
 
 
 class SvgTest(GraphicUnitTest):
-
     def test_simple(self):
         import xml.etree.ElementTree as ET
         from kivy.uix.widget import Widget

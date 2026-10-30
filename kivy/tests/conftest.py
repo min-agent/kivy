@@ -1,17 +1,17 @@
 import pytest
 import os
 
-kivy_eventloop = os.environ.get('KIVY_EVENTLOOP', 'asyncio')
+kivy_eventloop = os.environ.get("KIVY_EVENTLOOP", "asyncio")
 
 try:
-    from .fixtures import kivy_app, kivy_clock, kivy_metrics, \
-        kivy_exception_manager
+    from .fixtures import kivy_app, kivy_clock, kivy_metrics, kivy_exception_manager
 except SyntaxError:
     # async app tests would be skipped due to async_run forcing it to skip so
     # it's ok to fail here as it won't be used anyway
     pass
 
-if kivy_eventloop != 'trio':
+if kivy_eventloop != "trio":
+
     @pytest.fixture()
     def nursery():
         pass
