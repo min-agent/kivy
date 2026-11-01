@@ -23,13 +23,6 @@ import tempfile
 from setuptools import Distribution, Extension, find_packages, setup
 from setuptools.command.build_ext import build_ext
 
-if sys.version_info[0] == 2:
-    logging.critical(
-        "Unsupported Python version detected!: Kivy 2.0.0 and higher does not "
-        "support Python 2. Please upgrade to Python 3, or downgrade Kivy to "
-        "1.11.1 - the last Kivy release that still supports Python 2."
-    )
-
 
 def ver_equal(self, other):
     return self.version == other

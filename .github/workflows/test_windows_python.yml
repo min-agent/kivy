@@ -8,13 +8,14 @@ env:
   KIVY_SPLIT_EXAMPLES: 1
   SETUPTOOLS_USE_DISTUTILS: local
   UV_SYSTEM_PYTHON: "1"
+  UV_FIND_LINKS: wheelhouse
 
 jobs:
   unit_test:
     runs-on: windows-latest
     strategy:
       matrix:
-        python: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13' ]
+        python: ['3.14', '3.15']
         arch: ['x64']
     steps:
     - uses: actions/checkout@v4
@@ -27,6 +28,8 @@ jobs:
       uses: astral-sh/setup-uv@v10.3.3
       with:
         version: "0.13.6"
+    - name: Prepare kivy_deps wheels
+      run: python tools/repack_kivy_deps_wheels.py
     - name: Install Kivy
       run: |
         . .\.ci\windows_ci.ps1

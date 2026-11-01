@@ -471,8 +471,9 @@ from functools import wraps, partial
 from kivy.context import register_context
 from kivy.config import Config
 from kivy.logger import Logger
-from kivy.compat import clock as _default_time
 import time
+
+_default_time = time.perf_counter
 
 try:
     from kivy._clock import (
@@ -573,7 +574,7 @@ try:
         def _usleep(microseconds, obj=None):
             _libc_usleep(int(microseconds))
 
-except (OSError, ImportError, AttributeError):
+except OSError, ImportError, AttributeError:
     # ImportError: ctypes is not available on python-for-android.
     # AttributeError: ctypes is now available on python-for-android, but
     #   "undefined symbol: clock_gettime". CF #3797
@@ -829,7 +830,7 @@ class ClockBaseBehavior(object):
             raise
 
 
-ClockBaseBehavior.time.__doc__ = """Proxy method for :func:`~kivy.compat.clock`. """
+ClockBaseBehavior.time.__doc__ = """Proxy method for :func:`time.perf_counter`. """
 
 
 class ClockBaseInterruptBehavior(ClockBaseBehavior):

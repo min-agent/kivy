@@ -240,13 +240,14 @@ class ParserRuleProperty(object):
         if isinstance(node, ast.Name):
             yield node.id
 
-        if isinstance(node, (ast.JoinedStr, ast.BoolOp)):
+        if isinstance(node, ast.JoinedStr):
             for n in node.values:
-                if isinstance(n, ast.Str):
-                    # NOTE: required for python3.6
-                    yield from cls.get_names_from_expression(n.s)
-                else:
+                if isinstance(n, ast.FormattedValue):
                     yield from cls.get_names_from_expression(n.value)
+
+        if isinstance(node, ast.BoolOp):
+            for n in node.values:
+                yield from cls.get_names_from_expression(n)
 
         if isinstance(node, ast.BinOp):
             yield from cls.get_names_from_expression(node.right)

@@ -56,7 +56,7 @@ cdef class Buffer:
         self.l_free = <int *>newptr
 
         # Initialize the list with index of free block
-        for i in xrange(self.block_count, block_count):
+        for i in range(self.block_count, block_count):
             self.l_free[i] = <int>i
 
         # Update how many block are allocated
@@ -66,7 +66,7 @@ cdef class Buffer:
         '''Clear the whole buffer and mark all blocks as available.
         '''
         cdef long i
-        for i in xrange(self.block_count):
+        for i in range(self.block_count):
             self.l_free[i] = <int>i
         self.i_free = 0
 
@@ -81,7 +81,7 @@ cdef class Buffer:
             self.grow(self.block_count + count)
 
         # Add all the block inside our buffer
-        for i in xrange(count):
+        for i in range(count):
             p = <void *>(<char *>blocks + (self.block_size * i))
 
             # Take a free block
@@ -100,7 +100,7 @@ cdef class Buffer:
         '''
         cdef int i
 
-        for i in xrange(count):
+        for i in range(count):
             # Append the new indice as free block
             self.i_free -= 1
             self.l_free[self.i_free] = indices[i]

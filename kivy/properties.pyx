@@ -1464,7 +1464,7 @@ cdef class ReferenceListProperty(Property):
         # prevent dependency loop
         ps.stop_event = 1
         props = ps.properties
-        for idx in xrange(len(props)):
+        for idx in range(len(props)):
             prop = props[idx]
             x = value[idx]
             prop.set(obj, x)
@@ -1485,7 +1485,7 @@ cdef class ReferenceListProperty(Property):
         ps.stop_event = 1
         if isinstance(key, slice):
             props = ps.properties[key]
-            for index in xrange(len(props)):
+            for index in range(len(props)):
                 prop = props[index]
                 x = value[index]
                 res = prop.set(obj, x) or res

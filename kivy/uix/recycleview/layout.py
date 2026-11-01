@@ -12,7 +12,6 @@ The Layouts handle the presentation of views for the
     the documentation is not complete at this time.
 """
 
-from kivy.compat import string_types
 from kivy.factory import Factory
 from kivy.properties import StringProperty, ObjectProperty
 from kivy.uix.behaviors import CompoundSelectionBehavior
@@ -245,5 +244,5 @@ refresh_view_layout`.
 
     def on_viewclass(self, instance, value):
         # resolve the real class if it was a string.
-        if isinstance(value, string_types):
+        if isinstance(value, str):
             self.viewclass = getattr(Factory, value)

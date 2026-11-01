@@ -58,8 +58,6 @@ def ensure_web_server(root=None):
 
     if not root:
         root = os.path.join(os.path.dirname(__file__), "..", "..")
-    need_chdir = sys.version_info.major == 3 and sys.version_info.minor <= 6
-    curr_dir = os.getcwd()
 
     def _start_web_server():
         global http_server
@@ -67,11 +65,7 @@ def ensure_web_server(root=None):
         from socketserver import TCPServer
 
         try:
-            if need_chdir:
-                os.chdir(root)
-                handler = SimpleHTTPRequestHandler
-            else:
-                handler = partial(SimpleHTTPRequestHandler, directory=root)
+            handler = partial(SimpleHTTPRequestHandler, directory=root)
 
             http_server = TCPServer(("", 8000), handler, bind_and_activate=False)
             http_server.daemon_threads = True
@@ -87,9 +81,6 @@ def ensure_web_server(root=None):
         finally:
             http_server = None
             http_server_ready.set()
-
-            if need_chdir:
-                os.chdir(curr_dir)
 
     th = threading.Thread(target=_start_web_server)
     th.daemon = True
@@ -176,6 +167,8 @@ class GraphicUnitTest(_base):
         Window.register()
         Window.initialized = True
         Window.close = lambda *s: None
+        self._old_density = Window._density
+        Window._density = 1.0
         self.clear_window_and_event_loop()
 
     def clear_window_and_event_loop(self):
@@ -332,6 +325,10 @@ class GraphicUnitTest(_base):
 
         Window.unbind(on_flip=self.on_window_flip)
         self.clear_window_and_event_loop()
+        old_density = getattr(self, "_old_density", None)
+        if old_density is not None:
+            Window._density = old_density
+            self._old_density = None
         self.Window = None
         stopTouchApp()
         if not fake and self.test_failed:
@@ -506,12 +503,6 @@ def async_run(func=None, app_cls_func=None):
                 reason="Skipping because gl backend is set to mock"
             )(func)
 
-        if sys.version_info[0] < 3 or sys.version_info[1] <= 5:
-            return pytest.mark.skip(
-                reason="Skipping because graphics tests are not supported on "
-                "py3.5, only on py3.6+"
-            )(func)
-
         if app_cls_func is not None:
             func = pytest.mark.parametrize(
                 "kivy_app",
@@ -525,7 +516,7 @@ def async_run(func=None, app_cls_func=None):
             try:
                 import pytest_asyncio
 
-                return pytest.mark.asyncio(pytest_asyncio.fixture(func))
+                return pytest.mark.asyncio(func)
             except ImportError:
                 return pytest.mark.skip(
                     reason='KIVY_EVENTLOOP == "asyncio" but '

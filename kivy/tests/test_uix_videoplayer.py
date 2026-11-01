@@ -20,11 +20,15 @@ def videoplayer_app():
 async def test_default_thumbnail(
     kivy_app,
 ):
-    with patch(
-        "kivy.uix.videoplayer.VideoPlayer._load_thumbnail"
-    ) as mock__load_thumbnail, patch(
-        "kivy.uix.videoplayer.VideoPlayer._load_annotations"
-    ) as mock__load_annotations, patch("kivy.uix.videoplayer.exists") as mock_exists:
+    with (
+        patch(
+            "kivy.uix.videoplayer.VideoPlayer._load_thumbnail"
+        ) as mock__load_thumbnail,
+        patch(
+            "kivy.uix.videoplayer.VideoPlayer._load_annotations"
+        ) as mock__load_annotations,
+        patch("kivy.uix.videoplayer.exists") as mock_exists,
+    ):
         mock_exists.return_value = True
         kivy_app.root.source = "data/video.mp4"
         await kivy_app.wait_clock_frames(2)
@@ -35,9 +39,12 @@ async def test_default_thumbnail(
 async def test_default_annotation(
     kivy_app,
 ):
-    with patch(
-        "kivy.uix.videoplayer.VideoPlayer._load_annotations"
-    ) as mock__load_annotations, patch("kivy.uix.videoplayer.exists") as mock_exists:
+    with (
+        patch(
+            "kivy.uix.videoplayer.VideoPlayer._load_annotations"
+        ) as mock__load_annotations,
+        patch("kivy.uix.videoplayer.exists") as mock_exists,
+    ):
         mock_exists.return_value = True
         kivy_app.root.source = "data/video.mp4"
         await kivy_app.wait_clock_frames(2)
@@ -48,11 +55,15 @@ async def test_default_annotation(
 async def test_custom_thumbnail(
     kivy_app,
 ):
-    with patch(
-        "kivy.uix.videoplayer.VideoPlayer._load_thumbnail"
-    ) as mock__load_thumbnail, patch(
-        "kivy.uix.videoplayer.VideoPlayer._load_annotations"
-    ) as mock__load_annotations, patch("kivy.uix.videoplayer.exists") as mock_exists:
+    with (
+        patch(
+            "kivy.uix.videoplayer.VideoPlayer._load_thumbnail"
+        ) as mock__load_thumbnail,
+        patch(
+            "kivy.uix.videoplayer.VideoPlayer._load_annotations"
+        ) as mock__load_annotations,
+        patch("kivy.uix.videoplayer.exists") as mock_exists,
+    ):
         mock_exists.return_value = True
         kivy_app.root.source = "data/video.mp4"
         kivy_app.root.thumbnail = "data/custom.jpg"
@@ -64,9 +75,12 @@ async def test_custom_thumbnail(
 async def test_custom_annotation(
     kivy_app,
 ):
-    with patch(
-        "kivy.uix.videoplayer.VideoPlayer._load_annotations"
-    ) as mock__load_annotations, patch("kivy.uix.videoplayer.exists") as mock_exists:
+    with (
+        patch(
+            "kivy.uix.videoplayer.VideoPlayer._load_annotations"
+        ) as mock__load_annotations,
+        patch("kivy.uix.videoplayer.exists") as mock_exists,
+    ):
         mock_exists.return_value = True
         kivy_app.root.source = "data/video.mp4"
         kivy_app.root.annotations = "data/custom.jsa"

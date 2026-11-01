@@ -699,7 +699,7 @@ cdef class Svg(RenderContext):
             cy = parse_height(e.get('cy'), self.vbox_height)
             r = parse_float(e.get('r'))
             self.new_path()
-            for i in xrange(self.circle_points):
+            for i in range(self.circle_points):
                 theta = 2 * i * pi / self.circle_points
                 self.set_position(cx + r * cos(theta), cy + r * sin(theta))
             self.close_path()
@@ -711,7 +711,7 @@ cdef class Svg(RenderContext):
             rx = parse_width(e.get('rx'), self.vbox_width)
             ry = parse_height(e.get('ry'), self.vbox_height)
             self.new_path()
-            for i in xrange(self.circle_points):
+            for i in range(self.circle_points):
                 theta = 2 * i * pi / self.circle_points
                 self.set_position(cx + rx * cos(theta), cy + ry * sin(theta))
             self.close_path()

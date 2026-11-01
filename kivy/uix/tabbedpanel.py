@@ -131,7 +131,7 @@ __all__ = (
 
 from functools import partial
 from kivy.clock import Clock
-from kivy.compat import string_types
+
 from kivy.factory import Factory
 from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.widget import Widget
@@ -677,7 +677,7 @@ class TabbedPanel(GridLayout):
         _tabs = self._tab_strip
         cls = self.default_tab_cls
 
-        if isinstance(cls, string_types):
+        if isinstance(cls, str):
             cls = Factory.get(cls)
 
         if not issubclass(cls, TabbedPanelHeader):

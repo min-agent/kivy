@@ -558,7 +558,7 @@ cdef class Point(VertexInstruction):
             free(vertices)
             raise MemoryError('indices')
 
-        for i in xrange(count):
+        for i in range(count):
             x = p[i * 2]
             y = p[i * 2 + 1]
             iv = i * 4

@@ -39,7 +39,6 @@ __all__ = (
 from os import environ, path
 from sys import platform as _sys_platform
 from re import match, split, search, MULTILINE, IGNORECASE
-from kivy.compat import string_types
 
 
 def boundary(value, minvalue, maxvalue):
@@ -87,7 +86,7 @@ def rgba(s, *args):
 
     .. versionadded:: 1.10.0
     """
-    if isinstance(s, string_types):
+    if isinstance(s, str):
         return get_color_from_hex(s)
     if isinstance(s, (list, tuple)):
         s = [x / 255.0 for x in s]

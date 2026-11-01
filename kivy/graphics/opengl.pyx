@@ -34,7 +34,7 @@ cdef GLuint *_genBegin(int n):
 
 cdef list _genEnd(int n, GLuint *data):
     cdef list out = []
-    for x in xrange(n):
+    for x in range(n):
         out.append(data[x])
     free(data)
     return out
@@ -689,7 +689,7 @@ def glDrawElements(GLenum mode, GLsizei count, GLenum type, indices):
     cdef void *ptr = NULL
     if isinstance(indices, bytes):
         ptr = <void *>(<char *>(<bytes>indices))
-    elif isinstance(indices, (long, int)):
+    elif isinstance(indices, int):
         ptr = <void *>(<unsigned int>indices)
     else:
         raise TypeError("Argument 'indices' has incorrect type (expected bytes or int).")
@@ -848,7 +848,7 @@ def glGetBooleanv(GLenum pname):
     if params == NULL:
         raise MemoryError('glGetBooleanv()')
     cgl.glGetBooleanv(pname, params)
-    cdef out = [params[i] for i in xrange(_GL_GET_SIZE[pname])]
+    cdef out = [params[i] for i in range(_GL_GET_SIZE[pname])]
     free(params)
     return out
 
@@ -862,7 +862,7 @@ def glGetBufferParameteriv(GLenum target, GLenum pname):
     if params == NULL:
         raise MemoryError('glGetBufferParameteriv()')
     cgl.glGetBufferParameteriv(target, pname, params)
-    cdef out = [params[i] for i in xrange(_GL_GET_SIZE[pname])]
+    cdef out = [params[i] for i in range(_GL_GET_SIZE[pname])]
     free(params)
     return out
 
@@ -884,7 +884,7 @@ def glGetFloatv(GLenum pname):
     if params == NULL:
         raise MemoryError('glGetFloatv()')
     cgl.glGetFloatv(pname, params)
-    cdef out = [params[i] for i in xrange(_GL_GET_SIZE[pname])]
+    cdef out = [params[i] for i in range(_GL_GET_SIZE[pname])]
     free(params)
     return out
 
@@ -898,7 +898,7 @@ def glGetFramebufferAttachmentParameteriv(GLenum target, GLenum attachment, GLen
     if params == NULL:
         raise MemoryError('glGetFramebufferAttachmentParameteriv()')
     cgl.glGetFramebufferAttachmentParameteriv(target, attachment, pname, params)
-    cdef out = [params[i] for i in xrange(_GL_GET_SIZE[pname])]
+    cdef out = [params[i] for i in range(_GL_GET_SIZE[pname])]
     free(params)
     return out
 
@@ -912,7 +912,7 @@ def glGetIntegerv(GLenum pname):
     if params == NULL:
         raise MemoryError('glGetIntegerv()')
     cgl.glGetIntegerv(pname, params)
-    cdef out = [params[i] for i in xrange(_GL_GET_SIZE[pname])]
+    cdef out = [params[i] for i in range(_GL_GET_SIZE[pname])]
     free(params)
     return out
 
@@ -1539,7 +1539,7 @@ def glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean norma
     cdef void *ptr = NULL
     if isinstance(data, bytes):
         ptr = <void *>(<char *>(<bytes>data))
-    elif isinstance(data, (long, int)):
+    elif isinstance(data, int):
         ptr = <void *>(<unsigned int>data)
     else:
         raise TypeError("Argument 'data' has incorrect type (expected bytes or int).")

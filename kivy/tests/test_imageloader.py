@@ -351,8 +351,7 @@ class ImageLoaderTestCase(unittest.TestCase):
         w, h, pixels, pitch = imgdata._data[0].get_mipmap(0)
         fmt = imgdata._data[0].fmt
 
-        # required for FFPy memview
-        # FIXME: bytearray() for py2 compat, I can't be bothered to research
+        # FIXME: bytearray() is required for FFPy memview
         if not isinstance(pixels, bytes):
             pixels = bytearray(pixels)
 

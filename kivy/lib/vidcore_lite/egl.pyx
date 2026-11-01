@@ -382,14 +382,14 @@ def ChooseConfig(Display dpy, list attrib_list, EGLint config_size):
     attribs = <EGLint*>malloc(sizeof(EGLint)*n_attrib)
     configs = <EGLConfig*>malloc(sizeof(EGLConfig)*config_size)
     try:
-        for i in xrange(n_attrib):
+        for i in range(n_attrib):
             attribs[i] = attrib_list[i]
 
         if eglChooseConfig(dpy._egldisplay, attribs,
                    configs, config_size, &num_config) == EGL_FALSE:
             raise_egl_error()
         chosen = []
-        for i in xrange(num_config):
+        for i in range(num_config):
             cfg = Config()
             cfg._eglconfig = configs[i]
             chosen.append(cfg)
@@ -414,7 +414,7 @@ def CreateWindowSurface(Display dpy, Config config, NativeWindow win,
 
     if n_attrib > 0:
         attribs = <EGLint*>malloc(sizeof(EGLint)*n_attrib)
-        for i in xrange(n_attrib):
+        for i in range(n_attrib):
             attribs[i] = attrib_list[i]
     try:
         surf = eglCreateWindowSurface(dpy._egldisplay, config._eglconfig,
@@ -437,7 +437,7 @@ def CreatePbufferSurface(Display dpy, Config config, list attrib_list):
 
     attribs = <EGLint*>malloc(sizeof(EGLint)*n_attrib)
     try:
-        for i in xrange(n_attrib):
+        for i in range(n_attrib):
             attribs[i] = attrib_list[i]
 
         surf = eglCreatePbufferSurface(dpy._egldisplay, config._eglconfig,
@@ -459,7 +459,7 @@ def CreatePbufferSurface(Display dpy, Config config, list attrib_list):
 #
 #    attribs = <EGLint*>malloc(sizeof(EGLint)*n_attrib)
 #    try:
-#        for i in xrange(n_attrib):
+#        for i in range(n_attrib):
 #            attribs[i] = attrib_list[i]
 #
 #        surf = eglCreatePixmapSurface(dpy._egldisplay, config._eglconfig,
@@ -539,7 +539,7 @@ def CreateContext(Display dpy, Config config, object share_ctx, list attrib_list
     if n_attrib > 0:
         attribs = <EGLint*>malloc(sizeof(EGLint)*n_attrib)
     try:
-        for i in xrange(n_attrib):
+        for i in range(n_attrib):
             attribs[i] = attrib_list[i]
 
         _ctx = eglCreateContext(dpy._egldisplay, config._eglconfig,

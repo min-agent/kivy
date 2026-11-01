@@ -162,7 +162,7 @@ cdef load_from_surface(SDL_Surface *image):
 
     # Palette with alpha is converted to rgba
     elif image.format.palette != NULL:
-        for n in xrange(0, image.format.palette.ncolors):
+        for n in range(0, image.format.palette.ncolors):
             if image.format.palette.colors[n].a < 0xFF:
                 fmt = 'rgba'
                 target_fmt = want_rgba

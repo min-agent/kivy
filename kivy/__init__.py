@@ -69,13 +69,6 @@ if platform == "macosx" and sys.maxsize < 9223372036854775807:
     """
     Logger.critical(r)
 
-if sys.version_info[0] == 2:
-    Logger.critical(
-        "Unsupported Python version detected!: Kivy 2.0.0 and higher does not "
-        "support Python 2. Please upgrade to Python 3, or downgrade Kivy to "
-        "1.11.0 - the last Kivy release that still supports Python 2."
-    )
-
 
 def parse_kivy_version(version):
     """Parses the kivy version as described in :func:`require` into a 3-tuple

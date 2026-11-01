@@ -135,11 +135,8 @@ from kivy.vector import Vector
 from kivy.clock import Clock
 from kivy.event import EventDispatcher
 from kivy.properties import ListProperty
-from kivy.compat import PY2
 from io import BytesIO
 
-if not PY2:
-    xrange = range
 
 # Default number of gesture matches per frame
 # FIXME: relevant number
@@ -924,7 +921,7 @@ class MultistrokeGesture(object):
         a = 0.0
         b = 0.0
 
-        for i in xrange(0, len(v1), 2):
+        for i in range(0, len(v1), 2):
             a += (v1[i] * v2[i]) + (v1[i + 1] * v2[i + 1])
             b += (v1[i] * v2[i + 1]) - (v1[i + 1] * v2[i])
 
@@ -1038,7 +1035,7 @@ class MultistrokeGesture(object):
             all the desired stroke orders.
         """
         # Seed with index of each stroke
-        self._order = [i for i in xrange(0, len(self.strokes))]
+        self._order = [i for i in range(0, len(self.strokes))]
 
         # Prepare ._orders
         self._orders = []
@@ -1064,7 +1061,7 @@ class MultistrokeGesture(object):
             self._orders.append(self_order[:])
         else:
             i = 0
-            for i in xrange(0, n):
+            for i in range(0, n):
                 self._heap_permute(n - 1)
                 if n % 2 == 1:
                     tmp = self_order[0]
@@ -1085,7 +1082,7 @@ class MultistrokeGesture(object):
             while b < pow(2, len(r)):  # use b's bits for directions
                 unistroke = []
                 unistroke_append = unistroke.append
-                for i in xrange(0, len(r)):
+                for i in range(0, len(r)):
                     pts = self_strokes[r[i]][:]
                     if (b >> i) & 1 == 1:  # is b's bit at index i 1?
                         pts.reverse()
@@ -1374,7 +1371,7 @@ def rotate_by(points, radians):
     newpoints = []
     newpoints_append = newpoints.append
 
-    for i in xrange(0, len(points)):
+    for i in range(0, len(points)):
         qx = (points[i][0] - cx) * cos - (points[i][1] - cy) * sin + cx
         qy = (points[i][0] - cx) * sin + (points[i][1] - cy) * cos + cy
         newpoints_append(Vector(qx, qy))
@@ -1448,7 +1445,7 @@ def vectorize(points, use_bounded_rotation_invariance):
         sum += newx**2 + newy**2
 
     magnitude = sqrt(sum)
-    for i in xrange(0, vector_len):
+    for i in range(0, vector_len):
         vector[i] /= magnitude
 
     return vector
@@ -1459,7 +1456,7 @@ def centroid(points):
     y = 0.0
     points_len = len(points)
 
-    for i in xrange(0, points_len):
+    for i in range(0, points_len):
         x += points[i][0]
         y += points[i][1]
 
@@ -1490,7 +1487,7 @@ def bounding_box(points):
 
 def path_length(points):
     d = 0.0
-    for i in xrange(1, len(points)):
+    for i in range(1, len(points)):
         d += distance(points[i - 1], points[i])
     return d
 

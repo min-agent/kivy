@@ -35,7 +35,6 @@ Other
 
 Other miscellaneous resources include
 
-* :file:`pep8checker`: pep8 checking scripts and git hook
 * :file:`theming`: demonstrates an alternative theme for kivy
 * :file:`travis`: travis continuous integration
 

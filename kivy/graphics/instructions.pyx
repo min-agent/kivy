@@ -16,7 +16,6 @@ include "../include/config.pxi"
 include "opcodes.pxi"
 
 from kivy.graphics.cgl cimport *
-from kivy.compat import PY2
 from kivy.logger import Logger
 from kivy.graphics.context cimport get_context, Context
 from weakref import proxy
@@ -202,7 +201,7 @@ cdef class InstructionGroup(Instruction):
 
     def indexof(self, Instruction c):
         cdef int i
-        for i in xrange(len(self.children)):
+        for i in range(len(self.children)):
             if self.children[i] is c:
                 return i
         return -1
@@ -419,7 +418,7 @@ cdef class VertexInstruction(Instruction):
     @tex_coords.setter
     def tex_coords(self, tc):
         cdef int index
-        for index in xrange(8):
+        for index in range(8):
             self._tex_coords[index] = tc[index]
         self.flag_data_update()
 
@@ -517,7 +516,7 @@ cdef class Callback(Instruction):
             cgl.glUseProgram(0)
 
             # FIXME don't use 10. use max texture available from gl conf
-            for i in xrange(10):
+            for i in range(10):
                 cgl.glActiveTexture(GL_TEXTURE0 + i)
                 cgl.glBindTexture(GL_TEXTURE_2D, 0)
                 cgl.glDisableVertexAttribArray(i)
@@ -536,7 +535,7 @@ cdef class Callback(Instruction):
             rcx = getActiveContext()
             shader = rcx._shader
             rcx.enter()
-            for index, texture in rcx.bind_texture.iteritems():
+            for index, texture in rcx.bind_texture.items():
                 rcx.set_texture(index, texture)
 
             reset_gl_context()
@@ -817,7 +816,7 @@ cdef class RenderContext(Canvas):
 
         cdef str key
         self._shader.use()
-        for key, stack in self.state_stacks.iteritems():
+        for key, stack in self.state_stacks.items():
             self.set_state(key, stack[0])
 
         if 'use_parent_projection' in kwargs:
@@ -845,7 +844,7 @@ cdef class RenderContext(Canvas):
 
     cdef int set_states(self, dict states) except -1:
         cdef str name
-        for name, value in states.iteritems():
+        for name, value in states.items():
             self.set_state(name, value)
 
     cdef int push_state(self, str name) except -1:
@@ -894,11 +893,7 @@ cdef class RenderContext(Canvas):
         return 0
 
     cdef int apply(self) except -1:
-        cdef list keys
-        if PY2:
-            keys = self.state_stacks.keys()
-        else:
-            keys = list(self.state_stacks.keys())
+        cdef list keys = list(self.state_stacks.keys())
 
         cdef RenderContext active_context = getActiveContext()
         if self._use_parent_projection:

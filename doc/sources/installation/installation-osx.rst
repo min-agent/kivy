@@ -30,7 +30,7 @@ MacPorts
 
 If you're using `Macports <https://www.macports.org>`_, you can install Python with::
 
-    # Install and set e.g. Python 3.8 as the default
+    # Install and set e.g. Python 3.14 as the default
     port install python38
     port select --set python python38
 

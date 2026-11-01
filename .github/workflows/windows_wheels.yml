@@ -14,13 +14,14 @@ env:
   KIVY_GL_BACKEND: 'angle_sdl2'
   SETUPTOOLS_USE_DISTUTILS: local
   UV_SYSTEM_PYTHON: "1"
+  UV_FIND_LINKS: wheelhouse
 
 jobs:
   windows_wheels_create:
     runs-on: windows-latest
     strategy:
       matrix:
-        python: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13' ]
+        python: ['3.14', '3.15']
         arch: ['x64']
     if: github.event_name == 'schedule' || (github.event_name == 'create' && github.event.ref_type == 'tag') || contains(github.event.head_commit.message, '[build wheel]') || contains(github.event.head_commit.message, '[build wheel win]') || contains(github.event.pull_request.title, '[build wheel]') || contains(github.event.pull_request.title, '[build wheel win]')
     steps:
@@ -34,12 +35,14 @@ jobs:
       uses: astral-sh/setup-uv@v10.3.3
       with:
         version: "0.13.6"
+    - name: Prepare kivy_deps wheels
+      run: python tools/repack_kivy_deps_wheels.py
     - name: Generate version metadata
       run: |
         . .\.ci\windows_ci.ps1
         Update-version-metadata
     - name: Generate sdist/kivy-examples
-      if: matrix.arch == 'x64' && matrix.python == '3.8'
+      if: matrix.arch == 'x64' && matrix.python == '3.14'
       # only windows kivy-examples is uploaded
       run: |
         . .\.ci\windows_ci.ps1
@@ -110,7 +113,7 @@ jobs:
     needs: windows_wheels_create
     strategy:
       matrix:
-        python: ['3.8', '3.9', '3.10', '3.11', '3.12', '3.13' ]
+        python: ['3.14', '3.15']
         arch: [ 'x64' ]
     steps:
       - uses: actions/checkout@v4
@@ -123,6 +126,8 @@ jobs:
         uses: astral-sh/setup-uv@v10.3.3
         with:
           version: "0.13.6"
+      - name: Prepare kivy_deps wheels
+        run: python tools/repack_kivy_deps_wheels.py
       - uses: actions/download-artifact@v4
         with:
           # Only one windows_wheels-*-* artifact contains the kivy-examples
@@ -157,11 +162,13 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.x
+          python-version: 3.15
       - name: Set up uv
         uses: astral-sh/setup-uv@v10.3.3
         with:
           version: "0.13.6"
+      - name: Prepare kivy_deps wheels
+        run: python tools/repack_kivy_deps_wheels.py
       - uses: actions/download-artifact@v4
         with:
           # Only one windows_wheels-*-* artifact contains the sdist

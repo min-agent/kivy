@@ -1,10 +1,9 @@
 [build-system]
 requires = [
-    "setuptools~=69.2.0",
-    "wheel~=0.44.0",
-    "packaging~=24.0",
-    "cython>=0.29.1,<=3.0.11",
-    'tomli>=1.1.0; python_version < "3.11"',
+    "setuptools>=80,<85",
+    "wheel>=0.45",
+    "packaging>=25",
+    "cython>=3.3,<4",
     'kivy_deps.gstreamer_dev~=0.3.3; sys_platform == "win32"',
     'kivy_deps.sdl2_dev~=0.8.0; sys_platform == "win32"',
     'kivy_deps.glew_dev~=0.3.1; sys_platform == "win32"',
@@ -19,8 +18,9 @@ name = "Kivy"
 dynamic = ["version"]
 description = "An open-source Python framework for developing GUI apps that work cross-platform, including desktop, mobile and embedded platforms."
 readme = "README.md"
-requires-python = ">=3.8,<3.14"
-license = { text = "MIT" }
+requires-python = ">=3.14"
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [
     { name = "Kivy Team and other contributors", email = "kivy-dev@googlegroups.com" },
 ]
@@ -33,18 +33,13 @@ classifiers = [
     "Intended Audience :: End Users/Desktop",
     "Intended Audience :: Information Technology",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
     "Operating System :: MacOS :: MacOS X",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: POSIX :: BSD :: FreeBSD",
     "Operating System :: POSIX :: Linux",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
     "Topic :: Artistic Software",
     "Topic :: Games/Entertainment",
     "Topic :: Multimedia :: Graphics :: 3D Rendering",
@@ -64,10 +59,10 @@ dependencies = [
     "pygments",
     "requests",
     "filetype",
-    'kivy_deps.angle~=0.4.0; sys_platform == "win32"',
+    'kivy_deps.angle~=0.5.0; sys_platform == "win32"',
     'kivy_deps.sdl2~=0.8.0; sys_platform == "win32"',
     'kivy_deps.glew~=0.3.1; sys_platform == "win32"',
-    'pypiwin32; sys_platform == "win32"',
+    'pywin32>=312; sys_platform == "win32"',
 ]
 
 [project.urls]
@@ -79,54 +74,57 @@ Documentation = "https://kivy.org/doc/stable/"
 [project.optional-dependencies]
 tuio = ["oscpy"]
 dev = [
-    "pytest>=3.6",
-    "pytest-cov",
-    "pytest_asyncio!=0.11.0",
-    "pytest-timeout",
-    "pytest-benchmark",
-    "pyinstaller",
-    "sphinx~=6.2.1",
-    "sphinxcontrib-jquery~=4.1",
+    "pytest>=8.4",
+    "pytest-cov>=6",
+    "pytest-asyncio>=1.0",
+    "pytest-timeout>=2.4",
+    "pytest-benchmark>=5",
+    "pyinstaller>=6.16",
+    "sphinx>=9.2",
+    "sphinxcontrib-jquery>=4.1",
     'kivy_deps.gstreamer_dev~=0.3.3; sys_platform == "win32"',
     'kivy_deps.sdl2_dev~=0.8.0; sys_platform == "win32"',
     'kivy_deps.glew_dev~=0.3.1; sys_platform == "win32"',
     "ruff>=0.17.3,<1.0.0",
-    "pre-commit",
-    "responses",
+    "pre-commit>=4",
+    "responses>=0.25",
 ]
-base = ["pillow>=9.5.0,<11"]
+base = ["pillow>=11.3"]
 media = [
     'kivy_deps.gstreamer~=0.3.3; sys_platform == "win32"',
-    'ffpyplayer; sys_platform == "linux" or sys_platform == "darwin"',
+    'ffpyplayer>=4.5.4; (sys_platform == "linux" or sys_platform == "darwin") and python_version < "3.15"',
 ]
 full = [
-    "pillow>=9.5.0,<11",
+    "pillow>=11.3,<13",
     'kivy_deps.gstreamer~=0.3.3; sys_platform == "win32"',
-    'ffpyplayer; sys_platform == "linux" or sys_platform == "darwin"',
+    'ffpyplayer>=4.5.4; (sys_platform == "linux" or sys_platform == "darwin") and python_version < "3.15"',
 ]
 gstreamer = ['kivy_deps.gstreamer~=0.3.3; sys_platform == "win32"']
-angle = ['kivy_deps.angle~=0.4.0; sys_platform == "win32"']
+angle = ['kivy_deps.angle~=0.5.0; sys_platform == "win32"']
 sdl2 = ['kivy_deps.sdl2~=0.8.0; sys_platform == "win32"']
 glew = ['kivy_deps.glew~=0.3.1; sys_platform == "win32"']
 
 [dependency-groups]
 ci = [
-    "cibuildwheel~=2.21.1",
+    "cibuildwheel>=4.3",
     "ruff>=0.17.3,<1.0.0",
 ]
 docs = [
-    "sphinx~=6.2.1",
-    "sphinxcontrib-jquery~=4.1",
+    "sphinx>=9.2",
+    "sphinxcontrib-jquery>=4.1",
 ]
 
+[tool.uv]
+find-links = ["wheelhouse"]
+
 [tool.kivy]
-cython_min = "0.29.1"
-cython_max = "3.0.11"
+cython_min = "3.3.0"
+cython_max = "3.3.0"
 cython_exclude = ""
-python_versions = "3.8 - 3.13"
+python_versions = "3.14 - 3.15"
 
 [tool.ruff]
-target-version = "py38"
+target-version = "py315"
 exclude = [
     "__pycache__",
     ".tox",
@@ -149,6 +147,8 @@ plugins = ["kivy.tools.coverage"]
 concurrency = ["thread", "multiprocessing"]
 
 [tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
 addopts = "--benchmark-skip --benchmark-warmup=on --benchmark-warmup-iterations=5 --benchmark-disable-gc --benchmark-name=short --benchmark-sort=mean --benchmark-group-by=fullfunc --benchmark-storage=.benchmarks-kivy --benchmark-save=kivy"
 markers = [
     "logmodepython: mark a test for the logger module in python mode",

@@ -100,7 +100,7 @@ cdef class VBO:
         cgl.glBindBuffer(GL_ARRAY_BUFFER, self.id)
         log_gl_error('VBO.bind-glBindBuffer')
         shader.bind_vertex_format(self.vertex_format)
-        for i in xrange(self.format_count):
+        for i in range(self.format_count):
             attr = &self.format[i]
             if attr.per_vertex == 0:
                 continue
@@ -194,7 +194,7 @@ cdef class VertexBatch:
         # block. no need to use add() everytime we need to reconstruct the list.
         cdef int local_index
         cdef unsigned short *vbi = <unsigned short*>self.vbo_index.pointer()
-        for i in xrange(indices_count):
+        for i in range(indices_count):
             local_index = indices[i]
             self.elements.add(&vbi[local_index], NULL, 1)
         self.flags |= V_NEEDUPLOAD

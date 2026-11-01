@@ -3,7 +3,7 @@ Weak Proxy
 ==========
 
 In order to allow garbage collection, the weak proxy provides
-`weak references <https://en.wikipedia.org/wiki/Weak_reference>`_ to objects.
+`weak references <https://docs.python.org/3/library/weakref.html#weakref.proxy>`_ to objects.
 It effectively enhances the
 `weakref.proxy <https://docs.python.org/2/library/weakref.html#weakref.proxy>`_
 by adding comparison support.
@@ -71,12 +71,8 @@ cdef class WeakProxy(object):
         elif op == 5:
             return r >= other
 
-    def __nonzero__(self):
+    def __bool__(self):
         return bool(self.__ref__())
-
-    if not PY3:
-        def __bool__(self):
-            return bool(self.__ref__())
 
     def __add__(self, other):
         return self.__ref__() + other
@@ -86,9 +82,6 @@ cdef class WeakProxy(object):
 
     def __mul__(self, other):
         return self.__ref__() * other
-
-    def __div__(self, other):
-        return operator.div(self.__ref__(), other)
 
     def __truediv__(self, other):
         return operator.truediv(self.__ref__(), other)
@@ -128,9 +121,6 @@ cdef class WeakProxy(object):
 
     def __rmul__(self, other):
         return other * self.__ref__()
-
-    def __rdiv__(self, other):
-        return operator.div(other, self.__ref__())
 
     def __rtruediv__(self, other):
         return operator.truediv(other, self.__ref__())
@@ -177,11 +167,6 @@ cdef class WeakProxy(object):
     def __imul__(self, other):
         r = self.__ref__()
         r *= other
-        self.__ref = weakref.ref(r)
-        return self
-
-    def __idiv__(self, other):
-        r = operator.idiv(self.__ref__(), other)
         self.__ref = weakref.ref(r)
         return self
 
@@ -253,17 +238,8 @@ cdef class WeakProxy(object):
     def __int__(self):
         return int(self.__ref__())
 
-    def __long__(self):
-        return long(self.__ref__())
-
     def __float__(self):
         return float(self.__ref__())
-
-    def __oct__(self):
-        return oct(self.__ref__())
-
-    def __hex__(self):
-        return hex(self.__ref__())
 
     def __index__(self):
         return operator.index(self.__ref__())
@@ -298,8 +274,6 @@ cdef class WeakProxy(object):
     def __str__(self):
         return str(self.__ref())
 
-    def __unicode__(self):
-        return unicode(self.__ref())
 
     def __repr__(self):
         return '<WeakProxy to {!r}>'.format(self.__ref())

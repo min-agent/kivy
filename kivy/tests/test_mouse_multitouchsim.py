@@ -1,8 +1,25 @@
+from kivy.core.window import Window
 from kivy.tests.common import GraphicUnitTest
 
 
 class MultitouchSimulatorTestCase(GraphicUnitTest):
     framecount = 3
+
+    def setUp(self):
+        super().setUp()
+        # These tests assume a 1:1 window (size == system_size). On
+        # high-DPI displays the GL size is scaled while system_size
+        # remains the logical size, so use the logical size as the
+        # effective size for deterministic coordinates.
+        self._old_effective_size = Window._get_effective_size
+        Window._get_effective_size = lambda: tuple(Window.system_size)
+
+    def tearDown(self):
+        old_effective_size = getattr(self, "_old_effective_size", None)
+        if old_effective_size is not None:
+            Window._get_effective_size = old_effective_size
+            self._old_effective_size = None
+        super().tearDown()
 
     def render(self, root, framecount=1):
         pass
@@ -12,7 +29,7 @@ class MultitouchSimulatorTestCase(GraphicUnitTest):
         # flip, because the mouse provider uses system's
         # raw one and it's changed to bottom-left origin
         # with Window's system_size[1] for 'mouse_pos'
-        return win.height - 1.0 - y
+        return win.system_size[1] - 1.0 - y
 
     def mouse_init(self, on_demand=False, disabled=False, scatter=False):
         # prepare MouseMotionEventProvider

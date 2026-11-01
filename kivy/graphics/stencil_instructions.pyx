@@ -98,7 +98,6 @@ include "opcodes.pxi"
 include "gl_debug_logger.pxi"
 
 from kivy.graphics.cgl cimport *
-from kivy.compat import PY2
 from kivy.graphics.instructions cimport Instruction
 
 cdef dict DEFAULT_STATE = {
@@ -309,11 +308,8 @@ cdef class StencilUse(Instruction):
         .. versionadded:: 1.5.0
         '''
 
-        index = _gl_stencil_op.values().index(self._op)
-        if PY2:
-            return _gl_stencil_op.keys()[index]
-        else:
-            return list(_gl_stencil_op.keys())[index]
+        index = list(_gl_stencil_op.values()).index(self._op)
+        return list(_gl_stencil_op.keys())[index]
 
     @func_op.setter
     def func_op(self, x):

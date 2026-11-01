@@ -74,9 +74,9 @@ class FileChooserUnicodeTestCase(unittest.TestCase):
         for f in self.files + self.existfiles:
             try:
                 remove(f)
-            except (OSError, FileNotFoundError):
+            except OSError, FileNotFoundError:
                 pass
         try:
             rmdir(self.subdir)
-        except (OSError, FileNotFoundError):
+        except OSError, FileNotFoundError:
             pass

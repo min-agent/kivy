@@ -14,7 +14,7 @@ jobs:
     - name: Set up Python 3
       uses: actions/setup-python@v5
       with:
-        python-version: 3.13
+        python-version: 3.15
     - name: Set up uv
       uses: astral-sh/setup-uv@v10.3.3
       with:
@@ -27,7 +27,11 @@ jobs:
         make style
 
   unit_test:
+    name: "unit_test (${{ matrix.python }})"
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.14', '3.15']
     env:
       DISPLAY: ':99.0'
     steps:
@@ -35,7 +39,7 @@ jobs:
     - name: Set up Python 3
       uses: actions/setup-python@v5
       with:
-        python-version: 3.13
+        python-version: ${{ matrix.python }}
     - name: Set up uv
       uses: astral-sh/setup-uv@v10.3.3
       with:
@@ -71,7 +75,7 @@ jobs:
     - name: Upload benchmarks as artifact
       uses: actions/upload-artifact@v4
       with:
-        name: benchmarks-ubuntu-unittests-python-3.x
+        name: benchmarks-ubuntu-unittests-python-${{ matrix.python }}
         path: .benchmarks-kivy
 
   gen_docs:
@@ -81,7 +85,7 @@ jobs:
     - name: Set up Python 3
       uses: actions/setup-python@v5
       with:
-        python-version: 3.13
+        python-version: 3.15
     - name: Set up uv
       uses: astral-sh/setup-uv@v10.3.3
       with:

@@ -213,7 +213,7 @@ cdef class Shader:
         '''
         cgl.glUseProgram(self.program)
         log_gl_error('Shader.use-glUseProgram')
-        for k, v in self.uniform_values.iteritems():
+        for k, v in self.uniform_values.items():
             self.upload_uniform(k, v)
         if cgl_get_initialized_backend_name() == 'glew':
             # XXX Very very weird bug. On virtualbox / win7 / glew, if we don't call
@@ -303,7 +303,7 @@ cdef class Shader:
                     float_list = <GLfloat *>malloc(vec_size * sizeof(GLfloat))
                     if float_list is NULL:
                         raise MemoryError()
-                    for index in xrange(vec_size):
+                    for index in range(vec_size):
                         float_list[index] = <GLfloat>list_value[index]
                     cgl.glUniform1fv(loc, <GLint>vec_size, float_list)
                     log_gl_error('Shader.upload_uniform-glUniform1fv'
@@ -329,7 +329,7 @@ cdef class Shader:
                     int_list = <int *>malloc(vec_size * sizeof(GLint))
                     if int_list is NULL:
                         raise MemoryError()
-                    for index in xrange(vec_size):
+                    for index in range(vec_size):
                         int_list[index] = <GLint>list_value[index]
                     cgl.glUniform1iv(loc, <GLint>vec_size, int_list)
                     log_gl_error('Shader.upload_uniform-glUniform1iv'
@@ -344,8 +344,8 @@ cdef class Shader:
                             list_size * vec_size * sizeof(GLfloat))
                     if float_list is NULL:
                         raise MemoryError()
-                    for x in xrange(list_size):
-                        for y in xrange(vec_size):
+                    for x in range(list_size):
+                        for y in range(vec_size):
                             float_list[vec_size * x + y] = <GLfloat>value[x][y]
                     if vec_size == 2:
                         cgl.glUniform2fv(loc, list_size, float_list)
@@ -369,8 +369,8 @@ cdef class Shader:
                             list_size * vec_size * sizeof(GLint))
                     if int_list is NULL:
                         raise MemoryError()
-                    for x in xrange(list_size):
-                        for y in xrange(vec_size):
+                    for x in range(list_size):
+                        for y in range(vec_size):
                             int_list[vec_size * x + y] = <GLint>value[x][y]
                     if vec_size == 2:
                         cgl.glUniform2iv(loc, list_size, int_list)
@@ -434,8 +434,8 @@ cdef class Shader:
                             list_size * vec_size * sizeof(GLfloat))
                     if float_list is NULL:
                         raise MemoryError()
-                    for x in xrange(list_size):
-                        for y in xrange(vec_size):
+                    for x in range(list_size):
+                        for y in range(vec_size):
                             float_list[vec_size * x + y] = <GLfloat>value[x][y]
                     if vec_size == 2:
                         cgl.glUniform2fv(loc, list_size, float_list)
@@ -459,8 +459,8 @@ cdef class Shader:
                             list_size * vec_size * sizeof(GLint))
                     if int_list is NULL:
                         raise MemoryError()
-                    for x in xrange(list_size):
-                        for y in xrange(vec_size):
+                    for x in range(list_size):
+                        for y in range(vec_size):
                             int_list[vec_size * x + y] = <GLint>value[x][y]
                     if vec_size == 2:
                         cgl.glUniform2iv(loc, list_size, int_list)
@@ -485,7 +485,7 @@ cdef class Shader:
 
     cdef void upload_uniform_matrix(self, int loc, Matrix value):
         cdef GLfloat mat[16]
-        for x in xrange(16):
+        for x in range(16):
             mat[x] = <GLfloat>value.mat[x]
         cgl.glUniformMatrix4fv(loc, 1, False, mat)
 
